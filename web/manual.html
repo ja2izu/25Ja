@@ -1,0 +1,269 @@
+<!doctype html>
+<!--
+  25Ja 説明書
+  Copyright (c) 2026 JA2IZU
+  Licensed under the Apache License, Version 2.0 (see LICENSE, NOTICE)
+-->
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>25Ja 説明書</title>
+<style>
+:root {
+  --bg: #ffffff; --fg: #1a1f1c; --sub: #4f5a54; --line: #c9d1cc; --accent: #2a6a4a; --warn: #8a5000; --box: #f4f7f5; --focus: #1a5fd6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-print]) { --bg: #141916; --fg: #e8efeb; --sub: #aebbb4; --line: #3a4540; --accent: #6cc496; --warn: #eab05a; --box: #1c2320; --focus: #8ab4ff; }
+}
+* { box-sizing: border-box; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: "BIZ UDPGothic", "BIZ UDPゴシック", "Hiragino Sans", "Noto Sans JP", sans-serif;
+  line-height: 1.8; font-size: 16px;
+}
+main { max-width: 820px; margin: 0 auto; padding: 24px 16px 48px; }
+#verBadge { position: fixed; top: 6px; right: 10px; font-size: .85rem; color: var(--sub); background: var(--bg); padding: 1px 6px; border-radius: 6px; white-space: pre; }
+h1 { font-size: 1.6rem; margin: 0 0 4px; }
+h2 { font-size: 1.2rem; margin: 32px 0 8px; padding-bottom: 4px; border-bottom: 2px solid var(--accent); }
+h3 { font-size: 1.02rem; margin: 20px 0 6px; }
+p { margin: 6px 0; }
+.lead { color: var(--sub); margin: 0 0 12px; }
+table { border-collapse: collapse; width: 100%; margin: 8px 0; font-size: .95rem; }
+th, td { border: 1px solid var(--line); padding: 5px 8px; text-align: left; vertical-align: top; }
+th { background: var(--box); font-weight: bold; }
+code, .mono { font-family: "BIZ UDGothic", "BIZ UDゴシック", ui-monospace, monospace; font-size: .9em; }
+pre { background: var(--box); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; overflow-x: auto; font-family: "BIZ UDGothic", "BIZ UDゴシック", ui-monospace, monospace; font-size: .88rem; }
+.warn { border-left: 4px solid var(--warn); background: var(--box); padding: 8px 12px; border-radius: 4px; margin: 10px 0; }
+.note { border-left: 4px solid var(--accent); background: var(--box); padding: 8px 12px; border-radius: 4px; margin: 10px 0; }
+ol, ul { padding-left: 1.5em; margin: 6px 0; }
+li { margin: 3px 0; }
+.kbd { display: inline-block; border: 1px solid var(--line); border-radius: 4px; padding: 0 6px; font-family: "BIZ UDGothic", "BIZ UDゴシック", monospace; font-size: .88em; background: var(--box); }
+.nowrap { white-space: nowrap; }
+.hash { font-family: "BIZ UDGothic", "BIZ UDゴシック", monospace; font-size: .85rem; word-break: break-all; }
+.check td:first-child { width: 2.2em; text-align: center; }
+footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px solid var(--line); padding-top: 10px; }
+@media print {
+  #verBadge { position: absolute; }
+  h2, h3 { break-after: avoid; }
+  table, .warn, .note, pre { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<div id="verBadge">Ver 0.1.8  JA2IZU</div>
+<main>
+<h1>25Ja（にこじゃ）説明書</h1>
+<p class="lead">UV-K1 / UV-K5(K6) V3 用 日本語ファーム 25Ja と 書込ツール 25Ja Tool の使い方</p>
+
+<div class="warn">
+  <b>ご注意</b><br>
+  ・ファームの書き換えは自己責任で行ってください。書き換えにより故障・保証外となる場合があります。<br>
+  ・技術基準適合証明（技適）のない無線機から電波を出すことは電波法違反です。送信は、適法に運用できる無線機・免許の範囲で行ってください。<br>
+  ・25Ja は Dondji（BD1AHN）をもとにした派生版で、Dondji 公式のものではありません。
+</div>
+
+<h2>1. 25Ja とは</h2>
+<p>Dondji v5.2.8（F4HWN 系, PY32F071 版）をもとに、日本語で使えるようにしたファームです。</p>
+<ul>
+  <li><b>CH 名に漢字・かな</b>（東雲 12 ドットフォント, JIS 第 1・第 2 水準 6,647 字）。CH 名は UTF-8 で最大 31 バイト＝漢字・かな 10 字（英数字 31 字）。
+      31 バイトの名前は PC の CPS（NeonPlugJA）で書きます。本体で名前を編集できるのは従来どおり 15 バイト（漢字・かな 5 字）までで、長い名前を本体で編集すると 15 バイトに切れます。
+      メイン画面では、漢字・かなの長い名前は 7 字ほどまでしか見えません（表示は今後調整）</li>
+  <li><b>メニューの日本語化</b>（本体メニュー「表示言語」で切替）</li>
+  <li><b>F Lock「JA/CE」</b>：隠しメニューの F Lock で選ぶと、送信を 144〜146MHz / 430〜440MHz に限定（CH ごとの送信許可より優先）</li>
+  <li><b>FM 放送の局名表示</b>：受信中の周波数に合う局名を周波数の下に表示（最大 127 局, 漢字・かな 9 字まで）</li>
+  <li><b>字庫の高速書込</b>：25Ja 同士なら字庫をセクタ単位でまとめて書くため、従来方式より速く、フラッシュの消去回数も少ない</li>
+  <li><b>画面転送</b>：PC の 25Dock / K5Viewer で本体の画面を見てキー操作できます（F4HWN の画面転送と同じ方式）</li>
+  <li>本体の側面キーの呼び方を <b>PF1 / PF2</b> に統一（メニュー「PF1短押」など）</li>
+  <li>起動ロゴ（招き猫）、名称表示を 25Ja に</li>
+  <li>日本では使わない機能を外して容量を空けました：<b>MDC1200 / Yan ID</b>（ID の送受信、ロジャー音の MDC・Yan ID）、<b>1750Hz トーン</b>（側面キーの機能）</li>
+</ul>
+
+<h2>2. 配布物</h2>
+<table>
+  <tr><th>ファイル</th><th>内容</th></tr>
+  <tr><td class="nowrap"><code>index.html</code></td><td>25Ja Tool（書込ツール本体）。PC の Chrome / Edge で使います</td></tr>
+  <tr><td class="nowrap"><code>manual.html</code></td><td>この説明書</td></tr>
+  <tr><td class="nowrap"><code>firmware/25Ja.fusion.bin</code></td><td>25Ja ファーム（同梱）</td></tr>
+  <tr><td class="nowrap"><code>font/25Ja_font_v4.bin</code></td><td>字庫（東雲 12 ドット, 6,647 字, 版数 4）</td></tr>
+  <tr><td class="nowrap"><code>LICENSE</code> / <code>NOTICE</code></td><td>ライセンスと出典</td></tr>
+  <tr><td class="nowrap"><code>README.md</code></td><td>ツールの概要（開発者向け）</td></tr>
+  <tr><td class="nowrap"><code>test/sim.js</code></td><td>模擬無線機を使った動作試験（開発者向け, Node.js）</td></tr>
+</table>
+<p>各ファイルのサイズと SHA-256 は <a href="#hash">11. 配布物の照合値</a> にあります。</p>
+
+<h2>3. 準備</h2>
+<ol>
+  <li>PC（Windows / Mac / Linux）に <b>Chrome または Edge</b> を用意します（Web Serial を使うため。Safari・Firefox・スマートフォンは不可）。</li>
+  <li>無線機と PC を USB ケーブルでつなぎます。</li>
+  <li>配布の ZIP を展開し、<code>25Ja_Tool</code> フォルダの <b><code>index.html</code> をダブルクリック</b>して開きます。<br>
+     Chrome / Edge 以外で開いたときは、<code>index.html</code> を右クリック →「プログラムから開く」→ Chrome（または Edge）を選びます。</li>
+  <li>この開き方では、同梱のファーム・字庫をツールが自動では読めません。2・3 の欄の「ファイルを選ぶ」で、
+     同じフォルダの <code>firmware/25Ja.fusion.bin</code>（ファーム）、<code>font/25Ja_font_v4.bin</code>（字庫）を選んでください。</li>
+</ol>
+<div class="note">
+  ・違うファイルを選んでも、ツールが大きさ・中身の目印・版数を確かめて受け付けません（ファーム欄に字庫を選んだときも止めます）。<br>
+  ・書込中はツールのタブを開いたままにしてください。別のタブや画面に切り替えても止まりはしませんが、遅くなることがあります。
+</div>
+
+<h2>4. 初めて 25Ja を入れる</h2>
+<p>ツール上部の「<b>0 初めて 25Ja を入れる手順</b>」に順番が並んでいます。番号を押すとその欄へ移動するので、各欄のボタンで進めます。終わった欄には ✔（失敗は ✖）が付きます。</p>
+<table>
+  <tr><th>順</th><th>欄</th><th>無線機の状態</th><th>操作</th></tr>
+  <tr><td>1</td><td>1 校正データのバックアップ</td><td>普通に起動</td><td>「校正データを読み出す」→「calibration.dat を保存」。<b>この無線機専用の大切なデータ</b>です。必ず保管してください</td></tr>
+  <tr><td>2</td><td>2 ファームの書込</td><td>電源を切り、<b>PTT を押したまま電源 ON</b>（刷机モード）</td><td>ファイルを選び（<code>firmware/25Ja.fusion.bin</code>）→「書き込む」。終わると再起動します</td></tr>
+  <tr><td>3</td><td>（本体）</td><td>再起動後</td><td>本体メニューで <b>初期化 → 全部</b> を実行し、手順の「済んだ」に印を付けます</td></tr>
+  <tr><td>4</td><td>3 字庫の書込</td><td>普通に起動</td><td>ファイルを選び（<code>font/25Ja_font_v4.bin</code>）→「書き込む」。最後に全体を照合します</td></tr>
+  <tr><td>5</td><td>4 校正データの復元</td><td>普通に起動</td><td>「書き戻す」。1 で読み出した直後なら、ファイルを選び直す必要はありません。終わると再起動します</td></tr>
+</table>
+<p>最後に本体メニュー「<b>表示言語</b>」を<b>日本語</b>にします。本体情報の「字形」が「6647 字・正常」になっていれば字庫は正しく入っています。</p>
+<div class="note">
+  ・ボタンを押すたびに、ブラウザがシリアルポートの選択を求めます。無線機のポートを選んでください。<br>
+  ・ページを開き直した後は、保存した <code>calibration.dat</code> を 4 の欄で選んで書き戻してください。<br>
+  ・途中で止まったら、その欄からやり直せます。
+</div>
+
+<h2>5. ファームだけ更新する</h2>
+<p>字庫・CH・設定は無線機の SPI フラッシュに残るので、ファームの更新は「<b>2 ファームの書込</b>」だけで済みます。</p>
+<ol>
+  <li>電源を切り、PTT を押したまま電源 ON（刷机モード）。</li>
+  <li>「同梱のファームを使う」→「書き込む」。</li>
+</ol>
+<p>字庫の版数が変わったときだけ、字庫も書き直してください（その場合は配布時に案内します）。</p>
+
+<h2>6. FM 放送の局名</h2>
+<h3>6.1 FM 画面</h3>
+<table>
+  <tr><th>段</th><th>表示</th></tr>
+  <tr><td>上段</td><td>プリセットの CH 番号（例 <code>CH05</code>）。状態によって「CH12に保存?」「CH05を削除?」「自動登録中」「サーチ中」</td></tr>
+  <tr><td>中段</td><td>周波数（大きい数字）</td></tr>
+  <tr><td>下段</td><td>局名（局名表にある周波数のとき）。自動登録中は登録した局数</td></tr>
+</table>
+<h3>6.2 FM ラジオの操作（25Ja の元になった F4HWN と同じ）</h3>
+<table>
+  <tr><th>操作</th><th>働き</th></tr>
+  <tr><td><span class="kbd">F</span> → <span class="kbd">0</span></td><td>FM ラジオの入／切</td></tr>
+  <tr><td><span class="kbd">F</span> → <span class="kbd">1</span></td><td>バンド切替（日本は 76〜108MHz を選ぶ）</td></tr>
+  <tr><td><span class="kbd">F</span> → <span class="kbd">3</span></td><td>プリセット（CH）と周波数入力の切替</td></tr>
+  <tr><td><span class="kbd">*</span> 短押し</td><td>サーチ（次の局で止まる。プリセットには入らない）</td></tr>
+  <tr><td><span class="kbd">*</span> 長押し</td><td><b>自動登録</b>：プリセット 48CH を<b>全部消してから</b>、受信できた局を CH01 から登録</td></tr>
+  <tr><td>周波数表示中に <span class="kbd">MENU</span></td><td>「CH○○に保存?」→ 上下キーで CH を選び、もう一度 <span class="kbd">MENU</span> で保存（<span class="kbd">EXIT</span> で取消）</td></tr>
+  <tr><td>CH 表示中に <span class="kbd">MENU</span></td><td>「CH○○を削除?」→ もう一度 <span class="kbd">MENU</span> で削除（<span class="kbd">EXIT</span> で取消）</td></tr>
+</table>
+<h3>6.3 局名の入れ方（ツール「7 FM 局名」）</h3>
+<p><b>※ ツールの「7 FM 局名」はまだ不完全な機能です。</b>内容を確認しながら使ってください。</p>
+<ol>
+  <li>本体で局をプリセットに入れます（サーチして保存、または自動登録）。</li>
+  <li>ツールの「本体の FM プリセット 48CH」の「<b>周波数を表に取り込む</b>」→ 表に周波数が入ります。</li>
+  <li>表で局名を入力します。または CSV の「書き出す」→ Excel などで局名を入れる → CSV の「ファイルを選ぶ」で読み込む。</li>
+  <li>「本体の局名表」の「<b>書き込む</b>」。FM ラジオに入り直すと局名が出ます。</li>
+</ol>
+<p>逆に、「本体の FM プリセット 48CH」の「<b>表の周波数を書く</b>」を使うと、受信できるかどうかに関係なく、表の局をプリセット 48CH に登録できます（今のプリセットは置き換わり、書いた後に無線機が再起動します）。</p>
+<h3>6.4 局名の決まり</h3>
+<ul>
+  <li>最大 127 局。周波数は 64.0〜108.0MHz、0.1MHz 単位、重複なし</li>
+  <li>局名は UTF-8 で 28 バイト・画面幅 128 ドットまで（漢字・かなは 9 字、半角英数は 18 字まで）</li>
+  <li>使える字は半角英数記号と、字庫にある字（JIS 第 1・第 2 水準）。半角カナ・機種依存文字は不可。ツールが赤で知らせます</li>
+  <li>CSV は「周波数,局名」の 2 列。読込は UTF-8 / Shift_JIS、書出は UTF-8（BOM 付き）</li>
+</ul>
+<div class="note">
+  局名は、<b>受信中の周波数と表の周波数がぴったり一致したとき</b>に出ます。局名が出るのは、プリセットで選んだ局か、周波数を直接入れた局です。
+</div>
+
+<h2>7. そのほかの機能（ツール）</h2>
+<table>
+  <tr><th>欄</th><th>内容</th></tr>
+  <tr><td>5 設定のバックアップ・復元</td><td>本体の設定（SPI 0xA000〜0xA21F, 544 バイト）を保存・書き戻し。CH とその名前は含みません</td></tr>
+  <tr><td>6 起動画像</td><td>128×64 の白黒画像を書込。本体メニュー「起動画面」を「ロゴ」にすると表示。「画像を無効にする」で組み込みのロゴに戻ります</td></tr>
+  <tr><td>画面下のログ</td><td>上の取っ手をドラッグで高さを変えられます（ダブルクリックで大小切替、取っ手を選んで上下キーでも可）。高さはブラウザが覚えます。<br>
+      「<b>ログをコピー</b>」でツールの版と日時を付けてクリップボードへ（問い合わせのときにそのまま貼れます）。「<b>ログを消す</b>」で空にします</td></tr>
+  <tr><td>ファイルの選択</td><td>各欄の「<b>ファイルを選ぶ</b>」で選びます。選んだファイル名と大きさ、検査の結果（✔ / ✖）が欄に出ます。同じファイルを選び直すこともできます</td></tr>
+</table>
+
+<h2>8. 送信の制限（F Lock JA/CE）</h2>
+<p>隠しメニューの <b>F Lock</b> で「<b>JA/CE</b>」を選ぶと、送信できるのは 144〜146MHz と 430〜440MHz だけになります。このとき CH ごとの送信許可（TxLock）の設定は無視されます。「全送信禁止」を選ぶと送信できなくなります。</p>
+<p>隠しメニューは、ソース上は <b>PTT と SIDE1 キーを押したまま電源 ON</b> で出る作りです（ソース確認済み。実機での確認は配布前確認で行ってください）。PTT と SIDE2 の組み合わせは、AIRCOPY が無効のためエラー画面になります。</p>
+
+<h2>9. 困ったとき</h2>
+<table>
+  <tr><th>症状</th><th>対処</th></tr>
+  <tr><td>書込後に起動しない</td><td>電源を切り、<b>PTT を押したまま電源 ON</b> で刷机モードに入り、ファームを書き直します。ブートローダーはファームの書込で消えないので、この方法は常に使えます</td></tr>
+  <tr><td>CH 名・メニューの漢字が出ない、□ になる</td><td>字庫が入っていないか版が違います。「3 字庫」を書き直してください</td></tr>
+  <tr><td>「刷机モードになっています」と出る</td><td>その操作は普通に起動した状態で行います。電源を入れ直してください</td></tr>
+  <tr><td>「無線機が通常起動しています」と出る</td><td>ファームの書込は刷机モードで行います（PTT を押したまま電源 ON）</td></tr>
+  <tr><td>側面キーに割り当てた 1750Hz が効かない</td><td>25Ja では 1750Hz トーンを外しました。そのキーは何もしなくなるので、メニュー「PF1短押」などで別の機能を割り当ててください</td></tr>
+  <tr><td>「ファイルが選ばれませんでした」</td><td>ファイル選択で <code>firmware/25Ja.fusion.bin</code> または <code>font/25Ja_font_v4.bin</code> を選んでください</td></tr>
+  <tr><td>書込がとても遅い</td><td>ツールのタブを前に出したままにしてください</td></tr>
+  <tr><td>字庫の書込で「照合で不一致」</td><td>もう一度書き込んでください。続くときは USB ケーブル・接続を確かめてください</td></tr>
+  <tr><td>FM の局名が出ない</td><td>その局がプリセットにあるか、周波数が表とぴったり同じかを確かめます。バンドが 76〜108MHz かも確かめてください</td></tr>
+  <tr><td>校正がおかしい（受信感度・送信出力）</td><td>1 で保存した <code>calibration.dat</code> を「4 校正データの復元」で書き戻します</td></tr>
+</table>
+
+<h2>10. 出典とライセンス</h2>
+<ul>
+  <li>25Ja © 2026 JA2IZU — Apache License 2.0</li>
+  <li>Dondji（叮咚鸡）© 2026 BD1AHN — Apache License 2.0。Dondji の名称・ロゴ・公式サイトは商標方針により使用していません</li>
+  <li>F4HWN（armel）、muzkr、egzumer、DualTachyon ほか各氏のファーム — Apache License 2.0</li>
+  <li>FM 局名表示の着想：steranian/uv-k1-k5v3-firmware-custom（Apache License 2.0）。25Ja では専用の局名表として作り直し</li>
+  <li>東雲フォント（電子書体オープンラボ）— Public Domain</li>
+  <li>詳しくは <code>LICENSE</code> / <code>NOTICE</code> を参照</li>
+</ul>
+
+<h2 id="hash">11. 配布物の照合値</h2>
+<table>
+  <tr><th>ファイル</th><th>サイズ</th><th>SHA-256</th></tr>
+  <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">67,057 B</td><td class="hash">6b771a0b94b4f456783c241bc6b44983628c5a4ff4b333534c8234d4351a65a4</td></tr>
+  <tr><td class="nowrap"><code>firmware/25Ja.fusion.bin</code></td><td class="nowrap">111,308 B</td><td class="hash">65c80bfee46e742f60e3e63c4bf3fff762ff731d63e47713a97238c3b68c77b4</td></tr>
+  <tr><td class="nowrap"><code>font/25Ja_font_v4.bin</code></td><td class="nowrap">186,117 B</td><td class="hash">ca5d44656e91a9eb8f04a37af2e158456fd05fce2228167ae522a652da23e825</td></tr>
+  <tr><td class="nowrap"><code>LICENSE</code></td><td class="nowrap">11,357 B</td><td class="hash">c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4</td></tr>
+  <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">1,065 B</td><td class="hash">70618f92d8436acd9f603dfb9ce99e4a360ef26394193fb9f2ca023531734432</td></tr>
+  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">3,068 B</td><td class="hash">d5b57ec855d42539b715711106b86b21808a696bed9c961b9bfc96f9a397e3d2</td></tr>
+</table>
+<p>ファームの元のソース：25Ja <code>0847598</code>（Dondji v5.2.8 = <code>9f6263c</code> に 25Ja の変更を加えたもの。本体情報のビルド番号にも <code>08475982</code> と出ます）</p>
+
+<h2>12. 配布前の確認表（実機）</h2>
+<table class="check">
+  <tr><th>□</th><th>確認すること</th></tr>
+  <tr><td>□</td><td>index.html をダブルクリックで開き、右上に「Ver 0.1.8  JA2IZU」、上部に「ファイルを直接開いています」の案内が出る</td></tr>
+  <tr><td>□</td><td>ログの上の取っ手をドラッグして高さを変えられる（ダブルクリックで大小切替）</td></tr>
+  <tr><td>□</td><td>「ログをコピー」→ メモ帳に貼ると先頭に「25Ja Tool Ver 0.1.8 / 日時」。「ログを消す」で空になる</td></tr>
+  <tr><td>□</td><td>「ファイルを選ぶ」でファイルを選ぶと、欄に ✔ とファイル名が出る（同じファイルを続けて選び直しても出る）</td></tr>
+  <tr><td>□</td><td>新ファームで普通に起動して接続すると、ログの「本体:」の行に「（25Ja, CH 名 31 B）」と出る</td></tr>
+  <tr><td>□</td><td>手順の番号を押すと各欄へ移動し、欄の操作が終わると手順に ✔ が付く</td></tr>
+  <tr><td>□</td><td>1 校正：calibration.dat が保存され（512 バイト）、4 の欄に「1 で読み出した校正データ」と出る</td></tr>
+  <tr><td>□</td><td>2 ファーム：刷机モードで書ける／通常起動のままだと止まる</td></tr>
+  <tr><td>□</td><td>起動画面：招き猫とその下の「電圧・25JA・版」の行が重ならない</td></tr>
+  <tr><td>□</td><td>3 字庫：「高速」で書け、全体照合 OK。かかった秒数と「再送」の回数を控える（新ファームの USB 修正で、再送は 0 か数回に減るはず）</td></tr>
+  <tr><td>□</td><td>本体情報の字形：6647 字・正常</td></tr>
+  <tr><td>□</td><td>4 校正復元：書き戻され、再起動後の受信・送信出力が以前と同じ</td></tr>
+  <tr><td>□</td><td>メニューの日本語表示、漢字・かな CH 名（本体で入れる 5 字、NeonPlugJA で入れる 10 字）。長い名前のメイン画面での見え方</td></tr>
+  <tr><td>□</td><td>周波数・CH 番号・スペクトラムの数値の表示が以前と同じ（数値の書式処理を入れ替えたため）</td></tr>
+  <tr><td>□</td><td>メニュー「PF1短押」「PF1長押」「PF2短押」「PF2長押」の表記。ロジャー音の選択肢に MDC / Yan ID が無く、各音が鳴る。MDC / Yan の項目が無い</td></tr>
+  <tr><td>□</td><td>25Dock / K5Viewer で画面が映り、キー操作が効く。長く映し続けても固まらない。Viewer を閉じた後、25Ja Tool で読み書きできる</td></tr>
+  <tr><td>□</td><td>送信・受信、スリープからの復帰</td></tr>
+  <tr><td>□</td><td>F Lock「JA/CE」：145.000 は送信可、146.500 は不可。「全送信禁止」で送信不可</td></tr>
+  <tr><td>□</td><td>FM：自動登録中・サーチ中の表示、保存・削除の確認表示</td></tr>
+  <tr><td>□</td><td>FM：プリセット取込 → 局名入力 → 書込 → 局名が表示される</td></tr>
+  <tr><td>□</td><td>FM：「表の周波数を書く」→ 再起動後、表の局を CH で選べ局名が出る</td></tr>
+  <tr><td>□</td><td>ファームだけの更新で、字庫・CH・設定が残る</td></tr>
+  <tr><td>□</td><td>設定のバックアップ・復元、起動画像の書込・無効化</td></tr>
+  <tr><td>□</td><td>F→8：バックライトが点灯。F→9：バックライトの操作。長押しの 8 は周波数反転、長押しの 9 は従来のコール CH</td></tr>
+  <tr><td>□</td><td>スキャン中に F→↑↓ でスキャンリストを切り替えると、ステータスバーのリスト名がすぐ変わる</td></tr>
+  <tr><td>□</td><td>レンジスキャン中に MENU 長押し：止まった周波数が除外され、スキャンが続く（MR チャンネルのスキャンでは従来のチャンネル除外）</td></tr>
+  <tr><td>□</td><td>デュアル表示：上段・下段とも CH 名が左詰め（下段は上段より 2 ドット右）、周波数は下 2 桁の前に隙間。受信中・送信中の反転表示でも名前が左から始まる。長い名前の末尾は欠けてよい</td></tr>
+  <tr><td>□</td><td>メインのみの表示：周波数が上段、CH 名（または VFO）がその下。上端が欠けず、重ならない</td></tr>
+  <tr><td>□</td><td>設定メニューの左欄：「優先CH1」「優先CH2」が「優先」「CH1／CH2」の 2 行。「照明時間」「送信表示」「表示濃度」は 1 行で、右の区切り線にかからない。左右ペインの上下の位置がそろっている</td></tr>
+  <tr><td>□</td><td>設定メニューに「ナロー幅」が無い（NARROWER は使わない）</td></tr>
+  <tr><td>□</td><td>起動ロゴ：招き猫の上げた腕が細く短くなり、体に寄っている</td></tr>
+  <tr><td>□</td><td>設定画面：漢字・かな入りの 2 行値（右ペイン）で行が重ならない</td></tr>
+</table>
+
+<footer>
+  25Ja 説明書 — © 2026 JA2IZU, Apache License 2.0。本書および 25Ja は Dondji 公式のものではありません。
+</footer>
+</main>
+</body>
+</html>

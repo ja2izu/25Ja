@@ -1,0 +1,262 @@
+
+add_library(App INTERFACE)
+target_include_directories(App INTERFACE .)
+target_link_libraries(App INTERFACE PY32F071_Driver)
+target_compile_definitions(App INTERFACE PRINTF_INCLUDE_CONFIG_H)
+
+target_sources(App INTERFACE
+    # Drivers
+    driver/backlight.c
+    driver/bk4829.c
+    driver/py25q16.c
+    driver/gpio.c
+    driver/i2c.c
+    driver/keyboard.c
+    driver/st7565.c
+    driver/system.c
+    driver/systick.c
+    # Main
+    app/action.c
+    app/app.c
+    app/chFrScanner.c
+    app/common.c
+    app/dtmf.c
+    app/generic.c
+    app/main.c
+    app/menu.c
+)
+
+# JA: MDC1200 / Yan ID は ENABLE_MDC_YAN_ID のときだけ（並び順は元のまま）
+if(ENABLE_MDC_YAN_ID)
+    target_compile_definitions(App INTERFACE ENABLE_MDC_YAN_ID)
+    target_sources(App INTERFACE
+        app/mdc1200.c
+        app/mdc1200_app.c
+        app/mdc_addrbook.c
+        app/yan_id_packet.c
+        app/yan_id_rf.c
+    )
+endif()
+
+target_sources(App INTERFACE
+    app/scanner.c
+    audio.c
+    bitmaps.c
+    board.c
+    dcs.c
+    font.c
+    frequencies.c
+    functions.c
+    helper/battery.c
+    helper/boot.c
+    misc.c
+    radio.c
+    scheduler.c
+    settings.c
+    ui/battery.c
+    ui/boot_logo_bitmap.c
+    ui/helper.c
+    ui/inputbox.c
+    ui/main.c
+    ui/menu.c
+    ui/menu_lang.c
+    ui/menu_sub_values_cn.c
+    ui/scanner.c
+    ui/status.c
+    ui/ui.c
+    ui/welcome.c
+    "version.c"
+    main.c
+    external/printf/printf.c
+)
+
+
+macro(enable_feature feature)
+    if(${feature})
+        target_compile_definitions(App INTERFACE ${feature})
+        if(${ARGC} GREATER 1)
+            target_sources(App INTERFACE ${ARGN})
+        endif()
+    endif()
+endmacro()
+
+# compile options (see README.md for descriptions)
+
+if(ENABLE_FEAT_F4HWN)
+    target_compile_definitions(App INTERFACE 
+        "AUTHOR_STRING_1=\"${AUTHOR_STRING_1}\""
+        "AUTHOR_STRING_2=\"${AUTHOR_STRING_2}\""
+        "VERSION_STRING_1=\"${VERSION_STRING_1}\""
+        "VERSION_STRING_2=\"${VERSION_STRING_2}\""
+        "EDITION_STRING=\"${EDITION_STRING}\""
+        ALERT_TOT=10
+    )
+endif()
+
+target_compile_definitions(App INTERFACE 
+    "AUTHOR_STRING=\"${AUTHOR_STRING}\""
+    "VERSION_STRING=\"${VERSION_STRING}\""
+    "BUILD_COMMIT=\"${BUILD_COMMIT}\""
+)
+
+if(NOT SQL_TONE)
+    set(SQL_TONE 550) # For SA818, use 600 and python3 sa818.py --port /dev/ttyS2 radio --frequency 434.975 --ctcss 71.9 --tail Open
+endif()
+target_compile_definitions(App INTERFACE SQL_TONE=${SQL_TONE})
+
+if(ENABLE_AIRCOPY OR ENABLE_UART OR ENABLE_USB)
+    target_sources(App INTERFACE 
+        driver/crc.c
+        driver/eeprom_compat.c
+    )
+endif()
+
+enable_feature(ENABLE_UART
+    driver/uart.c 
+    app/uart.c
+    # driver/aes.c
+)
+
+if(ENABLE_USB)
+    target_link_libraries(App INTERFACE CherryUSB)
+    target_compile_definitions(App INTERFACE ENABLE_USB)
+    target_include_directories(App INTERFACE usb)
+    target_sources(App INTERFACE 
+        driver/vcp.c
+        usb/usbd_cdc_if.c
+    )
+endif()
+
+if(ENABLE_UART OR ENABLE_USB)
+    target_sources(App INTERFACE 
+        app/uart.c
+    )
+endif()
+
+# ---- STOCK QUANSHENG FEATURES ----
+
+enable_feature(ENABLE_FMRADIO
+    driver/bk1080.c 
+    app/fm.c 
+    ui/fmradio.c
+)
+enable_feature(ENABLE_AIRCOPY
+    app/aircopy.c 
+    ui/aircopy.c
+)
+enable_feature(ENABLE_NOAA)
+enable_feature(ENABLE_VOICE 
+    driver/voice.c
+)
+enable_feature(ENABLE_VOX)
+enable_feature(ENABLE_ALARM)
+enable_feature(ENABLE_TX1750)
+enable_feature(ENABLE_PWRON_PASSWORD
+    ui/lock.c
+)
+enable_feature(ENABLE_DTMF_CALLING)
+enable_feature(ENABLE_FLASHLIGHT
+    app/flashlight.c
+)
+
+# ---- CUSTOM MODS ----
+
+enable_feature(ENABLE_SPECTRUM
+    app/spectrum.c
+)
+enable_feature(ENABLE_BIG_FREQ)
+enable_feature(ENABLE_SMALL_BOLD)
+enable_feature(ENABLE_CHINESE)
+enable_feature(ENABLE_FEAT_STERANIAN_DISP_RADIOSTATION_NAME)  # JA: FM 局名表示
+enable_feature(ENABLE_CUSTOM_MENU_LAYOUT)
+enable_feature(ENABLE_KEEP_MEM_NAME)
+enable_feature(ENABLE_WIDE_RX)
+enable_feature(ENABLE_TX_WHEN_AM)
+enable_feature(ENABLE_F_CAL_MENU)
+enable_feature(ENABLE_CTCSS_TAIL_PHASE_SHIFT)
+enable_feature(ENABLE_BOOT_BEEPS)
+enable_feature(ENABLE_SHOW_CHARGE_LEVEL)
+enable_feature(ENABLE_REVERSE_BAT_SYMBOL)
+enable_feature(ENABLE_NO_CODE_SCAN_TIMEOUT)
+enable_feature(ENABLE_SQUELCH_MORE_SENSITIVE)
+enable_feature(ENABLE_FASTER_CHANNEL_SCAN)
+enable_feature(ENABLE_RSSI_BAR)
+enable_feature(ENABLE_AUDIO_BAR)
+enable_feature(ENABLE_FEAT_F4HWN_AUDIO_SCOPE)
+enable_feature(ENABLE_COPY_CHAN_TO_VFO)
+enable_feature(ENABLE_REDUCE_LOW_MID_TX_POWER)
+enable_feature(ENABLE_BYP_RAW_DEMODULATORS)
+enable_feature(ENABLE_BLMIN_TMP_OFF)
+enable_feature(ENABLE_SCAN_RANGES)
+
+# ---- CONTRIB MODS ----
+
+# Thank you @markusb
+enable_feature(ENABLE_REGA
+    app/rega.c
+) 
+# Thank you @reppad
+enable_feature(ENABLE_EXTRA_UART_CMD)
+
+# ---- F4HWN MODS ----
+
+if(ENABLE_FEAT_F4HWN)
+    target_include_directories(App INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/../external/U8G2/csrc")
+    target_compile_definitions(App INTERFACE
+        U8G2_NO_BALANCED_STR_WIDTH_CALCULATION
+        U8G2_WITHOUT_UNICODE
+        U8G2_WITHOUT_FONT_ROTATION
+        U8G2_WITHOUT_CLIP_WINDOW_SUPPORT
+        U8G2_WITHOUT_INTERSECTION
+        U8G2_WITHOUT_HVLINE_SPEED_OPTIMIZATION
+        U8X8_WITHOUT_SET_CONTRAST
+    )
+    target_sources(App INTERFACE
+        ../external/U8G2/csrc/u8g2_bitmap.c
+        ../external/U8G2/csrc/u8g2_box.c
+        ../external/U8G2/csrc/u8g2_buffer.c
+        ../external/U8G2/csrc/u8g2_d_memory_minimal.c
+        ../external/U8G2/csrc/u8g2_d_setup_minimal.c
+        ../external/U8G2/csrc/u8g2_font.c
+        ../external/U8G2/csrc/u8g2_hvline.c
+        ../external/U8G2/csrc/u8g2_ll_hvline.c
+        ../external/U8G2/csrc/u8g2_setup.c
+        ../external/U8G2/csrc/u8x8_8x8.c
+        ../external/U8G2/csrc/u8x8_byte.c
+        ../external/U8G2/csrc/u8x8_cad.c
+        ../external/U8G2/csrc/u8x8_display.c
+        ../external/U8G2/csrc/u8x8_gpio.c
+        ../external/U8G2/csrc/u8x8_setup.c
+        ../external/U8G2/csrc/u8x8_string.c
+        ../external/U8G2/csrc/u8x8_d_st7565.c
+        ui/dualvfo_u8g2_freq.c
+    )
+endif()
+
+enable_feature(ENABLE_FEAT_F4HWN)
+enable_feature(ENABLE_FEAT_F4HWN_SCREENSHOT 
+    screenshot.c
+)
+enable_feature(ENABLE_FEAT_F4HWN_SPECTRUM)
+enable_feature(ENABLE_FEAT_F4HWN_RX_TX_TIMER)
+enable_feature(ENABLE_FEAT_F4HWN_CHARGING_C)
+enable_feature(ENABLE_FEAT_F4HWN_SLEEP)
+enable_feature(ENABLE_FEAT_F4HWN_RESUME_STATE)
+enable_feature(ENABLE_FEAT_F4HWN_NARROWER)
+enable_feature(ENABLE_FEAT_F4HWN_INV)
+enable_feature(ENABLE_FEAT_F4HWN_CTR)
+enable_feature(ENABLE_FEAT_F4HWN_RESCUE_OPS)
+enable_feature(ENABLE_FEAT_F4HWN_VOL)
+enable_feature(ENABLE_FEAT_F4HWN_AUDIO)
+enable_feature(ENABLE_FEAT_F4HWN_RESET_VFO)
+enable_feature(ENABLE_FEAT_F4HWN_PMR)
+enable_feature(ENABLE_FEAT_F4HWN_GMRS_FRS_MURS)
+enable_feature(ENABLE_FEAT_F4HWN_CA)
+enable_feature(ENABLE_FEAT_F4HWN_MEM)
+enable_feature(ENABLE_FEAT_F4HWN_QRCODE)
+
+# ---- DEBUGGING ----
+
+
+# ---- COMPILER/LINKER OPTIONS ----
+

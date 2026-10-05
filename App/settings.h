@@ -1,0 +1,392 @@
+/* Copyright 2023 Dual Tachyon
+ * https://github.com/DualTachyon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *     Unless required by applicable law or agreed to in writing, software
+ *     distributed under the License is distributed on an "AS IS" BASIS,
+ *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *     See the License for the specific language governing permissions and
+ *     limitations under the License.
+ */
+
+#ifndef SETTINGS_H
+#define SETTINGS_H
+
+#include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
+
+/*
+ * JA: CH 名は 2 か所に分けて持つ（最大 31 バイト = 漢字・かな 10 字）。
+ *   前半 16 B: SPI 0x004000 + ch*16（従来の統一領域。16 B すべて使う）
+ *   後半 16 B: SPI 0x020000 + ch*16（旧中文名領域を転用。移し替え処理は削除）
+ * 前半のどこかに 0x00 / 0xFF があればそこで終わり、後半は見ない。
+ * 旧ファーム（15 B まで）が書いた名前はそのまま読める。
+ */
+#define CHANNEL_NAME_MAX_BYTES      31u
+#define CHANNEL_NAME_BUF_SIZE       32u     /* 名前を入れる配列の大きさ（終端込み） */
+#define CHANNEL_NAME_EXT_BASE       0x020000u
+/* 無線機での名前編集と、英数字名の表示（大きい字は右端で止まらない）は従来どおり 15 B */
+#define CHANNEL_NAME_EDIT_MAX_BYTES 15u
+
+#include "frequencies.h"
+#include <helper/battery.h>
+#include "radio.h"
+#include <driver/backlight.h>
+
+enum POWER_OnDisplayMode_t {
+    POWER_ON_DISPLAY_MODE_NONE = 0,
+    POWER_ON_DISPLAY_MODE_DEFAULT,
+    POWER_ON_DISPLAY_MODE_LOGO,
+};
+typedef enum POWER_OnDisplayMode_t POWER_OnDisplayMode_t;
+
+enum TxLockModes_t {
+    F_LOCK_DEF, //all default frequencies + configurable
+    F_LOCK_FCC,
+#ifdef ENABLE_FEAT_F4HWN_CA
+    F_LOCK_CA,
+#endif
+    F_LOCK_CE,
+    F_LOCK_GB,
+    F_LOCK_430,
+    F_LOCK_438,
+#ifdef ENABLE_FEAT_F4HWN_PMR
+    F_LOCK_PMR,
+#endif
+#ifdef ENABLE_FEAT_F4HWN_GMRS_FRS_MURS
+    F_LOCK_GMRS_FRS_MURS,
+#endif
+    F_LOCK_ALL, // disable TX on all frequencies
+    F_LOCK_NONE, // enable TX on all frequencies
+    F_LOCK_LEN
+};
+
+/*
+enum {
+    SCAN_RESUME_TO = 0,
+    SCAN_RESUME_CO,
+    SCAN_RESUME_SE
+};
+*/
+
+enum {
+    CROSS_BAND_OFF = 0,
+    CROSS_BAND_CHAN_A,
+    CROSS_BAND_CHAN_B
+};
+
+enum {
+    DUAL_WATCH_OFF = 0,
+    DUAL_WATCH_CHAN_A,
+    DUAL_WATCH_CHAN_B
+};
+
+enum {
+    TX_OFFSET_FREQUENCY_DIRECTION_OFF = 0,
+    TX_OFFSET_FREQUENCY_DIRECTION_ADD,
+    TX_OFFSET_FREQUENCY_DIRECTION_SUB
+};
+
+enum {
+    OUTPUT_POWER_USER = 0,
+    OUTPUT_POWER_LOW1,
+    OUTPUT_POWER_LOW2,
+    OUTPUT_POWER_LOW3,
+    OUTPUT_POWER_LOW4,
+    OUTPUT_POWER_LOW5,
+    OUTPUT_POWER_MID,
+    OUTPUT_POWER_HIGH
+};
+
+enum ACTION_OPT_t {
+    ACTION_OPT_NONE = 0,
+    ACTION_OPT_FLASHLIGHT,
+    ACTION_OPT_POWER,
+    ACTION_OPT_MONITOR,
+    ACTION_OPT_SCAN,
+    ACTION_OPT_VOX,
+    ACTION_OPT_ALARM,
+    ACTION_OPT_FM,
+    ACTION_OPT_1750,
+    ACTION_OPT_KEYLOCK,
+    ACTION_OPT_A_B,
+    ACTION_OPT_VFO_MR,
+    ACTION_OPT_SWITCH_DEMODUL,
+    ACTION_OPT_BLMIN_TMP_OFF, //BackLight Minimum Temporay OFF
+#ifdef ENABLE_FEAT_F4HWN
+    ACTION_OPT_RXMODE,
+    ACTION_OPT_MAINONLY,
+    ACTION_OPT_PTT,
+    ACTION_OPT_WN,
+    ACTION_OPT_BACKLIGHT,
+    ACTION_OPT_MUTE,
+    ACTION_OPT_RXA,
+    #ifdef ENABLE_FEAT_F4HWN_RESCUE_OPS
+        ACTION_OPT_POWER_HIGH,
+        ACTION_OPT_REMOVE_OFFSET,
+    #endif
+#endif
+#ifdef ENABLE_REGA
+    ACTION_OPT_REGA_ALARM,
+    ACTION_OPT_REGA_TEST,
+#endif
+    ACTION_OPT_LEN
+};
+
+#ifdef ENABLE_VOICE
+    enum VOICE_Prompt_t
+    {
+        VOICE_PROMPT_OFF = 0,
+        VOICE_PROMPT_CHINESE,
+        VOICE_PROMPT_ENGLISH
+    };
+    typedef enum VOICE_Prompt_t VOICE_Prompt_t;
+#endif
+
+enum ALARM_Mode_t {
+    ALARM_MODE_SITE = 0,
+    ALARM_MODE_TONE
+};
+typedef enum ALARM_Mode_t ALARM_Mode_t;
+
+enum ROGER_Mode_t {
+    ROGER_MODE_OFF = 0,
+    ROGER_MODE_ROGER,
+    ROGER_MODE_MDC,
+    ROGER_MODE_YAN_ID,
+    ROGER_MODE_CUSTOM1,
+    ROGER_MODE_CUSTOM2,
+    ROGER_MODE_CUSTOM3
+};
+typedef enum ROGER_Mode_t ROGER_Mode_t;
+
+#define YAN_ID_LEN  6
+#define YAN_ID_NAME "Yan ID"
+
+enum CHANNEL_DisplayMode_t {
+    MDF_FREQUENCY = 0,
+    MDF_CHANNEL,
+    MDF_NAME,
+    MDF_NAME_FREQ
+};
+typedef enum CHANNEL_DisplayMode_t CHANNEL_DisplayMode_t;
+
+typedef enum {
+    UI_LANGUAGE_EN = 0,
+    UI_LANGUAGE_CN = 1
+} UI_Language_t;
+
+typedef struct {
+    uint16_t               ScreenChannel[2]; // current channels set in the radio (memory or frequency channels)
+    uint16_t               FreqChannel[2]; // last frequency channels used
+    uint16_t               MrChannel[2]; // last memory channels used
+#ifdef ENABLE_NOAA
+    uint16_t           NoaaChannel[2];
+#endif
+
+    // The actual VFO index (0-upper/1-lower) that is now used for RX, 
+    // It is being alternated by dual watch, and flipped by crossband
+    uint8_t               RX_VFO;
+
+    // The main VFO index (0-upper/1-lower) selected by the user
+    // 
+    uint8_t               TX_VFO;
+
+    uint8_t               field7_0xa;
+    uint8_t               field8_0xb;
+
+#ifdef ENABLE_FMRADIO
+    uint16_t          FM_SelectedFrequency;
+    uint8_t           FM_SelectedChannel;
+    bool              FM_IsMrMode;
+    uint16_t          FM_FrequencyPlaying;
+    uint8_t           FM_Band  : 2;
+    //uint8_t         FM_Space : 2;
+#endif
+
+    uint8_t               SQUELCH_LEVEL;
+    uint8_t               TX_TIMEOUT_TIMER;
+    bool                  KEY_LOCK;
+#ifdef ENABLE_FEAT_F4HWN
+    bool                  KEY_LOCK_PTT;
+    bool                  SET_NAV;
+#endif
+#ifdef ENABLE_FEAT_F4HWN_RESCUE_OPS
+    bool                  MENU_LOCK;
+    uint8_t               SET_KEY;
+#endif
+    bool                  VOX_SWITCH;
+    uint8_t               VOX_LEVEL;
+#ifdef ENABLE_VOICE
+    VOICE_Prompt_t    VOICE_PROMPT;
+#endif
+    bool                  BEEP_CONTROL;
+    uint8_t               CHANNEL_DISPLAY_MODE;
+    bool                  TAIL_TONE_ELIMINATION;
+    bool                  VFO_OPEN;
+    uint8_t               DUAL_WATCH;
+    uint8_t               CROSS_BAND_RX_TX;
+    uint8_t               BATTERY_SAVE;
+    uint8_t               BACKLIGHT_TIME;
+    uint8_t               SCAN_RESUME_MODE;
+    uint8_t               SCAN_LIST_DEFAULT;
+    bool                  SCAN_LIST_ENABLED;
+    uint16_t              SCANLIST_PRIORITY_CH[6];
+//#ifdef ENABLE_FEAT_F4HWN_RESUME_STATE // Fix me !!! What the hell is this?
+    uint8_t               CURRENT_STATE;
+    uint8_t               CURRENT_LIST;
+//#endif                                // Fix me !!! What the hell is this?
+
+    uint8_t               field29_0x26;
+    uint8_t               field30_0x27;
+    
+    uint8_t               field37_0x32;
+    uint8_t               field38_0x33;
+
+    uint8_t               AUTO_KEYPAD_LOCK;
+#if defined(ENABLE_ALARM) || defined(ENABLE_TX1750)
+    ALARM_Mode_t      ALARM_MODE;
+#endif
+    POWER_OnDisplayMode_t POWER_ON_DISPLAY_MODE;
+    ROGER_Mode_t          ROGER;
+    char                  yan_id[YAN_ID_LEN + 1];
+    bool                  yan_id_rx;
+    bool                  mdc_id_rx;
+    uint8_t               REPEATER_TAIL_TONE_ELIMINATION;
+    uint8_t               KEY_1_SHORT_PRESS_ACTION;
+    uint8_t               KEY_1_LONG_PRESS_ACTION;
+    uint8_t               KEY_2_SHORT_PRESS_ACTION;
+    uint8_t               KEY_2_LONG_PRESS_ACTION;
+    uint8_t               MIC_SENSITIVITY;
+    uint8_t               MIC_SENSITIVITY_TUNING;
+    uint16_t              CHAN_1_CALL;
+#ifdef ENABLE_DTMF_CALLING
+    char                  ANI_DTMF_ID[8];
+    char                  KILL_CODE[8];
+    char                  REVIVE_CODE[8];
+#endif
+    char                  DTMF_UP_CODE[16];
+
+    uint8_t               field57_0x6c;
+    uint8_t               field58_0x6d;
+
+    char                  DTMF_DOWN_CODE[16];
+
+    uint8_t               field60_0x7e;
+    uint8_t               field61_0x7f;
+
+#ifdef ENABLE_DTMF_CALLING
+    char                  DTMF_SEPARATE_CODE;
+    char                  DTMF_GROUP_CALL_CODE;
+    uint8_t               DTMF_DECODE_RESPONSE;
+    uint8_t               DTMF_auto_reset_time;
+#endif  
+    uint16_t              DTMF_PRELOAD_TIME;
+    uint16_t              DTMF_FIRST_CODE_PERSIST_TIME;
+    uint16_t              DTMF_HASH_CODE_PERSIST_TIME;
+    uint16_t              DTMF_CODE_PERSIST_TIME;
+    uint16_t              DTMF_CODE_INTERVAL_TIME;
+    bool                  DTMF_SIDE_TONE;
+#ifdef ENABLE_DTMF_CALLING
+    bool                  PERMIT_REMOTE_KILL;
+#endif
+    int16_t               BK4819_XTAL_FREQ_LOW;
+#ifdef ENABLE_NOAA
+    bool              NOAA_AUTO_SCAN;
+#endif
+    uint8_t               VOLUME_GAIN;
+    #ifdef ENABLE_FEAT_F4HWN
+        uint8_t           VOLUME_GAIN_BACKUP;
+    #endif
+    uint8_t               DAC_GAIN;
+
+    VFO_Info_t            VfoInfo[2];
+    uint32_t              POWER_ON_PASSWORD;
+    uint16_t              VOX1_THRESHOLD;
+    uint16_t              VOX0_THRESHOLD;
+
+    uint8_t               field77_0x95;
+    uint8_t               field78_0x96;
+    uint8_t               field79_0x97;
+
+    uint8_t               KEY_M_LONG_PRESS_ACTION;
+    uint8_t               BACKLIGHT_MIN;
+#ifdef ENABLE_BLMIN_TMP_OFF
+    BLMIN_STAT_t          BACKLIGHT_MIN_STAT;
+#endif
+    uint8_t               BACKLIGHT_MAX;
+    BATTERY_Type_t        BATTERY_TYPE;
+#ifdef ENABLE_RSSI_BAR
+    uint8_t               S0_LEVEL;
+    uint8_t               S9_LEVEL;
+#endif
+} EEPROM_Config_t;
+
+extern EEPROM_Config_t gEeprom;
+
+extern uint8_t gUiLanguage;
+
+void     SETTINGS_InitEEPROM(void);
+void     SETTINGS_LoadCalibration(void);
+uint32_t SETTINGS_FetchChannelFrequency(const uint16_t channel);
+void     SETTINGS_FetchChannelName(char *s, const uint16_t channel);
+#ifdef ENABLE_CHINESE
+bool     SETTINGS_ChannelNameHasCjkUtf8(const char *s);
+#endif
+/* mode: 0=VFO, 1=ALL, 2=OEM (wipe AES sector, then power-off prompt) */
+void     SETTINGS_FactoryReset(uint8_t mode);
+#ifdef ENABLE_FMRADIO
+    void SETTINGS_SaveFM(void);
+#endif
+void SETTINGS_SaveVfoIndices(void);
+void SETTINGS_SaveVfoIndicesFlush(void);
+void SETTINGS_SaveSettings(void);
+void SETTINGS_SaveChannelName(uint16_t channel, const char * name);
+void SETTINGS_TruncateChannelName(char *s, size_t max);
+void SETTINGS_SaveChannel(uint16_t Channel, uint8_t VFO, const VFO_Info_t *pVFO, uint8_t Mode);
+
+#if defined(ENABLE_CHINESE) || defined(ENABLE_FEAT_F4HWN)
+/*
+ * JA: 0x020000..0x023FFF (16 KB) は旧中文名の領域だった。起動時の移し替え
+ * （SETTINGS_MigrateLegacyCnChannelNamesToUnified）を外し、CH 名の後半
+ * （CHANNEL_NAME_EXT_BASE）に転用する。字庫は 0x024000 からで重ならない。
+ */
+
+// CN font SPI Flash layout (data written via web tool)
+// NOTE: these must match the output of gen_cn_font.py / cn_font_data.h
+#define CN_FONT_FLASH_BASE      0x024000u
+#define CN_FONT_CHAR_COUNT      6647u
+#define CN_FONT_BITMAP_SIZE     159528u
+#define CN_FONT_INDEX_SIZE      26588u
+#define CN_FONT_PY_OFFSET       186116u
+#define CN_FONT_PY_COUNT        0u
+#define CN_FONT_VERSION         4u
+#define CN_FONT_VERSION_OFFSET  186116u
+#define CN_FONT_PY_TOTAL_SIZE   0u
+#endif
+
+#ifdef ENABLE_CHINESE
+// CN font SPI Flash functions
+void SETTINGS_InitCNFont(void);
+int16_t SETTINGS_CNCharToIndex(uint16_t unicode);
+void SETTINGS_ReadCNFontBitmap(uint16_t charIndex, uint16_t *bitmap);
+#endif
+void SETTINGS_SaveBatteryCalibration(const uint16_t * batteryCalibration);
+void SETTINGS_UpdateChannel(uint16_t channel, const VFO_Info_t *pVFO, bool keep, bool check, bool save);
+void SETTINGS_WriteBuildOptions(void);
+#ifdef ENABLE_FEAT_F4HWN_RESUME_STATE
+    void SETTINGS_WriteCurrentState(void);
+#endif
+#ifdef ENABLE_FEAT_F4HWN_VOL
+    void SETTINGS_WriteCurrentVol(void);
+#endif
+#ifdef ENABLE_FEAT_F4HWN
+    void SETTINGS_ResetTxLock(void);
+#endif
+#endif

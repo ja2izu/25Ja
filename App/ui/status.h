@@ -1,0 +1,40 @@
+/* Copyright 2023 Dual Tachyon
+ * https://github.com/DualTachyon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *     Unless required by applicable law or agreed to in writing, software
+ *     distributed under the License is distributed on an "AS IS" BASIS,
+ *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *     See the License for the specific language governing permissions and
+ *     limitations under the License.
+ */
+
+#ifndef UI_STATUS_H
+#define UI_STATUS_H
+
+#include <stddef.h>
+#include <stdbool.h>
+
+void UI_DisplayStatus();
+void UI_DisplayMainOnlyStatusBar(void);
+
+#ifdef ENABLE_FEAT_F4HWN
+bool UI_IsDualVfoMainScreen(void);
+#endif
+
+/* 频谱顶栏：仅左侧 dB 范围小字 + 右侧电池与百分比（不写 gStatusLine 外；不 Blit，由调用方 Blit） */
+void UI_SpectrumDrawStatusLineDbRangeAndBattery(const char *db_range_text);
+
+/*
+ * 根据菜单 BatTxt（gSetting_battery_text）格式化电池图标旁小字。
+ * 返回 false 表示「无」档不绘制旁路文字（开机页请勿调用本函数）。
+ */
+bool UI_FormatBatteryStatusSideText(char *out, size_t out_sz);
+
+#endif
+

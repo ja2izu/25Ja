@@ -1,0 +1,21 @@
+25Ja Tool
+Copyright (c) 2026 JA2IZU
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+It is not an official Dondji product and is not affiliated with or endorsed by BD1AHN.
+
+Third-party work
+- Serial protocol handling (framing, obfuscation, CRC, bootloader flashing,
+  EEPROM / SPI flash access) is rewritten from the Dondji web tool
+  (docs/js/flash.js), Copyright (c) 2026 BD1AHN, Apache License 2.0.
+  https://github.com/EthanYan6/Dondji
+- font/25Ja_font_v4.bin is generated from the Shinonome 12-dot Gothic font,
+  The Electronic Font Open Laboratory, Public Domain.
+- firmware/25Ja.fusion.bin is built from Dondji v5.2.8 (Copyright (c) 2026 BD1AHN,
+  Apache License 2.0; based on F4HWN / muzkr / egzumer / DualTachyon et al.)
+  with the 25Ja modifications (Copyright (c) 2026 JA2IZU). The Dondji name,
+  logo and official site are not used.
+  The FM station name display is based on the idea in
+  steranian/uv-k1-k5v3-firmware-custom (Copyright 2026 steranian,
+  Apache License 2.0), reimplemented with a dedicated station table.

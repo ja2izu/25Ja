@@ -1,0 +1,77 @@
+/* Copyright 2023 Dual Tachyon
+ * https://github.com/DualTachyon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *     Unless required by applicable law or agreed to in writing, software
+ *     distributed under the License is distributed on an "AS IS" BASIS,
+ *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *     See the License for the specific language governing permissions and
+ *     limitations under the License.
+ */
+
+#ifndef UI_UI_H
+#define UI_UI_H
+
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+
+void UI_GenerateChannelString(char *pString, const uint16_t Channel);
+void UI_GenerateChannelStringEx(char *pString, const bool bShowPrefix, const uint16_t ChannelNumber);
+void UI_PrintString(const char *pString, uint8_t Start, uint8_t End, uint8_t Line, uint8_t Width);
+void UI_PrintStringSmallNormal(const char *pString, uint8_t Start, uint8_t End, uint8_t Line);
+#ifdef ENABLE_FEAT_F4HWN
+void UI_PrintStringSmallNormalVOffset(const char *pString, uint8_t Start, uint8_t End, uint8_t Line, uint8_t vOffset);
+void UI_PrintStringSmallNormalVOffsetUp(const char *pString, uint8_t Start, uint8_t End, uint8_t Line, uint8_t upOffset);
+void UI_PrintStringSmallNormalBottomInRow(const char *pString, uint8_t Start, uint8_t End, uint8_t Line);
+void UI_PrintStringSmallNormalAt(const char *pString, uint8_t x, uint8_t y);
+void UI_DisplayFrequencyVOffset(const char *string, uint8_t X, uint8_t Y, bool center, uint8_t vOffsetY);
+void UI_DisplayFrequencyUp2(const char *string, uint8_t X, uint8_t Y, bool center, uint8_t maxXTop);
+#endif
+void UI_PrintStringSmallNormalInverse(const char *pString, uint8_t Start, uint8_t End, uint8_t Line);
+void UI_PrintStringSmallNormalNegative(const char *pString, uint8_t Start, uint8_t End, uint8_t Line);
+#ifdef ENABLE_FEAT_F4HWN
+void UI_PrintStringSmallNormalNegativeTopMargin1(const char *pString, uint8_t Start, uint8_t End, uint8_t Line);
+#endif
+void UI_PrintStringSmallBold(const char *pString, uint8_t Start, uint8_t End, uint8_t Line);
+void UI_PrintStringSmallBoldInverse(const char *pString, uint8_t Start, uint8_t End, uint8_t Line);
+void UI_PrintStringSmallBoldNegative(const char *pString, uint8_t Start, uint8_t End, uint8_t Line);
+void UI_PrintStringSmallBufferNormal(const char *pString, uint8_t *buffer);
+void UI_PrintStringSmallBufferBold(const char *pString, uint8_t * buffer);
+void UI_DisplayFrequency(const char *string, uint8_t X, uint8_t Y, bool center);
+
+void UI_DisplayPopup(const char *string);
+
+void UI_DrawPixelBuffer(uint8_t (*buffer)[128], uint8_t x, uint8_t y, bool black);
+#ifdef ENABLE_FEAT_F4HWN
+    //void UI_DrawLineDottedBuffer(uint8_t (*buffer)[128], int16_t x1, int16_t y1, int16_t x2, int16_t y2, bool black);
+    void PutPixel(uint8_t x, uint8_t y, bool fill);
+    void PutPixelStatus(uint8_t x, uint8_t y, bool fill);
+    void GUI_DisplaySmallest(const char *pString, uint8_t x, uint8_t y, bool statusbar, bool fill);
+    void GUI_DisplaySmallestNegative(const char *pString, uint8_t x, uint8_t y);
+    void UI_DisplayUnlockKeyboard(int16_t yOffset);
+    bool IsEmptyName(const char *name, uint8_t len);
+#endif
+void UI_DrawLineBuffer(uint8_t (*buffer)[128], int16_t x1, int16_t y1, int16_t x2, int16_t y2, bool black);
+void UI_DrawRectangleBuffer(uint8_t (*buffer)[128], int16_t x1, int16_t y1, int16_t x2, int16_t y2, bool black);
+
+void UI_DisplayClear();
+
+#ifdef ENABLE_CHINESE
+size_t UI_SmallStringPixelWidth(const char *pString);
+void UI_PrintStringSmallAtPixel(const char *pString, uint8_t x_start, uint8_t x_end, uint8_t y_pixel_start, uint8_t y_pixel_end, uint8_t latin_down_when_mixed);
+/** 键盘锁弹窗「长按#解锁」：混排时拉丁上移，相对 UI_PrintStringSmallAtPixel(..., 3) 中 # 上移 3 像素 */
+void UI_PrintStringSmallAtPixelKeyLockUnlockHint(const char *pString, uint8_t x_start, uint8_t x_end, uint8_t y_pixel_start, uint8_t y_pixel_end);
+/** 12px 纵带内绘信道名（中英混排）：与命名信道拼音编辑、主界面 MR 一致，latin_down=0 */
+void UI_PrintStringSmallChannelNameBand(const char *pString, uint8_t x_start, uint8_t x_end, uint8_t y_pixel_top);
+void UI_PrintStringSmallAtPixelInverse(const char *pString, uint8_t x_start, uint8_t x_end, uint8_t y_pixel_start, uint8_t y_pixel_end);
+void UI_PrintStringSmallAtPixelCnInverse(const char *pString, uint8_t x_start, uint8_t x_end, uint8_t y_pixel_start, uint8_t y_pixel_end);
+void UI_PrintStringSmallAtPixelCnInverseLeft(const char *pString, uint8_t x_start, uint8_t x_end, uint8_t y_pixel_start, uint8_t y_pixel_end);
+#endif
+
+#endif

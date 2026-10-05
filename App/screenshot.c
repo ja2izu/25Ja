@@ -1,0 +1,190 @@
+/* Copyright 2024 Armel F4HWN
+ * https://github.com/armel
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *     Unless required by applicable law or agreed to in writing, software
+ *     distributed under the License is distributed on an "AS IS" BASIS,
+ *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *     See the License for the specific language governing permissions and
+ *     limitations under the License.
+ */
+
+#include "debugging.h"
+#ifdef ENABLE_SPECTRUM
+#include "app/spectrum.h"
+#endif
+#include "driver/st7565.h"
+#include "screenshot.h"
+#include "misc.h"
+#include "driver/vcp.h"
+#include "driver/keyboard.h"
+#include "ui/ui.h"
+
+// SRAM optimization: minimize static allocations
+// - previousFrame: 1024 bytes (REQUIRED - need to compare for delta)
+// - No currentFrame or deltaFrame static buffers
+static uint8_t previousFrame[1024] = {0};
+static uint8_t forcedBlock = 0;
+static uint8_t keepAlive = 3;
+
+void SCREENSHOT_ParseInput(void)
+{
+    if (SCREENSHOT_IsLocked())
+        return;
+
+    if (UART_IsCableConnected()) {
+        keepAlive = 15;
+        gUSB_ScreenshotEnabled = false;
+    }
+    else if (VCP_ScreenshotPing()) {
+        keepAlive = 15;
+        gUSB_ScreenshotEnabled = true;
+    }
+}
+
+static void SCREENSHOT_Send(const uint8_t *buf, uint16_t len)
+{
+    if (gUSB_ScreenshotEnabled) {
+        cdc_acm_data_send_with_dtr(buf, len);
+    } else {
+        UART_Send(buf, len);
+    }
+}
+
+void SCREENSHOT_Line(uint8_t *src, uint8_t *dest, uint16_t *idx) {
+    for (uint8_t b = 0; b < 8; b++) {
+        for (uint8_t i = 0; i < 128; i += 8) {
+            uint8_t acc = 0;
+            for (uint8_t k = 0; k < 8; k++) {
+                if (src[i + k] & (1 << b)) acc |= (1 << k);
+            }
+            dest[(*idx)++] = gSetting_set_inv ? ~acc : acc;
+        }
+    }
+}
+
+void SCREENSHOT_Update(bool force)
+{
+    // Build frame in a temporary stack buffer
+    // This is 1024 bytes but it's temporary and gets freed after the function
+    uint8_t frameBuffer[1024];
+    uint16_t index = 0;
+    static bool wasConnected = false;
+
+    if (SCREENSHOT_IsLocked())
+        return;
+
+    if (keepAlive > 0) {
+        if (--keepAlive == 0) {
+            // Connection just lost → reset state for next reconnection
+            wasConnected = false;
+            return;
+        }
+    } else {
+        return;
+    }
+
+    // Connection is alive — detect reconnection and force full frame
+    if (!wasConnected) {
+        force = true;
+        wasConnected = true;
+    }
+
+    // ==== BUILD FRAME ONCE ====
+    bool is_spectrum_active = false;
+#ifdef ENABLE_SPECTRUM
+    is_spectrum_active = APP_IsSpectrumActive();
+#endif
+
+    bool is_dual_vfo_tight_top = UI_IsDualVfoMainScreen();
+    if (is_spectrum_active)
+    {
+        is_dual_vfo_tight_top = false;
+    }
+
+    if (is_dual_vfo_tight_top) {
+        // Dual VFO: gFrameBuffer[0] is the channel header. Send it as the
+        // status line (so the viewer shows it once at the top), then send
+        // pages 1-7 as content to avoid duplicating the header.
+        memcpy(gStatusLine, gFrameBuffer[0], 128);
+        SCREENSHOT_Line(gStatusLine, frameBuffer, &index);
+        for (uint8_t l = 1; l < 8; l++)
+            SCREENSHOT_Line(gFrameBuffer[l], frameBuffer, &index);
+    } else {
+        SCREENSHOT_Line(gStatusLine, frameBuffer, &index);
+        for (uint8_t l = 0; l < 7; l++)
+            SCREENSHOT_Line(gFrameBuffer[l], frameBuffer, &index);
+    }
+
+    if (index != 1024)
+        return;
+
+    // ==== FIRST PASS: Count changed chunks ====
+    uint16_t deltaLen = 0;
+    uint8_t changedChunks[128];  // List of changed chunk indices
+    uint8_t changedCount = 0;
+
+    for (uint8_t chunk = 0; chunk < 128; chunk++) {
+        uint8_t *cur = &frameBuffer[chunk * 8];
+        uint8_t *prev = &previousFrame[chunk * 8];
+
+        bool changed = memcmp(cur, prev, 8) != 0;
+        bool isForced = (chunk == forcedBlock);
+        bool fullUpdate = force;
+
+        if (changed || isForced || fullUpdate) {
+            changedChunks[changedCount++] = chunk;
+            deltaLen += 9;
+        }
+    }
+
+    forcedBlock = (forcedBlock + 1) % 128;
+
+    if (deltaLen == 0)
+        return;
+
+    // Skip transmission if a key is currently pressed
+    // UART_Send is blocking - would freeze the main loop and lose keypresses
+    if (gKeyReading0 != KEY_INVALID)
+        return;
+
+    // ==== Send version marker (for backward compatibility detection) ====
+    // New format: sends 0xFF before header
+    // Old format: doesn't exist, so viewers can differentiate
+    uint8_t versionMarker = 0xFF;
+    SCREENSHOT_Send(&versionMarker, 1);
+
+    // ==== Send header ====
+    uint8_t header[5] = {
+        0xAA, 0x55, 0x02,
+        (uint8_t)(deltaLen >> 8),
+        (uint8_t)(deltaLen & 0xFF)
+    };
+
+    SCREENSHOT_Send(header, 5);
+
+    // ==== SECOND PASS: Send only changed chunks ====
+    uint8_t chunk[9];
+    
+    for (uint8_t i = 0; i < changedCount; i++) {
+        uint8_t chunkIdx = changedChunks[i];
+        uint8_t *cur = &frameBuffer[chunkIdx * 8];
+        uint8_t *prev = &previousFrame[chunkIdx * 8];
+
+        chunk[0] = chunkIdx;
+        memcpy(&chunk[1], cur, 8);
+        
+        SCREENSHOT_Send(chunk, 9);
+        
+        // Update previousFrame for next comparison
+        memcpy(prev, cur, 8);
+    }
+
+    uint8_t end = 0x0A;
+    SCREENSHOT_Send(&end, 1);
+}

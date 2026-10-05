@@ -1,0 +1,75 @@
+Dondji Firmware
+叮咚鸡开源固件项目
+
+Copyright (c) 2026 BD1AHN
+
+
+Project:
+Dondji（叮咚鸡）
+
+
+Maintainer:
+BD1AHN
+
+
+Official Website:
+https://ethanyan6.github.io/Dondji/
+
+
+This project is licensed under the Apache License, Version 2.0.
+
+
+The Apache License applies only to the source code.
+
+
+The following assets are not granted under the Apache License:
+
+- Dondji name
+- 叮咚鸡名称
+- Dondji logo
+- Project branding
+- Official website
+- Official distribution channels
+- Official maintainer identity
+
+
+The Dondji brand and official project identity are managed by BD1AHN.
+
+
+Commercial products using the Dondji brand,
+claiming official support, certification,
+or official association require prior written
+authorization from BD1AHN.
+
+----------------------------------------------------------------
+Japanese modifications (25Ja)
+----------------------------------------------------------------
+
+This derivative adds Japanese channel names / menus and related changes
+to the Dondji source code. It is not an official Dondji product.
+
+- FM station name display (ENABLE_FEAT_STERANIAN_DISP_RADIOSTATION_NAME)
+  based on the idea in steranian/uv-k1-k5v3-firmware-custom;
+  reimplemented with a dedicated station table (SPI 0x012000)
+  https://github.com/steranian/uv-k1-k5v3-firmware-custom
+  Copyright 2026 steranian, Apache License 2.0
+
+- Japanese font data (web/font/25Ja_font_v4.bin, App/bdf/shinonome/)
+  Shinonome 12-dot Gothic font, The Electronic Font Open Laboratory
+  Public Domain (see App/bdf/shinonome/LICENSE)
+  Source used: https://github.com/code4fukui/shinonome-font (053b21e)
+
+- Changes made by 25Ja (Apache License 2.0, section 4(b)); modified files carry
+  "JA:" comments in the source:
+  * Japanese (kanji / kana) display: channel names (31 bytes, SPI back half
+    0x020000), menu titles and values, SPI font (0x024000, 6647 characters)
+  * FM station name table (SPI 0x012000)
+  * Serial protocol: 25Ja identification in the hello reply, staged SPI write
+    (0x0523), fixes for USB ring buffer / odd-length write handling
+  * Settings screen: right-pane layout for two-line values containing kanji / kana
+  * Keys: F+8 / F+9 backlight actions; scan list name refreshed immediately
+    when the scan list is switched
+  * Range scan: exclusion of the current frequency during scanning
+    (MENU long press), ported from F4HWN 6.0.0 (Apache License 2.0)
+  * Removed: TX 1750 Hz tone, Dondji web site / documentation / archive files
+    and branding assets

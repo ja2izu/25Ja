@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# Dondji Firmware
+#
+# Copyright (c) 2026 BD1AHN
+#
+# Licensed under the Apache License, Version 2.0
+#
+# Project:
+#     叮咚鸡 (Dondji)
+#
+# Maintainer:
+#     BD1AHN
+#
+# Official Website:
+#     https://ethanyan6.github.io/Dondji/
+#
+# The Dondji name, logo, and official project identity
+# are protected separately from the source code license.
+"""Scan App/*.c for CJK in string literals; compare with gen_cn_font.py CN_CHARS_500 (SPI 字库生成字表)."""
+
+import re
+from pathlib import Path
+
+
+def strip_c_comments(text):
+    out = []
+    i = 0
+    n = len(text)
+    in_block = False
+    while i < n:
+        if in_block:
+            if i + 1 < n and text[i : i + 2] == "*/":
+                in_block = False
+                i += 2
+            else:
+                i += 1
+            continue
+        if i + 1 < n and text[i : i + 2] == "//":
+            while i < n and text[i] != "\n":
+                i += 1
+            continue
+        if i + 1 < n and text[i : i + 2] == "/*":
+            in_block = True
+            i += 2
+            continue
+        out.append(text[i])
+        i += 1
+    return "".join(out)
+
+
+def decode_c_string_to_bytes(s):
+    out = bytearray()
+    i = 0
+    while i < len(s):
+        c = s[i]
+        if c == "\\" and i + 1 < len(s):
+            nxt = s[i + 1]
+            if nxt == "x" and i + 3 < len(s):
+                hx = s[i + 2 : i + 4]
+                if all(ch in "0123456789abcdefABCDEF" for ch in hx):
+                    out.append(int(hx, 16))
+                    i += 4
+                    continue
+            if nxt == "n":
+                out.append(10)
+                i += 2
+                continue
+            if nxt == "r":
+                out.append(13)
+                i += 2
+                continue
+            if nxt == "t":
+                out.append(9)
+                i += 2
+                continue
+            if nxt == "0" and i + 2 < len(s) and s[i + 2] in "01234567":
+                j = i + 2
+                while j < len(s) and j < i + 5 and s[j] in "01234567":
+                    j += 1
+                out.append(int(s[i + 2 : j], 8) & 0xFF)
+                i = j
+                continue
+            out.append(ord(nxt))
+            i += 2
+            continue
+        o = ord(c)
+        if o < 128:
+            out.append(o)
+            i += 1
+        else:
+            for bb in c.encode("utf-8"):
+                out.append(bb)
+            i += 1
+    return bytes(out)
+
+
+def is_cjk(ch):
+    o = ord(ch)
+    if 0x4E00 <= o <= 0x9FFF:
+        return True
+    if 0x3400 <= o <= 0x4DBF:
+        return True
+    if 0x3000 <= o <= 0x303F:
+        return True
+    if 0xFF00 <= o <= 0xFFEF:
+        return True
+    return False
+
+
+def extract_strings(src):
+    pat = re.compile(r'(?:u8)?"((?:[^"\\]|\\.)*)"', re.DOTALL)
+    return [m.group(1) for m in pat.finditer(src)]
+
+
+def collect_used_from_app(app_root: Path):
+    used = set()
+    for pattern in ("*.c", "*.h"):
+        for path in app_root.rglob(pattern):
+            raw = path.read_text(encoding="utf-8", errors="replace")
+            body = strip_c_comments(raw)
+            for lit in extract_strings(body):
+                byte_buf = decode_c_string_to_bytes(lit)
+                try:
+                    decoded = byte_buf.decode("utf-8")
+                except UnicodeDecodeError:
+                    decoded = byte_buf.decode("utf-8", errors="replace")
+                for ch in decoded:
+                    if is_cjk(ch):
+                        used.add(ch)
+    return used
+
+
+def cn_font_char_set():
+    """与 App/tools/gen_cn_font.py 中 SPI 字库字表一致（合并元组内各段字符串）。"""
+    import gen_cn_font as gcf
+
+    blob = "".join(gcf.CN_CHARS_500)
+    result = set()
+    for ch in blob:
+        if is_cjk(ch) or ord(ch) > 0x7F:
+            result.add(ch)
+    return result
+
+
+def main():
+    script_dir = Path(__file__).resolve().parent
+    app_root = script_dir.parent
+    used = collect_used_from_app(app_root)
+
+    menu_cjk = cn_font_char_set()
+    only_old = menu_cjk - used
+    only_used = used - menu_cjk
+
+    minimal_line = "".join(sorted(used))
+    lines = [
+        "used CJK count: %d" % len(used),
+        "in CN_CHARS_500 not in code count: %d" % len(only_old),
+        "in CN_CHARS_500 not in code: %s" % "".join(sorted(only_old)),
+        "in code not in CN_CHARS_500 count: %d" % len(only_used),
+        "in code not in CN_CHARS_500: %s" % "".join(sorted(only_used)),
+        "--- minimal merged chars from code (sorted, one line) ---",
+        minimal_line,
+    ]
+    for line in lines:
+        print(line)
+
+
+if __name__ == "__main__":
+    main()
