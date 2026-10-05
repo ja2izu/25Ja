@@ -50,6 +50,7 @@ static const AddrMapping_t ADDR_MAPPINGS[] = {
 
     _MK_MAPPING(0x008000, 0x008000, 0x00886E),  // 1024 MR  + 7 VFO Attributes * 2 Bytes (ex 0x002000) 0x008000 -> 0x00880E
                                                 // List name * 4 Bytes 0x00880E -> 0x00886E
+    _MK_MAPPING(0x008880, 0x008880, 0x0089A0),  // JA: Scan list kanji name * 12 Bytes * 24 (UTF-8)
 
     _MK_MAPPING(0x009000, 0x009000, 0x0090D6),  // 14 VFO * 16 Bytes (ex 0x001000)
 
