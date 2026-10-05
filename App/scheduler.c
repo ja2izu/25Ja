@@ -77,6 +77,9 @@ void SysTick_Handler(void)
     DECREMENT(gNOAACountdown_10ms);
 #endif
 
+    if (gScanListNameCountdown_10ms > 0 && --gScanListNameCountdown_10ms == 0)
+        gUpdateDisplay = true;   /* JA: ポップアップを消すため再描画 */
+
     DECREMENT(gFoundCDCSSCountdown_10ms);
 
     DECREMENT(gFoundCTCSSCountdown_10ms);

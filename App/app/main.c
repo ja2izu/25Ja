@@ -43,6 +43,7 @@ extern uint8_t gSetting_SpectrumDisplayMode;
 #include "radio.h"
 #include "settings.h"
 #include "ui/inputbox.h"
+#include "ui/main.h"
 #include "ui/ui.h"
 #include <stdlib.h>
 
@@ -333,6 +334,7 @@ static void processFKeyFunction(const KEY_Code_t Key, const bool beep)
 
                 if (gScanStateDir != SCAN_OFF) {
                     RADIO_NextValidList(isKeyUp ? 1 : -1);
+                    UI_MAIN_ShowScanListPopup();   /* JA */
                     gUpdateStatus  = true;   /* JA: 切替をすぐ画面に出す（F4HWN 5.9 / 6.0 の UI_MAIN_NotifyScanListChanged 相当） */
                     gUpdateDisplay = true;
                 } else {
@@ -526,6 +528,7 @@ static void MAIN_Key_DIGITS(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
             if (value == 0)
             {
                 gEeprom.SCAN_LIST_DEFAULT = MR_CHANNELS_LIST + 1;
+                UI_MAIN_ShowScanListPopup();   /* JA */
                 gUpdateStatus  = true;   /* JA: 切替をすぐ画面に出す */
                 gUpdateDisplay = true;
             #ifdef ENABLE_FEAT_F4HWN_RESUME_STATE
@@ -546,6 +549,7 @@ static void MAIN_Key_DIGITS(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
                     gBeepToPlay = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
                     RADIO_NextValidList(1);
                 }
+                UI_MAIN_ShowScanListPopup();   /* JA */
                 gUpdateStatus  = true;   /* JA: 切替をすぐ画面に出す */
                 gUpdateDisplay = true;
 

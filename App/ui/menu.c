@@ -2454,10 +2454,8 @@ void UI_DisplayMenu(void)
                 const char *name = gListName[gSubMenuSelection - 1];
                 
                 // If first character is empty/invalid, display "N/A"
-                if (IsEmptyName(name, sizeof(gListName[0])))
-                    sprintf(String, "%02u", gSubMenuSelection);
-                else
-                    sprintf(String, "%02u (%.3s)", gSubMenuSelection, name);
+                (void)name;
+                SETTINGS_FormatListLabel(String, (uint8_t)gSubMenuSelection);   /* JA: "03 防災" / 名前なしは数字のみ */
             }
             break;
             

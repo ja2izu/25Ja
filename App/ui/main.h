@@ -77,6 +77,8 @@ void UI_DisplayYanIdRxPopup(void);
 #endif
 void UI_MAIN_TimeSlice500ms(void);
 void UI_DisplayMain(void);
+void UI_MAIN_ShowScanListPopup(void);   /* JA */
+void UI_MAIN_DrawScanListPopup(void);   /* JA */
 
 
 #endif

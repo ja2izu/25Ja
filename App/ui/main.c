@@ -2050,6 +2050,57 @@ void UI_DisplayMicBarTxPopup(bool main_screen_just_redrawn)
 }
 #endif /* ENABLE_AUDIO_BAR */
 
+/* JA: スキャンリスト切替ポップアップ ("03 防災")。
+ * 本体表示切替の直後(UI 再描画後)に重ね描きする。表示時間は 10ms 単位。 */
+#define SCAN_LIST_POPUP_TIME_10MS   150u
+#define SCAN_LIST_POPUP_W           86
+#define SCAN_LIST_POPUP_H           20
+
+void UI_MAIN_ShowScanListPopup(void)
+{
+    gScanListNameCountdown_10ms = SCAN_LIST_POPUP_TIME_10MS;
+    gUpdateDisplay = true;
+}
+
+void UI_MAIN_DrawScanListPopup(void)
+{
+    char label[24];
+    uint8_t x0;
+    uint8_t y0;
+    uint8_t x1;
+    uint8_t y1;
+    unsigned int ty;
+
+    if (gScanListNameCountdown_10ms == 0 || gScanStateDir == SCAN_OFF || gScreenToDisplay != DISPLAY_MAIN)
+        return;
+
+    SETTINGS_FormatListLabel(label, gEeprom.SCAN_LIST_DEFAULT);
+
+    x0 = (uint8_t)((LCD_WIDTH - SCAN_LIST_POPUP_W) / 2);
+    x1 = (uint8_t)(x0 + SCAN_LIST_POPUP_W - 1);
+    y0 = (uint8_t)(((unsigned)LCD_HEIGHT - SCAN_LIST_POPUP_H) / 2u);
+#ifdef ENABLE_FEAT_F4HWN
+    if (!UI_IsDualVfoMainScreen())
+        y0 = (uint8_t)(y0 - 8u);    /* 単守は FB[0] が物理 2 行目 (マイクポップアップと同じ補正) */
+#endif
+    y1 = (uint8_t)(y0 + SCAN_LIST_POPUP_H - 1);
+
+    for (uint8_t y = y0; y <= y1; y++)
+        for (uint8_t x = x0; x <= x1; x++)
+            UI_DrawPixelBuffer(gFrameBuffer, x, y, false);
+    UI_DrawRectangleBuffer(gFrameBuffer, x0, y0, x1, y1, true);
+
+    ty = (unsigned)y0 + 8u + 4u;     /* UI_PrintStringSmallAtPixel の y は画面座標(枠内 y = 引数 - 8) */
+    UI_PrintStringSmallAtPixel(label, (uint8_t)(x0 + 2), (uint8_t)(x1 - 2), (uint8_t)ty, (uint8_t)(ty + 11u), 0u);
+
+#ifdef ENABLE_FEAT_F4HWN
+    if (UI_IsDualVfoMainScreen())
+        ST7565_BlitFullScreenDualVfoTightTop();
+    else
+#endif
+        ST7565_BlitFullScreen();
+}
+
 #ifdef ENABLE_MDC_YAN_ID  // JA
 /* Shared Rx ID popup: phone icon + Yan callsign, or phone icon + MDC hex ID. */
 void UI_DisplayYanIdRxPopup(void)

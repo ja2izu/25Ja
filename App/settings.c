@@ -16,6 +16,7 @@
  */
 
 #include <string.h>
+#include "external/printf/printf.h"
 
 #include "app/dtmf.h"
 #include "app/action.h"
@@ -1684,6 +1685,66 @@ bool SETTINGS_ChannelNameHasCjkUtf8(const char *s)
         p++;
     }
     return false;
+}
+
+/* JA: スキャンリスト漢字名の取得。不正バイト列・未書込(0xFF)は空文字 */
+void SETTINGS_FetchListName(char *s, uint8_t list)
+{
+    uint8_t n = 0;
+    uint8_t i = 0;
+
+    if (s == NULL)
+        return;
+    s[0] = 0;
+
+    if (list < 1 || list > MR_CHANNELS_LIST)
+        return;
+
+    PY25Q16_ReadBuffer(SCAN_LIST_KANJI_BASE + (uint32_t)(list - 1u) * SCAN_LIST_KANJI_BYTES, s, SCAN_LIST_KANJI_BYTES);
+
+    while (i < SCAN_LIST_KANJI_BYTES)
+    {
+        const uint8_t c = (uint8_t)s[i];
+        if (c == 0 || c == 0xFF)
+            break;
+        if (c >= 0x20 && c < 0x7F)
+        {
+            n = ++i;
+            continue;
+        }
+        if (c >= 0xE3 && c <= 0xEF && (i + 3u) <= SCAN_LIST_KANJI_BYTES &&
+            ((uint8_t)s[i + 1] & 0xC0) == 0x80 && ((uint8_t)s[i + 2] & 0xC0) == 0x80)
+        {
+            i += 3;
+            n = i;
+            continue;
+        }
+        break;      /* 不正: ここで打ち切り */
+    }
+    s[n] = 0;
+    s[SCAN_LIST_KANJI_BYTES] = 0;
+}
+
+void SETTINGS_FormatListLabel(char *out, uint8_t list)
+{
+    char name[SCAN_LIST_KANJI_BYTES + 1u];
+
+    if (out == NULL)
+        return;
+
+    if (list == MR_CHANNELS_LIST + 1)
+    {
+        strcpy(out, "ALL");
+        return;
+    }
+
+    sprintf(out, "%02u", (unsigned)list);
+    SETTINGS_FetchListName(name, list);
+    if (name[0] != 0)
+    {
+        strcat(out, " ");
+        strcat(out, name);
+    }
 }
 
 // ── CN Font SPI Flash functions ──

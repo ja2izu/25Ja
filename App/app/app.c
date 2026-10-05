@@ -1273,6 +1273,7 @@ void APP_TimeSlice10ms(void)
     if (gUpdateDisplayCurrent) {
         gUpdateDisplay = false;
         GUI_DisplayScreen();
+        UI_MAIN_DrawScanListPopup();   /* JA: スキャンリスト名ポップアップ */
     }
 
 #ifdef ENABLE_AUDIO_BAR

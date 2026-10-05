@@ -363,6 +363,12 @@ bool     SETTINGS_FetchChannelScanDisplayInfo(const uint16_t channel, ChannelSca
 void     SETTINGS_FetchChannelName(char *s, const uint16_t channel);
 #ifdef ENABLE_CHINESE
 bool     SETTINGS_ChannelNameHasCjkUtf8(const char *s);
+/* JA: スキャンリスト漢字名 (SPI 0x008880, 12 B x 24)。list=1..24。s は 13 B 以上 */
+#define SCAN_LIST_KANJI_BASE   0x008880u
+#define SCAN_LIST_KANJI_BYTES  12u
+void     SETTINGS_FetchListName(char *s, uint8_t list);
+/* JA: 表示用 "03 防災" / 名前なしは "03" / ALL。out は 20 B 以上 */
+void     SETTINGS_FormatListLabel(char *out, uint8_t list);
 #endif
 /* mode: 0=VFO, 1=ALL, 2=OEM (wipe AES sector, then power-off prompt) */
 void     SETTINGS_FactoryReset(uint8_t mode);

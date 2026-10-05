@@ -373,6 +373,7 @@ enum
 
 extern volatile bool     gScheduleScanListen;
 extern volatile uint16_t gScanPauseDelayIn_10ms;
+extern volatile uint16_t gScanListNameCountdown_10ms;   /* JA: スキャンリスト名ポップアップ残り時間 */
 
 extern AlarmState_t          gAlarmState;
 extern uint16_t              gMenuCountdown;

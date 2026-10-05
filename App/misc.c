@@ -240,6 +240,7 @@ bool              gCssBackgroundScan;
 
 volatile bool     gScheduleScanListen = true;
 volatile uint16_t gScanPauseDelayIn_10ms;
+volatile uint16_t gScanListNameCountdown_10ms;
 
 #if defined(ENABLE_ALARM) || defined(ENABLE_TX1750)
     AlarmState_t  gAlarmState;
