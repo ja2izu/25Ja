@@ -42,6 +42,9 @@ const char *UI_MENU_GetMenuTitle(const t_menu_item *item)
     case MENU_S_PRI_CH_1:   return "優先CH""1";
     case MENU_S_PRI_CH_2:   return "優先CH""2";
     case MENU_SC_REV:       return "スキャン 再開";
+#ifdef ENABLE_FEAT_F4HWN_SCAN_FASTER
+    case MENU_SET_SCN:      return "スキャン 速度";
+#endif
 #ifndef ENABLE_FEAT_F4HWN
     #ifdef ENABLE_NOAA
     case MENU_NOAA_S:       return "NOAA-S";

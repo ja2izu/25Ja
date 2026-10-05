@@ -332,9 +332,34 @@ extern EEPROM_Config_t gEeprom;
 
 extern uint8_t gUiLanguage;
 
+#ifdef ENABLE_FEAT_F4HWN_SCAN_FASTER
+/* JA: F4HWN 高速スキャン用。メモリ CH の表示に要る項目だけを EEPROM(フラッシュ)から読んだ結果 */
+typedef struct {
+    FREQ_Config_t    rx;
+    FREQ_Config_t    tx;
+    uint32_t         offset;
+    uint16_t         stepFrequency;
+    STEP_Setting_t   stepSetting;
+    ModulationMode_t modulation;
+    uint8_t          txOffsetFrequencyDirection;
+    uint8_t          outputPower;
+    bool             frequencyReverse;
+    uint8_t          channelBandwidth;
+    uint8_t          busyChannelLock;
+    uint8_t          txLock;
+#ifdef ENABLE_DTMF_CALLING
+    uint8_t          dtmfDecodingEnable;
+#endif
+    PTT_ID_t         dtmfPttIdTxMode;
+} ChannelScanDisplayInfo_t;
+#endif
+
 void     SETTINGS_InitEEPROM(void);
 void     SETTINGS_LoadCalibration(void);
 uint32_t SETTINGS_FetchChannelFrequency(const uint16_t channel);
+#ifdef ENABLE_FEAT_F4HWN_SCAN_FASTER
+bool     SETTINGS_FetchChannelScanDisplayInfo(const uint16_t channel, ChannelScanDisplayInfo_t *info);
+#endif
 void     SETTINGS_FetchChannelName(char *s, const uint16_t channel);
 #ifdef ENABLE_CHINESE
 bool     SETTINGS_ChannelNameHasCjkUtf8(const char *s);

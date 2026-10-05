@@ -153,9 +153,23 @@ static void UI_DisplayMain_FreqInputBare(void)
     UI_PrintString(fs, 0, LCD_WIDTH, 3, 8);
 }
 
+#ifdef ENABLE_FEAT_F4HWN_SCAN_FASTER
+/* JA: 高速スキャン中は VFO 情報を読み直さないので、走査中の CH の情報（変調・トーン・ステップなど）は chFrScanner.c が持つ。
+ *     受信側 VFO の表示だけ、それに差し替える（受信中・スキャン停止中は NULL が返り、従来どおり） */
+static const VFO_Info_t *UI_MAIN_ScanAwareVfo(unsigned int vfoIdx)
+{
+    const VFO_Info_t *scanVfo = CHFRSCANNER_GetScanDisplayVfo();
+    if (scanVfo != NULL && vfoIdx == gEeprom.RX_VFO)
+        return scanVfo;
+    return &gEeprom.VfoInfo[vfoIdx];
+}
+#else
+#define UI_MAIN_ScanAwareVfo(vfoIdx) (&gEeprom.VfoInfo[(vfoIdx)])
+#endif
+
 static const char *DualVfoPowerWord(uint8_t vfoIdx)
 {
-    const VFO_Info_t *v = &gEeprom.VfoInfo[vfoIdx];
+    const VFO_Info_t *v = UI_MAIN_ScanAwareVfo(vfoIdx);
     uint8_t           p = v->OUTPUT_POWER % 8u;
     if (p == OUTPUT_POWER_USER)
         p = (uint8_t)(gSetting_set_pwr + 1u);
@@ -206,7 +220,7 @@ static void DualVfoHeaderLeft(unsigned int vfoIdx, char *out, size_t outLen)
 
 static void DualVfoHeaderRight(unsigned int vfoIdx, char *out, size_t outLen)
 {
-    const VFO_Info_t *v = &gEeprom.VfoInfo[vfoIdx];
+    const VFO_Info_t *v = UI_MAIN_ScanAwareVfo(vfoIdx);
 #ifdef ENABLE_FEAT_F4HWN_NARROWER
     bool narrower = (v->CHANNEL_BANDWIDTH == BANDWIDTH_NARROW && gSetting_set_nfm == 1);
     const char *bw =
@@ -294,6 +308,75 @@ static void DualVfoClearRectPx(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
         for (uint8_t xx = x0; xx <= x1 && xx < LCD_WIDTH; xx++)
             PutPixel(xx, yy, false);
 }
+
+#if defined(ENABLE_FEAT_F4HWN_SCAN_FASTER) && defined(ENABLE_FEAT_F4HWN_SCAN_RSSI)
+/* JA: スキャン中の RSSI スパークライン。F4HWN の UI_MAIN_DrawScanRssiSparkline()（ページ単位のビット描画）を、
+ *     画素座標の PutPixel で描く形に直した。平滑化・橋渡しの計算は F4HWN と同じ。
+ *     x0 = 左端、yBottom = 一番下の行、height = 高さ(画素)。F4HWN のレベルは 0〜5 なので height に切り詰める */
+static void UI_MAIN_DrawScanRssiSparklinePx(uint8_t x0, uint8_t yBottom, uint8_t height)
+{
+    uint8_t level[CHFRSCANNER_RSSI_SPARKLINE_WIDTH];
+
+    if (!CHFRSCANNER_HasScanRssiSparkline())
+        return;
+
+    for (uint8_t i = 0; i < CHFRSCANNER_RSSI_SPARKLINE_WIDTH; i++)
+        level[i] = CHFRSCANNER_GetScanRssiSparklineLevel(i);
+
+    for (uint8_t i = 0; i < CHFRSCANNER_RSSI_SPARKLINE_WIDTH; i++)
+    {
+        const uint8_t previousRaw = (i > 0) ? level[i - 1] : 0;
+        const uint8_t nextRaw = (i + 1 < CHFRSCANNER_RSSI_SPARKLINE_WIDTH) ? level[i + 1] : 0;
+        uint8_t displayLevel = (uint8_t)((previousRaw + 2u * level[i] + nextRaw + 2u) >> 2);
+        uint8_t previousLevel = previousRaw;
+
+        if (level[i] == 0 && previousRaw == 0 && nextRaw == 0)
+            displayLevel = 0;
+        else if (displayLevel == 0)
+            displayLevel = 1;
+
+        if (i > 0)
+        {
+            const uint8_t previousPreviousRaw = (i > 1) ? level[i - 2] : 0;
+            previousLevel = (uint8_t)((previousPreviousRaw + 2u * previousRaw + level[i] + 2u) >> 2);
+        }
+
+        if (displayLevel > height)
+            displayLevel = height;
+        if (previousLevel > height)
+            previousLevel = height;
+
+        uint8_t top = yBottom;
+        uint8_t bridgeTop;
+        uint8_t bridgeBottom;
+
+        if (displayLevel == 0)
+        {
+            bridgeTop = yBottom;
+            bridgeBottom = yBottom;
+        }
+        else
+        {
+            top = (uint8_t)(yBottom + 1u - displayLevel);
+            bridgeTop = top;
+            bridgeBottom = top;
+
+            if (previousLevel > 0)
+            {
+                const uint8_t previousTop = (uint8_t)(yBottom + 1u - previousLevel);
+                if (previousTop < bridgeTop)
+                    bridgeTop = previousTop;
+                else if (previousTop > bridgeBottom)
+                    bridgeBottom = previousTop;
+            }
+        }
+
+        // Solid crest line with a small vertical bridge to avoid broken diagonals.
+        for (uint8_t y = bridgeTop; y <= bridgeBottom; y++)
+            PutPixel((uint8_t)(x0 + i), y, true);
+    }
+}
+#endif
 
 /* UV-KX / u8g2_DrawXBM：每字节 bit0 为最左像素，依次左→右 */
 static void DualVfoDrawSmeterXbm(uint8_t x0, uint8_t y0)
@@ -580,7 +663,7 @@ static void DualVfoDrawTopDetailRowPx(unsigned int topVfoIdx, uint8_t y)
         return;
     }
 #endif
-    const VFO_Info_t *v = &gEeprom.VfoInfo[topVfoIdx];
+    const VFO_Info_t *v = UI_MAIN_ScanAwareVfo(topVfoIdx);
     char              buf[48];
     uint8_t           sq = gEeprom.SQUELCH_LEVEL;
     if (sq > 9u)
@@ -629,7 +712,7 @@ static void DualVfoDrawTopChannel(unsigned int vfoIdx)
             (bool)(FUNCTION_IsRx() && gEeprom.RX_VFO == vfoIdx && VfoState[vfoIdx] == VFO_STATE_NORMAL);
         const bool txHere =
             (bool)(gCurrentFunction == FUNCTION_TRANSMIT && activeTxVFO == vfoIdx);
-        uint32_t   frequency = gEeprom.VfoInfo[vfoIdx].pRX->Frequency;
+        uint32_t   frequency = UI_MAIN_ScanAwareVfo(vfoIdx)->pRX->Frequency;
         if (txHere)
             frequency = gEeprom.VfoInfo[vfoIdx].pTX->Frequency;
         bool cnSwap = false;
@@ -708,7 +791,7 @@ static void DualVfoDrawBottomChannel(unsigned int vfoIdx)
         dualPttSideTx && gSetting_mic_bar_display != MIC_BAR_DISPLAY_POPUP;
 
     {
-        uint32_t frequency = gEeprom.VfoInfo[vfoIdx].pRX->Frequency;
+        uint32_t frequency = UI_MAIN_ScanAwareVfo(vfoIdx)->pRX->Frequency;
         if (txHere)
             frequency = gEeprom.VfoInfo[vfoIdx].pTX->Frequency;
 
@@ -2472,7 +2555,7 @@ void UI_DisplayMain(void)
 #ifdef ENABLE_FEAT_F4HWN
     if (isMainOnly() && !gAirCopyBootMode && gScreenToDisplay == DISPLAY_MAIN) {
         const uint8_t vfo = gEeprom.TX_VFO;
-        const VFO_Info_t *pVfo = &gEeprom.VfoInfo[vfo];
+        const VFO_Info_t *pVfo = UI_MAIN_ScanAwareVfo(vfo);
 
         // 顶线 + 左侧小长条（RX 接收时空心，平时实心）+ 方框
         for (unsigned int i = 0; i < LCD_WIDTH; i++)
@@ -2571,6 +2654,13 @@ void UI_DisplayMain(void)
         } else {
             UI_PrintStringSmallAtPixel("VFO", contentX, contentX, 27, 38, 0);   /* JA: 下段 */
         }
+
+#if defined(ENABLE_FEAT_F4HWN_SCAN_FASTER) && defined(ENABLE_FEAT_F4HWN_SCAN_RSSI)
+        /* JA: スキャン中の RSSI スパークライン。枠の上辺(y2)と周波数の数字(y7〜)の間の y3〜y6 に置く（位置は推測・未確認）。
+         *     周波数を描いた後に描く（周波数の描画が枠内を消すため） */
+        if (gScanStateDir != SCAN_OFF && !FUNCTION_IsRx())
+            UI_MAIN_DrawScanRssiSparklinePx((uint8_t)contentX, 6, 4);
+#endif
 
         // 方框底边：与上边/右边同样用 1 像素线画
         UI_DrawLineBuffer(gFrameBuffer, rectX0, rectY1, LCD_WIDTH - 1, rectY1, true);

@@ -527,6 +527,15 @@ gEeprom.FreqChannel[1]   = IS_FREQ_CHANNEL(Data16[5]) ? Data16[5] : (FREQ_CHANNE
         PY25Q16_ReadBuffer(0x00A158, Data, 8);
         gSetting_set_pwr = (((Data[7] & 0xF0) >> 4) < 7) ? ((Data[7] & 0xF0) >> 4) : 0;
         gSetting_set_ptt = 0;
+#ifdef ENABLE_FEAT_F4HWN_SCAN_FASTER
+        /* JA: 高速スキャンの ON/OFF は Data[7] の下位ニブルのビット1（F4HWN と同じ。1 = NORMAL）。
+         *     従来の 25Ja は下位ニブルを 0 で書いていたので、アップデート直後は ON(FAST)。消去状態(0xFF)は OFF(NORMAL) */
+        {
+            const uint8_t set_ptt_scn_sav = Data[7] & 0x0F;
+            const bool set_ptt_scn_sav_valid = (Data[7] != 0xFF) && set_ptt_scn_sav < 4;
+            gSetting_set_scn = set_ptt_scn_sav_valid ? ((set_ptt_scn_sav & 0x02) == 0) : 0;
+        }
+#endif
 
         gSetting_set_tot = 0;
         gSetting_set_eot = 0;
@@ -701,6 +710,117 @@ uint32_t SETTINGS_FetchChannelFrequency(const uint16_t channel)
 
     return info.frequency;
 }
+
+#ifdef ENABLE_FEAT_F4HWN_SCAN_FASTER
+/* JA: radio.c の RADIO_ConfigureChannel() と同じ検証（CodeType と Code の組）を、スキャン表示用の構造体に対して行う */
+static void SETTINGS_ScanInfoValidateCode(FREQ_Config_t *pConfig, uint8_t code)
+{
+    switch (pConfig->CodeType)
+    {
+        default:
+        case CODE_TYPE_OFF:
+            pConfig->CodeType = CODE_TYPE_OFF;
+            code = 0;
+            break;
+
+        case CODE_TYPE_CONTINUOUS_TONE:
+            if (code > (ARRAY_SIZE(CTCSS_Options) - 1))
+                code = 0;
+            break;
+
+        case CODE_TYPE_DIGITAL:
+        case CODE_TYPE_REVERSE_DIGITAL:
+            if (code > (ARRAY_SIZE(DCS_Options) - 1))
+                code = 0;
+            break;
+    }
+    pConfig->Code = code;
+}
+
+/* JA: F4HWN の SETTINGS_FetchChannelScanDisplayInfo() の移植。レイアウトは RADIO_ConfigureChannel() の MR 読み出しと同じ（base = channel * 16）。
+ *     PTT ID は 25Ja ではメニュー非表示で、チャンネル読み込み時は常に OFF にしているので、ここも OFF に揃えた */
+bool SETTINGS_FetchChannelScanDisplayInfo(const uint16_t channel, ChannelScanDisplayInfo_t *info)
+{
+    if (info == NULL)
+        return false;
+
+    struct
+    {
+        uint32_t frequency;
+        uint32_t offset;
+        uint8_t  data[8];
+    } __attribute__((packed)) raw;
+
+    PY25Q16_ReadBuffer(channel * 16, &raw, sizeof(raw));
+
+    if (raw.frequency == 0 || raw.frequency == 0xFFFFFFFF)
+        return false;
+
+    memset(info, 0, sizeof(*info));
+
+    info->rx.Frequency = raw.frequency;
+    info->tx.Frequency = raw.frequency;
+    info->offset       = (raw.offset >= _1GHz_in_KHz) ? (_1GHz_in_KHz / 100) : raw.offset;
+
+    info->rx.CodeType = (raw.data[2] >> 0) & 0x0F;
+    info->tx.CodeType = (raw.data[2] >> 4) & 0x0F;
+    SETTINGS_ScanInfoValidateCode(&info->rx, raw.data[0]);
+    SETTINGS_ScanInfoValidateCode(&info->tx, raw.data[1]);
+
+    uint8_t tmp = raw.data[3] & 0x0F;
+    if (tmp > TX_OFFSET_FREQUENCY_DIRECTION_SUB)
+        tmp = TX_OFFSET_FREQUENCY_DIRECTION_OFF;
+    info->txOffsetFrequencyDirection = tmp;
+
+    tmp = raw.data[3] >> 4;
+    if (tmp >= MODULATION_UKNOWN)
+        tmp = MODULATION_FM;
+    info->modulation = (ModulationMode_t)tmp;
+
+    tmp = raw.data[6];
+    if (tmp >= STEP_N_ELEM)
+        tmp = STEP_12_5kHz;
+    info->stepSetting   = (STEP_Setting_t)tmp;
+    info->stepFrequency = gStepFrequencyTable[tmp];
+
+    if (raw.data[4] == 0xFF)
+    {
+        info->frequencyReverse = false;
+        info->channelBandwidth = BANDWIDTH_WIDE;
+        info->outputPower      = OUTPUT_POWER_LOW1;
+        info->busyChannelLock  = false;
+        info->txLock           = true;
+    }
+    else
+    {
+        const uint8_t d4 = raw.data[4];
+        info->frequencyReverse = !!((d4 >> 0) & 1u);
+        info->channelBandwidth = !!((d4 >> 1) & 1u);
+        info->outputPower      =   ((d4 >> 2) & 7u);
+        info->busyChannelLock  = !!((d4 >> 5) & 1u);
+        info->txLock           = !!((d4 >> 6) & 1u);
+    }
+
+    switch (info->txOffsetFrequencyDirection)
+    {
+        case TX_OFFSET_FREQUENCY_DIRECTION_ADD:
+            info->tx.Frequency = raw.frequency + info->offset;
+            break;
+        case TX_OFFSET_FREQUENCY_DIRECTION_SUB:
+            info->tx.Frequency = raw.frequency - info->offset;
+            break;
+        default:
+            break;
+    }
+
+#ifdef ENABLE_DTMF_CALLING
+    info->dtmfDecodingEnable = (raw.data[5] == 0xFF) ? false : ((raw.data[5] >> 0) & 1u);
+#endif
+    info->dtmfPttIdTxMode = PTT_ID_OFF;
+
+    return true;
+}
+#endif
 
 void SETTINGS_FetchChannelName(char *s, const uint16_t channel)
 {
@@ -1200,7 +1320,16 @@ void SETTINGS_SaveSettings(void)
     State[6] = ((gSetting_set_tot << 4) | (gSetting_set_eot & 0x0F));
     gSetting_set_ptt = 0;
     gSetting_set_ptt_session = 0;
+#ifdef ENABLE_FEAT_F4HWN_SCAN_FASTER
+    {
+        uint8_t set_ptt_scn_sav = gSetting_set_ptt & 0x01;
+        if (!gSetting_set_scn)
+            set_ptt_scn_sav |= 0x02;
+        State[7] = ((gSetting_set_pwr << 4) | set_ptt_scn_sav);
+    }
+#else
     State[7] = ((gSetting_set_pwr << 4) | (gSetting_set_ptt & 0x0F));
+#endif
 
     gEeprom.KEY_LOCK_PTT = gSetting_set_lck;
 

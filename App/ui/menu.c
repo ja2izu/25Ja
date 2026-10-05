@@ -375,6 +375,9 @@ const t_menu_item MenuList[] =
     {"PriCh1",       MENU_S_PRI_CH_1   },
     {"PriCh2",       MENU_S_PRI_CH_2   },
     {"ScnRev",      MENU_SC_REV        },
+#ifdef ENABLE_FEAT_F4HWN_SCAN_FASTER
+    {"SetScn",      MENU_SET_SCN       }, /* JA: 高速スキャン（F4HWN SCAN_FASTER） */
+#endif
 #ifndef ENABLE_FEAT_F4HWN
     #ifdef ENABLE_NOAA
         {"NOAA-S",      MENU_NOAA_S    },
@@ -746,6 +749,14 @@ const char gSubMenu_SCRAMBLER[][7] =
         "TINY",
         "CLASSIC"
     };
+
+    #ifdef ENABLE_FEAT_F4HWN_SCAN_FASTER
+        const char gSubMenu_SET_SCN[][7] =
+        {
+            "NORMAL",
+            "FAST"
+        };
+    #endif
 
     #ifdef ENABLE_FEAT_F4HWN_AUDIO
         const char gSubMenu_SET_AUD_FM[][6] =
@@ -3281,6 +3292,12 @@ void UI_DisplayMenu(void)
         case MENU_SET_GUI:
             strcpy(String, SUBV(gSubMenu_SET_MET[gSubMenuSelection], gSubMenu_SET_MET_CN[gSubMenuSelection]));
             break;
+
+        #ifdef ENABLE_FEAT_F4HWN_SCAN_FASTER
+            case MENU_SET_SCN:
+                strcpy(String, SUBV(gSubMenu_SET_SCN[gSubMenuSelection], gSubMenu_SET_SCN_CN[gSubMenuSelection]));
+                break;
+        #endif
 
         #ifdef ENABLE_FEAT_F4HWN_AUDIO
             case MENU_SET_AUD:

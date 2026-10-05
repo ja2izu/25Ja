@@ -47,6 +47,9 @@ extern const char gSubMenu_TXP_CN[][6];
 extern const char gSubMenu_SET_PWR_CN[][6];
 extern const char gSubMenu_SET_LCK_CN[][12];
 extern const char gSubMenu_SET_MET_CN[][16];
+#ifdef ENABLE_FEAT_F4HWN_SCAN_FASTER
+extern const char gSubMenu_SET_SCN_CN[][7];
+#endif
 # ifdef ENABLE_FEAT_F4HWN_AUDIO
 extern const char gSubMenu_SET_AUD_FM_CN[][6];
 extern const char gSubMenu_SET_AUD_AM_CN[][6];

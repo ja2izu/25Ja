@@ -190,6 +190,13 @@ const char gSubMenu_SET_MET_CN[][16] = {
     "クラシック",
 };
 
+#ifdef ENABLE_FEAT_F4HWN_SCAN_FASTER
+const char gSubMenu_SET_SCN_CN[][7] = {
+    "通常",
+    "高速",
+};
+#endif
+
 # ifdef ENABLE_FEAT_F4HWN_AUDIO
 const char gSubMenu_SET_AUD_FM_CN[][6] = {
     "FLAT",

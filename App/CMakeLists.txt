@@ -254,6 +254,8 @@ enable_feature(ENABLE_FEAT_F4HWN_GMRS_FRS_MURS)
 enable_feature(ENABLE_FEAT_F4HWN_CA)
 enable_feature(ENABLE_FEAT_F4HWN_MEM)
 enable_feature(ENABLE_FEAT_F4HWN_QRCODE)
+enable_feature(ENABLE_FEAT_F4HWN_SCAN_FASTER)   # JA: F4HWN 高速スキャン（移植）
+enable_feature(ENABLE_FEAT_F4HWN_SCAN_RSSI)     # JA: スキャン中の RSSI スパークライン（移植）
 
 # ---- DEBUGGING ----
 
