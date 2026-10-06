@@ -337,6 +337,11 @@ static void SendReply(uint32_t Port, void *pReply, uint16_t Size)
     UART_Send(&Footer, sizeof(Footer));
 }
 
+/* JA: 25Ja の版数。上げるときはここだけ変える（0.3 → 0.3.1 は PATCH を 1 に） */
+#define JA_FW_VER_MAJOR  0
+#define JA_FW_VER_MINOR  3
+#define JA_FW_VER_PATCH  0
+
 static void SendVersion(uint32_t Port)
 {
     REPLY_0514_t Reply;
@@ -353,6 +358,11 @@ static void SendVersion(uint32_t Port)
         Reply.Data.Version[13] = 0x25;
         Reply.Data.Version[14] = 'J';
         Reply.Data.Version[15] = 0x01;
+        /* JA: 25Ja の版数（major.minor.patch）。hello 応答の Padding[2] に入れる。
+         *   Padding[0] = (major << 4) | minor（各 0〜15）、Padding[1] = patch（0〜255）
+         *   旧 25Ja は memset で 0x00 0x00 のまま。版数なしと区別できる（現行の版は 0 でない） */
+        Reply.Data.Padding[0] = (uint8_t)((JA_FW_VER_MAJOR << 4) | (JA_FW_VER_MINOR & 0x0F));
+        Reply.Data.Padding[1] = (uint8_t)JA_FW_VER_PATCH;
     }
     Reply.Data.bHasCustomAesKey = bHasCustomAesKey;
     Reply.Data.bIsInLockScreen = bIsInLockScreen;
