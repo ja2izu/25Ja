@@ -207,6 +207,9 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <ul>
   <li>本体のスキャンリストは<b>固定の 24 枠（1〜24）</b>です。作成や削除の操作はありません。CH ごとに「どの枠に入れるか」を選びます。<b>0</b> はどのリストにも入らない（スキャンしない）、<b>ALL（25）</b>は全リストに入る、の意味です。</li>
   <li>リスト名は本体の漢字名欄（12 バイト）に入ります。NeonPlugJA（0.91.7 から）は、この欄に書き込み・読み込みします。</li>
+  <li><b>リスト名の表示（ファーム 0.3 から）</b>：メニューの「スキャンリスト」「CH のスキャンリスト」の値が「<code>03 防災</code>」のように、番号＋名前で出ます。名前が空のリストは番号だけです。ALL は「ALL」です。</li>
+  <li><b>切り替え時のポップアップ（ファーム 0.3 から）</b>：スキャン中に <b>F → ↑↓</b> でリストを切り替えると、リスト番号と名前の小さな表示が一時的に出て、自動で消えます。数字キーの 2 桁入力で切り替えたとき、PF2 短押し（スキャン）のときにも出ます（作者の実機で確認。画面の重なりの見え方は未整理）。PF1/PF2 の割り当ては変えていません。</li>
+  <li>本体の初期化（工場リセット）でリスト名の欄も消える作りです（ソース上の確認。実機は未確認）。</li>
   <li><b>除外中</b>：スキャン中に MENU 長押しで外した CH は、リスト番号を残したまま「除外」の印が付きます。スキャン待機中に MENU を押すと戻ります。NeonPlugJA は、除外の印を編集せず、そのまま保ちます。</li>
   <li><b>NeonPlugJA（0.91.4 から）のスキャンリスト：</b>
     <ul>
@@ -221,6 +224,13 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
     </ul>
   </li>
 </ul>
+<h3>スキャン速度（ファーム 0.3 から）</h3>
+<ul>
+  <li>F4HWN の高速スキャン（SCAN_FASTER）と RSSI 表示を移植しています。メニューの「<b>スキャン 速度</b>」で <b>通常／高速</b> を選びます。</li>
+  <li>それまでの 25Ja から更新したときの初期値は<b>高速</b>です。設定が消去されている・不正なときは<b>通常</b>です。</li>
+  <li>RSSI の表示はメインのみの画面での作りです（他の画面の見え方は未確認）。</li>
+</ul>
+
 <h3>NeonPlugJA の画面</h3>
 <ul>
   <li><b>送信電力</b>（0.91.6 から）：UV-K1 では <b>Low1〜Low5・Medium・High</b> の 7 段を選べます（チャンネル表の PWR のプルダウン、編集画面の「送信出力」）。チャンネル表の「TG」の列は出ません。</li>
@@ -255,7 +265,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <ul>
   <li>25Ja © 2026 JA2IZU — Apache License 2.0</li>
   <li>Dondji（叮咚鸡）© 2026 BD1AHN — Apache License 2.0。Dondji の名称・ロゴ・公式サイトは商標方針により使用していません</li>
-  <li>F4HWN（armel）、muzkr、egzumer、DualTachyon ほか各氏のファーム — Apache License 2.0</li>
+  <li>F4HWN（armel）、muzkr、egzumer、DualTachyon ほか各氏のファーム — Apache License 2.0。高速スキャン・RSSI は F4HWN の SCAN_FASTER（commit 3a50e212）からの移植</li>
   <li>FM 局名表示の着想：steranian/uv-k1-k5v3-firmware-custom（Apache License 2.0）。25Ja では専用の局名表として作り直し</li>
   <li>東雲フォント（電子書体オープンラボ）— Public Domain</li>
   <li>詳しくは <code>LICENSE</code> / <code>NOTICE</code> を参照</li>
@@ -265,13 +275,13 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <table>
   <tr><th>ファイル</th><th>サイズ</th><th>SHA-256</th></tr>
   <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">67,057 B</td><td class="hash">6b771a0b94b4f456783c241bc6b44983628c5a4ff4b333534c8234d4351a65a4</td></tr>
-  <tr><td class="nowrap"><code>firmware/25Ja.fusion.bin</code></td><td class="nowrap">111,336 B</td><td class="hash">9f9992fd1073d04b4d339b970d2b07a1ef5f846cd44a5d77bdfe3575c04d310c</td></tr>
+  <tr><td class="nowrap"><code>firmware/25Ja.fusion.bin</code></td><td class="nowrap">114,164 B</td><td class="hash">62b8f942c1f8c456b7bd8995dc9667afc5190d47daa584b1750c67a68c3bee56</td></tr>
   <tr><td class="nowrap"><code>font/25Ja_font_v4.bin</code></td><td class="nowrap">186,117 B</td><td class="hash">ca5d44656e91a9eb8f04a37af2e158456fd05fce2228167ae522a652da23e825</td></tr>
   <tr><td class="nowrap"><code>LICENSE</code></td><td class="nowrap">11,357 B</td><td class="hash">c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4</td></tr>
-  <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">1,065 B</td><td class="hash">70618f92d8436acd9f603dfb9ce99e4a360ef26394193fb9f2ca023531734432</td></tr>
-  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">3,068 B</td><td class="hash">d5b57ec855d42539b715711106b86b21808a696bed9c961b9bfc96f9a397e3d2</td></tr>
+  <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">1,249 B</td><td class="hash">4f9b686f3bc41d9a508604266da113634eb7d2b959dc89e503793491d733d485</td></tr>
+  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">3,068 B</td><td class="hash">8f8d419074b10aec21813825039ca584c01f46844935c282ccc86f046e788975</td></tr>
 </table>
-<p>ファームの元のソース：25Ja <code>d6f3c60</code>（Dondji v5.2.8 = <code>9f6263c</code> に 25Ja の変更を加えたもの。本体情報のビルド番号にも <code>d6f3c60e</code> と出ます）</p>
+<p>ファームの版：25Ja v0.3（Dondji v5.2.8 ベース、F4HWN 由来）。同梱 BIN の本体情報のビルド番号は <code>8896e7c</code> です（ビルドしたコミットの短縮ハッシュ。ソースを再ビルドすると、コミットごとに変わります）</p>
 
 <h2>12. 配布前の確認表（実機）</h2>
 <table class="check">
@@ -316,6 +326,11 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><td>□</td><td>NeonPlugJA 0.91.4：チャンネル表のスキャンリストで「枠」「ALL」「なし」を選んで書込し、本体のスキャン（リスト切替を含む）が選んだとおりに動く。書込後に読み込み直すと、番号が同じ</td></tr>
   <tr><td>□</td><td>NeonPlugJA 0.91.6：本体で MENU 長押しして除外した CH を読み込むと「除外」にチェックが入り、そのまま書込しても除外が保たれる。アプリで「除外」を入れて書込すると、本体のスキャンでその CH が飛ばされる。「なし」で書込すると除外も外れる</td></tr>
   <tr><td>□</td><td>NeonPlugJA 0.91.6：送信電力 Low1〜Low5・Medium・High を選んで書込し、本体の電力表示が選んだ段と合う。読み込み直しても同じ</td></tr>
+  <tr><td>□</td><td>ファーム 0.3：メニュー「スキャンリスト」の値が「01」ではなく「01 名前」（漢字名）で出る。名前が空のリストは番号だけ</td></tr>
+  <tr><td>□</td><td>ファーム 0.3：スキャン中の F→↑↓、数字 2 桁入力、PF2 短押しでリスト名のポップアップが出て、自動で消える。画面が重ならない</td></tr>
+  <tr><td>□</td><td>ファーム 0.3：NeonPlugJA で付けたリスト名（漢字 4 字）が書込後に本体に出る。名前を空にして書いたときの本体側の名前の扱い。工場リセット後に名前が消える</td></tr>
+  <tr><td>□</td><td>ファーム 0.3：メニュー「スキャン 速度」で通常／高速を選べ、スキャンの速さが変わる。更新直後の初期値が高速</td></tr>
+  <tr><td>□</td><td>ファーム 0.3：NeonPlugJA 0.92 に接続して「F/W:25Ja v0.3(F4HWN v5.2.8)」と出る。本体情報のビルド番号が 8896e7c</td></tr>
 </table>
 
 <footer>

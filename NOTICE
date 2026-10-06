@@ -71,5 +71,14 @@ to the Dondji source code. It is not an official Dondji product.
     when the scan list is switched
   * Range scan: exclusion of the current frequency during scanning
     (MENU long press), ported from F4HWN 6.0.0 (Apache License 2.0)
+  * Scan speed: "fast scan" (RSSI pre-check before stopping on a channel /
+    frequency; menu "SetScn", Normal / Fast) and the RSSI graph shown while
+    scanning, ported from F4HWN (armel/uv-k1-k5v3-firmware-custom,
+    commit 3a50e212, Copyright armel et al., Apache License 2.0)
+  * Scan list names in kanji / kana: SPI 0x008880, 12 bytes (UTF-8) x 24,
+    shown in the menu (ScList / ChList) and in a pop-up when the scan list is
+    switched while scanning
+  * Serial protocol: 25Ja version number (major.minor.patch) returned in the
+    hello reply (Padding[2]); EEPROM address map entry for 0x008880-0x0089A0
   * Removed: TX 1750 Hz tone, Dondji web site / documentation / archive files
     and branding assets

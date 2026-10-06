@@ -23,7 +23,7 @@ UV-K1 / UV-K5(K6) V3 用 25Ja（にこじゃ）ファームの書込ツール。
 - 実機の Chrome（Windows）で、直開き（file://）でも Web Serial の接続・読み書き（FM 局名表）ができることを確認済み（2026-09-28）。
 
 ## ファイル
-- index.html — ツール本体（外部ライブラリなし, Ver 0.1.7）
+- index.html — ツール本体（外部ライブラリなし, Ver 0.1.8）
 - manual.html — 説明書（初回の書込・更新・FM 局名・困ったとき・配布前の確認表）
 - firmware/25Ja.fusion.bin — 同梱ファーム
 - font/25Ja_font_v4.bin — 同梱字庫

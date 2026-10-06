@@ -19,3 +19,6 @@ Third-party work
   The FM station name display is based on the idea in
   steranian/uv-k1-k5v3-firmware-custom (Copyright 2026 steranian,
   Apache License 2.0), reimplemented with a dedicated station table.
+  The fast scan and the RSSI graph during scanning are ported from F4HWN
+  (armel/uv-k1-k5v3-firmware-custom, Apache License 2.0). See the NOTICE of
+  the firmware source for details.
