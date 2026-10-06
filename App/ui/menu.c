@@ -1567,7 +1567,7 @@ static void UI_MENU_DrawLauncherPage(void)
 {
     static const char * const names_en[] = {"Channel", "Settings", "Display", "Other", "About"};
     static const char * const names_cn[] = {
-        "CH",
+        "チャンネル",
         "設定",
         "表示",
         "その他",
