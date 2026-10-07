@@ -1172,6 +1172,28 @@ static void UI_MENU_DrawChevron(bool left, uint8_t center_x, uint8_t center_y, u
     }
 }
 
+#ifdef ENABLE_FEAT_F4HWN_AUDIO
+/* JA: 音質設定は、現在のチャンネルの変調（AM/USB/FM）を題名の 2 行目に出す */
+static const char *UI_MENU_AudModeTag(void)
+{
+    if (gTxVfo->Modulation == MODULATION_AM)
+        return "AM";
+    if (gTxVfo->Modulation == MODULATION_USB)
+        return "USB";
+    return "FM";
+}
+
+/* 日本語表示では題名側に出すので、右上の AM/USB/FM は英語表示のときだけ出す */
+static void UI_MENU_AudModeTagRight(const char *tag, uint8_t x)
+{
+#ifdef ENABLE_CHINESE
+    if (gUiLanguage == UI_LANGUAGE_CN)
+        return;
+#endif
+    UI_PrintStringSmallNormal(tag, x, 0, MENU_VALUE_ROW(0));
+}
+#endif
+
 /* 二级菜单左栏中文两行标题（与接收/发射亚音等同一套坐标） */
 static void UI_MENU_DrawLevel2CnTwoLines(const char *line1, const char *line2)
 {
@@ -1266,6 +1288,13 @@ static void UI_MENU_DrawLevel2SplitLayout(uint8_t menu_count, char *String)
             UI_PrintStringSmallAtPixel("マイク", 0, left_end, l2_y1_lo, l2_y1_hi, 3u);
             UI_PrintStringSmallAtPixel("感度", 0, left_end, l2_y2_lo, l2_y2_hi, 3u);
         }
+#ifdef ENABLE_FEAT_F4HWN_AUDIO
+        else if (UI_MENU_GetCurrentMenuId() == MENU_SET_AUD)
+        {
+            UI_PrintStringSmallAtPixel("音質設定", 0, left_end, l2_y1_lo, l2_y1_hi, 3u);
+            UI_PrintStringSmallAtPixel(UI_MENU_AudModeTag(), 0, left_end, l2_y2_lo, l2_y2_hi, 0u);
+        }
+#endif
         else if (UI_MENU_GetCurrentMenuId() == MENU_F1SHRT)
         {
             UI_PrintStringSmallAtPixel("PF1", 0, left_end, l2_y1_lo, l2_y1_hi, 0u);
@@ -1384,12 +1413,22 @@ static void UI_MENU_DrawLevel2SplitLayout(uint8_t menu_count, char *String)
 static void UI_MENU_DrawCccMenuChrome(const t_menu_item *item)
 {
     const char *title = UI_MENU_GetMenuTitle(item);
+#if defined(ENABLE_CHINESE) && defined(ENABLE_FEAT_F4HWN_AUDIO)
+    char aud_title[20];   /* JA: title が指すので関数の最後まで有効にしておく */
+#endif
 
 #ifdef ENABLE_CHINESE
     if (item != NULL && item->menu_id == MENU_VOL && gUiLanguage == UI_LANGUAGE_CN)
     {
         title = "本体情報<にこじゃ>";
     }
+#ifdef ENABLE_FEAT_F4HWN_AUDIO
+    if (item != NULL && item->menu_id == MENU_SET_AUD && gUiLanguage == UI_LANGUAGE_CN)
+    {
+        sprintf(aud_title, "%s %s", title, UI_MENU_AudModeTag());
+        title = aud_title;
+    }
+#endif
     /* Title band +3px down vs previous 8..15 */
     UI_PrintStringSmallAtPixel(title, 2, 2, 11, 18, 0u);
 #else
@@ -1402,7 +1441,7 @@ static void UI_MENU_DrawCccMenuChrome(const t_menu_item *item)
 #endif
 }
 
-/* JA: ランチャーのアイコン（28x28 px）。PutPixel のみで描く。0=チャンネル 1=表示・音声 2=キー設定 3=システム 4=スキャン */
+/* JA: ランチャーのアイコン（24x24 px）。PutPixel のみで描く。0=チャンネル 1=表示・音声 2=キー設定 3=システム 4=スキャン */
 static void UI_MENU_IconRect(uint8_t x, uint8_t y, uint8_t l, uint8_t t, uint8_t r, uint8_t b, bool fill)
 {
     for (uint8_t yy = t; yy <= b; yy++)
@@ -1414,8 +1453,8 @@ static void UI_MENU_IconRect(uint8_t x, uint8_t y, uint8_t l, uint8_t t, uint8_t
 /* 円環の一部。象限指定: xsign/ysign は +1 / -1 / 0（0 は両側） */
 static void UI_MENU_IconRing(uint8_t x, uint8_t y, int8_t cx, int8_t cy, int16_t r2_lo, int16_t r2_hi, int8_t xsign, int8_t ysign)
 {
-    for (int16_t yy = -24; yy <= 24; yy++)
-        for (int16_t xx = -24; xx <= 24; xx++)
+    for (int16_t yy = -20; yy <= 20; yy++)
+        for (int16_t xx = -20; xx <= 20; xx++)
         {
             const int16_t r2 = (int16_t)(xx * xx + yy * yy);
             const int16_t px = (int16_t)(cx + xx);
@@ -1426,7 +1465,7 @@ static void UI_MENU_IconRing(uint8_t x, uint8_t y, int8_t cx, int8_t cy, int16_t
                 continue;
             if ((ysign > 0 && yy < 0) || (ysign < 0 && yy > 0))
                 continue;
-            if (px < 0 || px > 27 || py < 0 || py > 27)
+            if (px < 0 || px > 23 || py < 0 || py > 23)
                 continue;
             PutPixel((uint8_t)(x + px), (uint8_t)(y + py), true);
         }
@@ -1434,65 +1473,65 @@ static void UI_MENU_IconRing(uint8_t x, uint8_t y, int8_t cx, int8_t cy, int16_t
 
 static void UI_MENU_DrawLauncherChannel(uint8_t x, uint8_t y)
 {   /* 折り目つきの書類 */
-    UI_MENU_IconRect(x, y, 5, 5, 5, 26, false);          /* 左辺 */
-    UI_MENU_IconRect(x, y, 5, 26, 22, 26, false);        /* 下辺 */
-    UI_MENU_IconRect(x, y, 22, 7, 22, 26, false);        /* 右辺 */
-    UI_MENU_IconRect(x, y, 5, 1, 16, 1, false);          /* 上辺 */
-    for (uint8_t i = 0; i <= 6; i++)                     /* 折り目の斜め */
-        PutPixel((uint8_t)(x + 16 + i), (uint8_t)(y + 1 + i), true);
+    UI_MENU_IconRect(x, y, 4, 1, 4, 22, false);          /* 左辺 */
+    UI_MENU_IconRect(x, y, 4, 22, 19, 22, false);        /* 下辺 */
+    UI_MENU_IconRect(x, y, 19, 6, 19, 22, false);        /* 右辺 */
+    UI_MENU_IconRect(x, y, 4, 1, 14, 1, false);          /* 上辺 */
+    for (uint8_t i = 0; i <= 5; i++)                     /* 折り目の斜め */
+        PutPixel((uint8_t)(x + 14 + i), (uint8_t)(y + 1 + i), true);
     for (uint8_t i = 0; i <= 5; i++)                     /* 折り返しの縁 */
     {
-        PutPixel((uint8_t)(x + 16), (uint8_t)(y + 1 + i), true);
-        PutPixel((uint8_t)(x + 16 + i), (uint8_t)(y + 7), true);
+        PutPixel((uint8_t)(x + 14), (uint8_t)(y + 1 + i), true);
+        PutPixel((uint8_t)(x + 14 + i), (uint8_t)(y + 6), true);
     }
-    UI_MENU_IconRect(x, y, 9, 12, 18, 12, false);
-    UI_MENU_IconRect(x, y, 9, 17, 18, 17, false);
-    UI_MENU_IconRect(x, y, 9, 22, 14, 22, false);
+    UI_MENU_IconRect(x, y, 7, 10, 16, 10, false);
+    UI_MENU_IconRect(x, y, 7, 14, 16, 14, false);
+    UI_MENU_IconRect(x, y, 7, 18, 12, 18, false);
 }
 
 static void UI_MENU_DrawLauncherDispAud(uint8_t x, uint8_t y)
 {   /* スピーカー */
-    UI_MENU_IconRect(x, y, 2, 9, 6, 18, true);
-    for (uint8_t i = 0; i <= 6; i++)
+    UI_MENU_IconRect(x, y, 1, 8, 5, 15, true);
+    for (uint8_t i = 0; i <= 5; i++)
     {
-        PutPixel((uint8_t)(x + 7 + i), (uint8_t)(y + 9 - i), true);
-        PutPixel((uint8_t)(x + 7 + i), (uint8_t)(y + 18 + i), true);
+        PutPixel((uint8_t)(x + 6 + i), (uint8_t)(y + 8 - i), true);
+        PutPixel((uint8_t)(x + 6 + i), (uint8_t)(y + 15 + i), true);
     }
-    UI_MENU_IconRect(x, y, 7, 9, 7, 18, false);
-    UI_MENU_IconRect(x, y, 13, 3, 13, 24, false);
-    UI_MENU_IconRing(x, y, 14, 13, 42, 56, 1, 0);        /* 音波（小） */
-    UI_MENU_IconRing(x, y, 14, 13, 90, 110, 1, 0);       /* 音波（大） */
+    UI_MENU_IconRect(x, y, 6, 8, 6, 15, false);
+    UI_MENU_IconRect(x, y, 11, 2, 11, 21, false);
+    UI_MENU_IconRing(x, y, 12, 11, 30, 42, 1, 0);        /* 音波（小） */
+    UI_MENU_IconRing(x, y, 12, 11, 72, 90, 1, 0);        /* 音波（大） */
 }
 
 static void UI_MENU_DrawLauncherKeys(uint8_t x, uint8_t y)
 {   /* キーパッド（2x2） */
-    UI_MENU_IconRect(x, y, 3, 3, 12, 12, false);
-    UI_MENU_IconRect(x, y, 15, 3, 24, 12, false);
-    UI_MENU_IconRect(x, y, 3, 15, 12, 24, false);
-    UI_MENU_IconRect(x, y, 15, 15, 24, 24, false);
-    UI_MENU_IconRect(x, y, 6, 6, 9, 9, true);
+    UI_MENU_IconRect(x, y, 2, 2, 10, 10, false);
+    UI_MENU_IconRect(x, y, 13, 2, 21, 10, false);
+    UI_MENU_IconRect(x, y, 2, 13, 10, 21, false);
+    UI_MENU_IconRect(x, y, 13, 13, 21, 21, false);
+    UI_MENU_IconRect(x, y, 4, 4, 7, 7, true);
 }
 
 static void UI_MENU_DrawLauncherSystem(uint8_t x, uint8_t y)
 {   /* 歯車 */
-    UI_MENU_IconRing(x, y, 14, 14, 36, 70, 0, 0);
-    UI_MENU_IconRing(x, y, 14, 14, 0, 6, 0, 0);
-    UI_MENU_IconRect(x, y, 12, 3, 16, 6, true);
-    UI_MENU_IconRect(x, y, 12, 22, 16, 25, true);
-    UI_MENU_IconRect(x, y, 3, 12, 6, 16, true);
-    UI_MENU_IconRect(x, y, 22, 12, 25, 16, true);
-    UI_MENU_IconRect(x, y, 6, 6, 8, 8, true);
-    UI_MENU_IconRect(x, y, 20, 6, 22, 8, true);
-    UI_MENU_IconRect(x, y, 6, 20, 8, 22, true);
-    UI_MENU_IconRect(x, y, 20, 20, 22, 22, true);
+    UI_MENU_IconRing(x, y, 12, 12, 25, 50, 0, 0);
+    UI_MENU_IconRing(x, y, 12, 12, 0, 5, 0, 0);
+    UI_MENU_IconRect(x, y, 11, 2, 13, 5, true);
+    UI_MENU_IconRect(x, y, 11, 19, 13, 22, true);
+    UI_MENU_IconRect(x, y, 2, 11, 5, 13, true);
+    UI_MENU_IconRect(x, y, 19, 11, 22, 13, true);
+    UI_MENU_IconRect(x, y, 4, 4, 6, 6, true);
+    UI_MENU_IconRect(x, y, 18, 4, 20, 6, true);
+    UI_MENU_IconRect(x, y, 4, 18, 6, 20, true);
+    UI_MENU_IconRect(x, y, 18, 18, 20, 20, true);
 }
 
 static void UI_MENU_DrawLauncherScan(uint8_t x, uint8_t y)
 {   /* 電波（スキャン） */
-    UI_MENU_IconRing(x, y, 4, 23, 0, 8, 0, 0);
-    UI_MENU_IconRing(x, y, 4, 23, 64, 80, 1, -1);
-    UI_MENU_IconRing(x, y, 4, 23, 156, 188, 1, -1);
-    UI_MENU_IconRing(x, y, 4, 23, 380, 424, 1, -1);
+    UI_MENU_IconRing(x, y, 3, 20, 0, 6, 0, 0);
+    UI_MENU_IconRing(x, y, 3, 20, 49, 65, 1, -1);
+    UI_MENU_IconRing(x, y, 3, 20, 121, 149, 1, -1);
+    UI_MENU_IconRing(x, y, 3, 20, 256, 288, 1, -1);
 }
 
 static void UI_MENU_DrawLauncherPage(void)
@@ -1507,8 +1546,8 @@ static void UI_MENU_DrawLauncherPage(void)
     };
     const uint8_t icon_count = MENU_MainPageIconCount();
     const uint8_t idx = icon_count > 0 ? ((uint8_t)gSubMenuSelection % icon_count) : 0;
-    const uint8_t icon_left = 50;   /* JA: アイコンは 28x28 px（旧 40x40 より小さく） */
-    const uint8_t icon_top = 8;
+    const uint8_t icon_left = 52;   /* JA: アイコンは 24x24 px（旧 40x40 より小さく） */
+    const uint8_t icon_top = 10;
     char index_str[12];
 
     UI_DisplayClear();
@@ -1525,10 +1564,10 @@ static void UI_MENU_DrawLauncherPage(void)
     else if (idx == 4)
         UI_MENU_DrawLauncherScan(icon_left, icon_top);
     else
-        UI_DrawRectangleBuffer(gFrameBuffer, icon_left + 5, icon_top + 5, icon_left + 22, icon_top + 22, true);
+        UI_DrawRectangleBuffer(gFrameBuffer, icon_left + 4, icon_top + 4, icon_left + 19, icon_top + 19, true);
 
-    UI_MENU_DrawChevron(false, 15, 23, 12, 3);
-    UI_MENU_DrawChevron(true, 112, 23, 12, 3);
+    UI_MENU_DrawChevron(false, 15, 22, 5, 2);   /* JA: 小さく（旧 half_h 12 / 太さ 3） */
+    UI_MENU_DrawChevron(true, 112, 22, 5, 2);
 
     if (icon_count > 0)
     {
@@ -3220,15 +3259,15 @@ void UI_DisplayMenu(void)
             case MENU_SET_AUD:
                 if(gTxVfo->Modulation == MODULATION_AM) {
                     strcpy(String, SUBV(gSubMenu_SET_AUD_AM[gSubMenuSelection], gSubMenu_SET_AUD_AM_CN[gSubMenuSelection]));
-                    UI_PrintStringSmallNormal("AM", 114, 0, MENU_VALUE_ROW(0));
+                    UI_MENU_AudModeTagRight("AM", 114);
                 }
                 else if (gTxVfo->Modulation == MODULATION_USB) {
                     strcpy(String, "USB");
-                    UI_PrintStringSmallNormal("USB", 108, 0, MENU_VALUE_ROW(0));
+                    UI_MENU_AudModeTagRight("USB", 108);
                 }
                 else {
                     strcpy(String, SUBV(gSubMenu_SET_AUD_FM[gSubMenuSelection], gSubMenu_SET_AUD_FM_CN[gSubMenuSelection]));
-                    UI_PrintStringSmallNormal("FM", 114, 0, MENU_VALUE_ROW(0));
+                    UI_MENU_AudModeTagRight("FM", 114);
                 }
                 break;
         #endif
