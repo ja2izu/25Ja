@@ -2535,7 +2535,7 @@ void UI_DisplayMenu(void)
 #ifdef ENABLE_CHINESE
                 if (gUiLanguage == UI_LANGUAGE_CN)
                 {
-                    strcpy(String, has_user_hint ? "ユーザー\n設定" : "漢字\n万歳");   /* JA */
+                    strcpy(String, has_user_hint ? "ユーザー" : "漢字万歳");   /* JA */
                 }
                 else
 #endif
@@ -2558,7 +2558,7 @@ void UI_DisplayMenu(void)
             }
             else if (has_user_hint)
             {
-                strcpy(String, SUBV("User text", "ユーザー設定"));   /* JA */
+                strcpy(String, SUBV("User text", "ユーザー"));   /* JA */
             }
             else
             {
