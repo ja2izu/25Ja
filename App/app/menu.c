@@ -464,7 +464,8 @@ bool MENU_IsMenuIdExcludedFromBrowse(uint8_t menu_id)
            menu_id == MENU_SET_INV ||
            menu_id == MENU_SET_PTT ||
            menu_id == MENU_SET_TOT ||
-           menu_id == MENU_SET_EOT;
+           menu_id == MENU_SET_EOT ||
+           menu_id == MENU_SET_PWR;   /* JA: 出力設定は廃止（チャンネルの「送信出力」のみ） */
 }
 
 uint8_t MENU_GetVisibleCursorForActualIndex(uint8_t actual_menu_list_index)
@@ -476,9 +477,92 @@ uint8_t MENU_GetVisibleCursorForActualIndex(uint8_t actual_menu_list_index)
     return vis;
 }
 
+/* JA: メニューの分類（ランチャーのアイコン順）
+ *   0 チャンネル / 1 表示・音声 / 2 キー設定 / 3 システム / 4 スキャン
+ * 分類を指定していない項目は 3（システム）に入る。 */
+#define JA_GROUP_CHANNEL  0u
+#define JA_GROUP_DISPAUD  1u
+#define JA_GROUP_KEYS     2u
+#define JA_GROUP_SYSTEM   3u
+#define JA_GROUP_SCAN     4u
+
+static uint8_t MENU_GetGroupOfMenuId(uint8_t menu_id)
+{
+    switch (menu_id)
+    {
+        case MENU_STEP:
+        case MENU_TXP:
+        case MENU_R_DCS:
+        case MENU_R_CTCS:
+        case MENU_T_DCS:
+        case MENU_T_CTCS:
+        case MENU_SFT_D:
+        case MENU_OFFSET:
+        case MENU_W_N:
+        case MENU_BCL:
+        case MENU_COMPAND:
+        case MENU_AM:
+        case MENU_LIST_CH:
+        case MENU_MEM_CH:
+        case MENU_DEL_CH:
+        case MENU_MEM_NAME:
+            return JA_GROUP_CHANNEL;
+
+        case MENU_SQL:
+        case MENU_ROGER:
+        case MENU_MDC_ID:
+        case MENU_YAN_ID:
+        case MENU_YAN_ID_RX:
+        case MENU_MDC_ID_RX:
+        case MENU_STE:
+        case MENU_RP_STE:
+        case MENU_BEEP:
+        case MENU_MIC:
+#ifdef ENABLE_FEAT_F4HWN_AUDIO
+        case MENU_SET_AUD:
+#endif
+        case MENU_LANGUAGE:
+        case MENU_TDR:
+        case MENU_MDF:
+        case MENU_BREATH:
+        case MENU_ABR:
+        case MENU_ABR_MIN:
+        case MENU_ABR_MAX:
+        case MENU_ABR_ON_TX_RX:
+#ifdef ENABLE_FEAT_F4HWN_CTR
+        case MENU_SET_CTR:
+#endif
+        case MENU_SET_INV:
+#ifdef ENABLE_SPECTRUM
+        case MENU_SPECTRUM_MODE:
+#endif
+            return JA_GROUP_DISPAUD;
+
+        case MENU_F1SHRT:
+        case MENU_F1LONG:
+        case MENU_F2SHRT:
+        case MENU_F2LONG:
+        case MENU_MLONG:
+        case MENU_1_CALL:
+            return JA_GROUP_KEYS;
+
+        case MENU_S_LIST:
+        case MENU_S_PRI:
+        case MENU_S_PRI_CH_1:
+        case MENU_S_PRI_CH_2:
+        case MENU_SC_REV:
+#ifdef ENABLE_FEAT_F4HWN_SCAN_FASTER
+        case MENU_SET_SCN:
+#endif
+            return JA_GROUP_SCAN;
+
+        default:
+            return JA_GROUP_SYSTEM;
+    }
+}
+
 static bool MENU_IsMenuInIconGroup(uint8_t menu_number_1based, uint8_t menu_id, uint8_t icon_index)
 {
-    /* JA: ChDisp（MENU_MDF）を Channel カテゴリに出す（元は除外されていた） */
     if (MENU_IsMenuIdExcludedFromBrowse(menu_id))
         return false;
     if (MENU_IsHiddenDtmfMenu(menu_id))
@@ -486,98 +570,16 @@ static bool MENU_IsMenuInIconGroup(uint8_t menu_number_1based, uint8_t menu_id, 
 
     (void)menu_number_1based;
 
-    bool in_channel = false;
-    bool in_settings = false;
-    bool in_display = false;
-
-    /* 仅对明确指定的菜单做分组；未指定的一律归入“其它”。 */
-    if (menu_id == MENU_STEP ||
-        menu_id == MENU_TXP ||
-        menu_id == MENU_R_DCS ||
-        menu_id == MENU_R_CTCS ||
-        menu_id == MENU_T_DCS ||
-        menu_id == MENU_T_CTCS ||
-        menu_id == MENU_SFT_D ||
-        menu_id == MENU_OFFSET ||
-        menu_id == MENU_W_N ||
-        menu_id == MENU_BCL ||
-        menu_id == MENU_COMPAND ||
-        menu_id == MENU_AM ||
-        menu_id == MENU_LIST_CH ||
-        menu_id == MENU_MEM_CH ||
-        menu_id == MENU_DEL_CH ||
-        menu_id == MENU_MEM_NAME ||
-        menu_id == MENU_MDF)
-    {
-        in_channel = true;
-    }
-
-    if (menu_id == MENU_SQL ||
-        menu_id == MENU_ROGER ||
-        menu_id == MENU_MDC_ID ||
-        menu_id == MENU_YAN_ID ||
-        menu_id == MENU_YAN_ID_RX ||
-        menu_id == MENU_MDC_ID_RX ||
-        menu_id == MENU_STE ||
-        menu_id == MENU_RP_STE ||
-        menu_id == MENU_BEEP ||
-        menu_id == MENU_MIC ||
-        menu_id == MENU_F1SHRT ||
-        menu_id == MENU_F1LONG ||
-        menu_id == MENU_F2SHRT ||
-        menu_id == MENU_F2LONG ||
-        menu_id == MENU_MLONG ||
-        menu_id == MENU_BOOT_SOUND)
-    {
-        in_settings = true;
-    }
-
-    if (menu_id == MENU_LANGUAGE ||
-        menu_id == MENU_TDR ||
-        menu_id == MENU_PONMSG ||
-        menu_id == MENU_BOOT_HINT ||
-        menu_id == MENU_BREATH ||
-        menu_id == MENU_ABR ||
-        menu_id == MENU_ABR_MIN ||
-        menu_id == MENU_ABR_MAX ||
-        menu_id == MENU_ABR_ON_TX_RX ||
-#ifdef ENABLE_FEAT_F4HWN_CTR
-        menu_id == MENU_SET_CTR ||
-#endif
-        menu_id == MENU_SET_INV ||
-        menu_id == MENU_BAT_TXT
-#ifdef ENABLE_AUDIO_BAR
-        || menu_id == MENU_MIC_BAR
-#endif
-#ifdef ENABLE_SPECTRUM
-        || menu_id == MENU_SPECTRUM_MODE
-#endif
-        )
-    {
-        in_display = true;
-    }
-
-    const bool in_about = (menu_id == MENU_VOL);
-    const bool in_other = !(in_channel || in_settings || in_display || in_about);
-
-    if (icon_index == 0)
-        return in_channel;     // Channel
-    if (icon_index == 1)
-        return in_settings;    // Settings
-    if (icon_index == 2u)
-        return in_display;     // Display
-    if (icon_index == 4u)
-        return in_about;       // About
-    if (!in_other)
+    if (MENU_GetGroupOfMenuId(menu_id) != icon_index)
         return false;
-    if (icon_index == 3u && (menu_id == MENU_TX_LOCK || menu_id == MENU_SET_TMR))
-        return false;          // Other: hide TX_LOCK and SET_TMR entry
+    if (icon_index == JA_GROUP_SYSTEM && (menu_id == MENU_TX_LOCK || menu_id == MENU_SET_TMR))
+        return false;          /* System: hide TX_LOCK and SET_TMR entry */
     return true;
 }
 
 static uint8_t MENU_GetIconOrderPriority(uint8_t icon_index, uint8_t menu_id)
 {
-    if (icon_index == 0u)
+    if (icon_index == JA_GROUP_CHANNEL)
     {
         if (menu_id == MENU_STEP) return 0u;
         if (menu_id == MENU_TXP) return 1u;
@@ -595,10 +597,9 @@ static uint8_t MENU_GetIconOrderPriority(uint8_t icon_index, uint8_t menu_id)
         if (menu_id == MENU_MEM_CH) return 13u;
         if (menu_id == MENU_DEL_CH) return 14u;
         if (menu_id == MENU_MEM_NAME) return 15u;
-        if (menu_id == MENU_MDF) return 16u;
     }
 
-    if (icon_index == 1u)
+    if (icon_index == JA_GROUP_DISPAUD)
     {
         if (menu_id == MENU_SQL) return 0u;
         if (menu_id == MENU_ROGER) return 1u;
@@ -610,35 +611,70 @@ static uint8_t MENU_GetIconOrderPriority(uint8_t icon_index, uint8_t menu_id)
         if (menu_id == MENU_RP_STE) return 7u;
         if (menu_id == MENU_BEEP) return 8u;
         if (menu_id == MENU_MIC) return 9u;
-        if (menu_id == MENU_F1SHRT) return 10u;
-        if (menu_id == MENU_F1LONG) return 11u;
-        if (menu_id == MENU_F2SHRT) return 12u;
-        if (menu_id == MENU_F2LONG) return 13u;
-        if (menu_id == MENU_MLONG) return 14u;
-        if (menu_id == MENU_BOOT_SOUND) return 15u;
+#ifdef ENABLE_FEAT_F4HWN_AUDIO
+        if (menu_id == MENU_SET_AUD) return 10u;
+#endif
+        if (menu_id == MENU_LANGUAGE) return 11u;
+        if (menu_id == MENU_TDR) return 12u;
+        if (menu_id == MENU_MDF) return 13u;
+        if (menu_id == MENU_BREATH) return 14u;
+        if (menu_id == MENU_ABR) return 15u;
+        if (menu_id == MENU_ABR_MIN) return 16u;
+        if (menu_id == MENU_ABR_MAX) return 17u;
+        if (menu_id == MENU_ABR_ON_TX_RX) return 18u;
+#ifdef ENABLE_FEAT_F4HWN_CTR
+        if (menu_id == MENU_SET_CTR) return 19u;
+#endif
+        if (menu_id == MENU_SET_INV) return 20u;
+#ifdef ENABLE_SPECTRUM
+        if (menu_id == MENU_SPECTRUM_MODE) return 21u;
+#endif
     }
 
-    if (icon_index == 2u)
+    if (icon_index == JA_GROUP_KEYS)
     {
-        if (menu_id == MENU_LANGUAGE) return 0u;
-        if (menu_id == MENU_TDR) return 1u;
-        if (menu_id == MENU_PONMSG) return 2u;
-        if (menu_id == MENU_BOOT_HINT) return 3u;
-        if (menu_id == MENU_ABR) return 4u;
-        if (menu_id == MENU_ABR_MIN) return 5u;
-        if (menu_id == MENU_ABR_MAX) return 6u;
-        if (menu_id == MENU_ABR_ON_TX_RX) return 7u;
-#ifdef ENABLE_FEAT_F4HWN_CTR
-        if (menu_id == MENU_SET_CTR) return 8u;
+        if (menu_id == MENU_F1SHRT) return 0u;
+        if (menu_id == MENU_F1LONG) return 1u;
+        if (menu_id == MENU_F2SHRT) return 2u;
+        if (menu_id == MENU_F2LONG) return 3u;
+        if (menu_id == MENU_MLONG) return 4u;
+        if (menu_id == MENU_1_CALL) return 5u;
+    }
+
+    if (icon_index == JA_GROUP_SCAN)
+    {
+        if (menu_id == MENU_S_LIST) return 0u;
+        if (menu_id == MENU_S_PRI) return 1u;
+        if (menu_id == MENU_S_PRI_CH_1) return 2u;
+        if (menu_id == MENU_S_PRI_CH_2) return 3u;
+        if (menu_id == MENU_SC_REV) return 4u;
+#ifdef ENABLE_FEAT_F4HWN_SCAN_FASTER
+        if (menu_id == MENU_SET_SCN) return 5u;
 #endif
-        if (menu_id == MENU_SET_INV) return 9u;
-        if (menu_id == MENU_BAT_TXT) return 10u;
+    }
+
+    if (icon_index == JA_GROUP_SYSTEM)
+    {
+        /* 未指定の項目は 100、本体情報（MENU_VOL）は最後 */
+        if (menu_id == MENU_BOOT_SOUND) return 0u;
+        if (menu_id == MENU_PONMSG) return 1u;
+        if (menu_id == MENU_BOOT_HINT) return 2u;
+        if (menu_id == MENU_BAT_TXT) return 3u;
 #ifdef ENABLE_AUDIO_BAR
-        if (menu_id == MENU_MIC_BAR) return 11u;
+        if (menu_id == MENU_MIC_BAR) return 4u;
 #endif
-#ifdef ENABLE_SPECTRUM
-        if (menu_id == MENU_SPECTRUM_MODE) return 12u;
-#endif
+        if (menu_id == MENU_AUTOLK) return 5u;
+        if (menu_id == MENU_SET_LCK) return 6u;
+        if (menu_id == MENU_TOT) return 7u;
+        if (menu_id == MENU_SAVE) return 8u;
+        if (menu_id == MENU_SET_OFF) return 9u;
+        if (menu_id == MENU_F_LOCK) return 10u;
+        if (menu_id == MENU_BATCAL) return 11u;
+        if (menu_id == MENU_BATTYP) return 12u;
+        if (menu_id == MENU_SET_NAV) return 13u;
+        if (menu_id == MENU_RESET) return 14u;
+        if (menu_id == MENU_VOL) return 255u;
+        return 100u;
     }
 
     return 255u;
@@ -887,7 +923,7 @@ int MENU_GetLimits(uint8_t menu_id, int32_t *pMin, int32_t *pMax)
             break;
 
         case MENU_TXP:
-            //*pMin = 0;
+            *pMin = 1;    /* JA: USER（0）は選べなくする */
             *pMax = ARRAY_SIZE(gSubMenu_TXP) - 1;
             break;
 
@@ -1962,7 +1998,8 @@ void MENU_ShowCurrentSetting(void)
             break;
 
         case MENU_TXP:
-            gSubMenuSelection = gTxVfo->OUTPUT_POWER;
+            /* JA: USER（0）は選択肢から廃止。0 のチャンネルは Low1 として表示する（保存するまで書き換えない） */
+            gSubMenuSelection = (gTxVfo->OUTPUT_POWER != 0) ? gTxVfo->OUTPUT_POWER : 1;
             break;
 
         case MENU_RESET:
@@ -2836,34 +2873,6 @@ static void MENU_Key_EXIT(bool bKeyPressed, bool bKeyHeld)
                 }
             }
 
-            /* About (icon 4): EXIT from level 3 returns to level-1 launcher on About, not level-2 list */
-            if (UI_MENU_GetCurrentMenuId() == MENU_VOL &&
-                gMenuUseMainOnlyStatus &&
-                gMenuMainPageIconIndex == 4u)
-            {
-                gAskForConfirmation = 0;
-                gIsInSubMenu = false;
-                gInputBoxIndex = 0;
-                gFlagRefreshSetting = true;
-
-                #ifdef ENABLE_VOICE
-                    gAnotherVoiceID = VOICE_ID_CANCEL;
-                #endif
-
-                MENU_RecordSelectionBeforeLeaveMenuToMain();
-                gMenuMainPageLastValid = true;
-                gMenuMainPageLastIconIndex = gMenuMainPageIconIndex;
-
-                MENU_ActivateMainPage();
-                gRequestDisplayScreen = DISPLAY_MENU;
-
-                if (gEeprom.BACKLIGHT_TIME == 0)
-                {
-                    BACKLIGHT_TurnOff();
-                }
-                return;
-            }
-
             if (gInputBoxIndex == 0 || UI_MENU_GetCurrentMenuId() != MENU_OFFSET)
             {
                 gAskForConfirmation = 0;
@@ -2948,15 +2957,6 @@ static void MENU_Key_MENU(const bool bKeyPressed, const bool bKeyHeld)
             gMenuCursor = UI_MENU_GetMenuIdx(gMenuSecondPageLastMenuId[gMenuMainPageIconIndex]);
         else
             gMenuCursor = 0;
-        /* About (icon 4): list is only MENU_VOL (SysInf / firmware) — avoid stale cursor mapping to another group */
-        if (gMenuMainPageIconIndex == 4u)
-        {
-            gMenuCursor = 0;
-            /* Skip level-2 browse; open About (MENU_VOL) detail directly like a third-level screen */
-            gIsInSubMenu = true;
-            edit_index = -1;
-            gMemNameCandidateCount = 0;
-        }
         gRequestDisplayScreen = DISPLAY_MENU;
         return;
     }
@@ -3086,13 +3086,6 @@ static void MENU_Key_MENU(const bool bKeyPressed, const bool bKeyHeld)
     if (gIsInSubMenu)
     {
         const int m = UI_MENU_GetCurrentMenuId();
-        if (m == MENU_VOL &&
-            gMenuUseMainOnlyStatus &&
-            gMenuMainPageIconIndex == 4u)
-        {
-            return;
-        }
-
         if (m == MENU_RESET  ||
             m == MENU_MEM_CH ||
             m == MENU_DEL_CH ||

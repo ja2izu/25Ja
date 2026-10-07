@@ -27,17 +27,17 @@ const char *UI_MENU_GetMenuTitle(const t_menu_item *item)
     case MENU_SCR:          return "秘話";
 #endif
     case MENU_BCL:          return "ビジー ロック";
-    case MENU_COMPAND:      return "音声 圧縮伸張";
-    case MENU_AM:           return "変調方式";
+    case MENU_COMPAND:      return "Compand";
+    case MENU_AM:           return "受信 モード";
 #ifdef ENABLE_FEAT_F4HWN
     case MENU_TX_LOCK:      return "バンド外 送信禁止";
 #endif
-    case MENU_LIST_CH:      return "CHリスト";
+    case MENU_LIST_CH:      return "スキャン グループ";
     case MENU_MEM_CH:       return "CH保存";
     case MENU_DEL_CH:       return "CH削除";
     case MENU_MEM_NAME:     return "CH名 編集";
     case MENU_CN_MEM_NAME:  return "CH名 編集";
-    case MENU_S_LIST:       return "スキャン リスト";
+    case MENU_S_LIST:       return "スキャン グループ";
     case MENU_S_PRI:        return "優先 スキャン";
     case MENU_S_PRI_CH_1:   return "優先CH""1";
     case MENU_S_PRI_CH_2:   return "優先CH""2";
@@ -115,7 +115,7 @@ const char *UI_MENU_GetMenuTitle(const t_menu_item *item)
 #else
     case MENU_VOL:          return "電池電圧";
 #endif
-    case MENU_TDR:          return "受信方式<主画面>";
+    case MENU_TDR:          return "待受方式<主画面>";
     case MENU_SQL:          return "スケルチ";
 #ifdef ENABLE_FEAT_F4HWN
     case MENU_SET_PWR:      return "出力設定";
@@ -148,7 +148,7 @@ const char *UI_MENU_GetMenuTitle(const t_menu_item *item)
 #ifdef ENABLE_FEAT_F4HWN_AUDIO
     case MENU_SET_AUD:      return "音質設定";
 #endif
-    case MENU_SET_NAV:      return "ナビキー";
+    case MENU_SET_NAV:      return "機種依存 キー";
 #endif
     case MENU_RESET:        return "リセット";
     case MENU_F_LOCK:       return "バンド ロック";

@@ -1119,65 +1119,6 @@ static void UI_MENU_DrawMemNameEdit(unsigned int sub_val_x1, unsigned int sub_va
 }
 #endif /* ENABLE_CHINESE */
 
-static void UI_MENU_DrawLauncherGear40(uint8_t x, uint8_t y)
-{
-    static const uint64_t GEAR40[40] = {
-        0x0000000000ULL,
-        0x00007E0000ULL,
-        0x00007E0000ULL,
-        0x00007E0000ULL,
-        0x00007E0000ULL,
-        0x01C3FFC380ULL,
-        0x03EFFFF7C0ULL,
-        0x07FFFFFFE0ULL,
-        0x07FFFFFFE0ULL,
-        0x07FFFFFFE0ULL,
-        0x03FF00FFC0ULL,
-        0x01FC003F80ULL,
-        0x03F8001FC0ULL,
-        0x03F0000FC0ULL,
-        0x07E00007E0ULL,
-        0x07E00007E0ULL,
-        0x07C00003E0ULL,
-        0x7FC00003FEULL,
-        0x7FC00003FEULL,
-        0x7FC00003FEULL,
-        0x7FC00003FEULL,
-        0x7FC00003FEULL,
-        0x7FC00003FEULL,
-        0x07C00003E0ULL,
-        0x07E00007E0ULL,
-        0x07E00007E0ULL,
-        0x03F0000FC0ULL,
-        0x03F8001FC0ULL,
-        0x01FC003F80ULL,
-        0x03FF00FFC0ULL,
-        0x07FFFFFFE0ULL,
-        0x07FFFFFFE0ULL,
-        0x07FFFFFFE0ULL,
-        0x03EFFFF7C0ULL,
-        0x01C3FFC380ULL,
-        0x00007E0000ULL,
-        0x00007E0000ULL,
-        0x00007E0000ULL,
-        0x00007E0000ULL,
-        0x0000000000ULL
-    };
-
-    // Slightly reduce height to 36, keep width stretched to 48.
-    for (uint8_t yy = 0; yy < 36; yy++)
-    {
-        const uint8_t sy = (uint8_t)((yy * 40u) / 36u);
-        const uint64_t row = GEAR40[sy];
-        for (uint8_t xx = 0; xx < 48; xx++)
-        {
-            const uint8_t sx = (uint8_t)((xx * 40u) / 48u);
-            const uint64_t mask = 1ULL << (39 - sx);
-            PutPixel((uint8_t)(x + xx), (uint8_t)(y + yy), (row & mask) != 0);
-        }
-    }
-}
-
 #ifdef ENABLE_CHINESE
 static bool UI_MENU_IsToneMenu(const uint8_t menu_id)
 {
@@ -1356,7 +1297,7 @@ static void UI_MENU_DrawLevel2SplitLayout(uint8_t menu_count, char *String)
         }
         else if (UI_MENU_GetCurrentMenuId() == MENU_TDR)
         {
-            UI_PrintStringSmallAtPixel("受信方式", 0, left_end, l2_y1_lo, l2_y1_hi, 3u);
+            UI_PrintStringSmallAtPixel("待受方式", 0, left_end, l2_y1_lo, l2_y1_hi, 3u);
             UI_PrintStringSmallAtPixel("<主画面>", 0, left_end, l2_y2_lo, l2_y2_hi, 0u);
         }
         else if (UI_MENU_GetCurrentMenuId() == MENU_VOL)
@@ -1461,162 +1402,130 @@ static void UI_MENU_DrawCccMenuChrome(const t_menu_item *item)
 #endif
 }
 
-static void UI_MENU_DrawLauncherChannel40(uint8_t x, uint8_t y)
+/* JA: ランチャーのアイコン（28x28 px）。PutPixel のみで描く。0=チャンネル 1=表示・音声 2=キー設定 3=システム 4=スキャン */
+static void UI_MENU_IconRect(uint8_t x, uint8_t y, uint8_t l, uint8_t t, uint8_t r, uint8_t b, bool fill)
 {
-    // Document icon with folded corner + 3 lines, matching reference style.
-    const uint8_t l = x + 7, t = y + 3, r = x + 41, b = y + 33;
-
-    // Main outline (open top-right for folded corner)
-    UI_DrawLineBuffer(gFrameBuffer, l + 3, t, r - 9, t, true);
-    UI_DrawLineBuffer(gFrameBuffer, l, t + 3, l, b - 3, true);
-    UI_DrawLineBuffer(gFrameBuffer, l + 3, b, r - 3, b, true);
-    UI_DrawLineBuffer(gFrameBuffer, r, t + 12, r, b - 3, true);
-
-    // Rounded corners
-    UI_DrawLineBuffer(gFrameBuffer, l, t + 3, l + 3, t, true);
-    UI_DrawLineBuffer(gFrameBuffer, l, b - 3, l + 3, b, true);
-    UI_DrawLineBuffer(gFrameBuffer, r - 3, b, r, b - 3, true);
-
-    // Folded corner
-    UI_DrawLineBuffer(gFrameBuffer, r - 15, t + 11, r - 1, t - 1, true);
-
-    // Inner horizontal lines
-    UI_DrawLineBuffer(gFrameBuffer, l + 6,  t + 8,  l + 22, t + 8,  true);
-    UI_DrawLineBuffer(gFrameBuffer, l + 6,  t + 14, l + 18, t + 14, true);
-    UI_DrawLineBuffer(gFrameBuffer, l + 6,  t + 21, l + 14, t + 21, true);
+    for (uint8_t yy = t; yy <= b; yy++)
+        for (uint8_t xx = l; xx <= r; xx++)
+            if (fill || xx == l || xx == r || yy == t || yy == b)
+                PutPixel((uint8_t)(x + xx), (uint8_t)(y + yy), true);
 }
 
-static void UI_MENU_DrawLauncherOther40(uint8_t x, uint8_t y)
+/* 円環の一部。象限指定: xsign/ysign は +1 / -1 / 0（0 は両側） */
+static void UI_MENU_IconRing(uint8_t x, uint8_t y, int8_t cx, int8_t cy, int16_t r2_lo, int16_t r2_hi, int8_t xsign, int8_t ysign)
 {
-    // Folder icon in 48x36 footprint
-    UI_DrawLineBuffer(gFrameBuffer, x + 6,  y + 8,  x + 21, y + 8,  true);
-    UI_DrawLineBuffer(gFrameBuffer, x + 21, y + 8,  x + 26, y + 13, true);
-    UI_DrawLineBuffer(gFrameBuffer, x + 26, y + 13, x + 39, y + 13, true);
-    UI_DrawLineBuffer(gFrameBuffer, x + 39, y + 13, x + 41, y + 15, true);
-    UI_DrawRectangleBuffer(gFrameBuffer, x + 5, y + 15, x + 42, y + 33, true);
-    UI_DrawLineBuffer(gFrameBuffer, x + 6, y + 8, x + 6, y + 15, true);
-    // thicken main strokes
-    UI_DrawLineBuffer(gFrameBuffer, x + 5, y + 16, x + 42, y + 16, true);
-    UI_DrawLineBuffer(gFrameBuffer, x + 5, y + 33, x + 42, y + 33, true);
+    for (int16_t yy = -24; yy <= 24; yy++)
+        for (int16_t xx = -24; xx <= 24; xx++)
+        {
+            const int16_t r2 = (int16_t)(xx * xx + yy * yy);
+            const int16_t px = (int16_t)(cx + xx);
+            const int16_t py = (int16_t)(cy + yy);
+            if (r2 < r2_lo || r2 > r2_hi)
+                continue;
+            if ((xsign > 0 && xx < 0) || (xsign < 0 && xx > 0))
+                continue;
+            if ((ysign > 0 && yy < 0) || (ysign < 0 && yy > 0))
+                continue;
+            if (px < 0 || px > 27 || py < 0 || py > 27)
+                continue;
+            PutPixel((uint8_t)(x + px), (uint8_t)(y + py), true);
+        }
 }
 
-static void UI_MENU_DrawLauncherDisplay40(uint8_t x, uint8_t y)
-{
-    uint8_t body_left = (uint8_t)(x + 6u);
-    uint8_t body_top = (uint8_t)(y + 10u);
-    uint8_t body_right = (uint8_t)(x + 42u);
-    uint8_t body_bottom = (uint8_t)(y + 33u);
-    uint8_t screen_left = (uint8_t)(x + 12u);
-    uint8_t screen_top = (uint8_t)(y + 14u);
-    uint8_t screen_right = (uint8_t)(x + 30u);
-    uint8_t screen_bottom = (uint8_t)(y + 25u);
-    uint8_t antenna_top_left_x = (uint8_t)(x + 21u);
-    uint8_t antenna_top_right_x = (uint8_t)(x + 30u);
-    uint8_t antenna_mid_x = (uint8_t)(x + 24u);
-    uint8_t antenna_top_y = (uint8_t)(y + 2u);
-    uint8_t antenna_bottom_y = body_top;
-
-    UI_DrawRectangleBuffer(gFrameBuffer, body_left, body_top, body_right, body_bottom, true);
-    UI_DrawRectangleBuffer(gFrameBuffer, screen_left, screen_top, screen_right, screen_bottom, true);
-
+static void UI_MENU_DrawLauncherChannel(uint8_t x, uint8_t y)
+{   /* 折り目つきの書類 */
+    UI_MENU_IconRect(x, y, 5, 5, 5, 26, false);          /* 左辺 */
+    UI_MENU_IconRect(x, y, 5, 26, 22, 26, false);        /* 下辺 */
+    UI_MENU_IconRect(x, y, 22, 7, 22, 26, false);        /* 右辺 */
+    UI_MENU_IconRect(x, y, 5, 1, 16, 1, false);          /* 上辺 */
+    for (uint8_t i = 0; i <= 6; i++)                     /* 折り目の斜め */
+        PutPixel((uint8_t)(x + 16 + i), (uint8_t)(y + 1 + i), true);
+    for (uint8_t i = 0; i <= 5; i++)                     /* 折り返しの縁 */
     {
-        uint8_t left_line_height = (uint8_t)(antenna_bottom_y - antenna_top_y);
-        uint8_t right_line_height = (uint8_t)(antenna_bottom_y - antenna_top_y);
-        uint8_t left_line_dx = (uint8_t)(antenna_mid_x - antenna_top_left_x);
-        uint8_t right_line_dx = (uint8_t)(antenna_top_right_x - antenna_mid_x);
-        uint8_t line_step = 0u;
-
-        for (line_step = 0u; line_step <= left_line_height; line_step++)
-        {
-            uint8_t line_y = (uint8_t)(antenna_top_y + line_step);
-            uint8_t left_line_x = (uint8_t)(antenna_top_left_x + (line_step * left_line_dx) / left_line_height);
-            uint8_t right_line_x = (uint8_t)(antenna_top_right_x - (line_step * right_line_dx) / right_line_height);
-
-            PutPixel(left_line_x, line_y, true);
-            PutPixel(right_line_x, line_y, true);
-        }
+        PutPixel((uint8_t)(x + 16), (uint8_t)(y + 1 + i), true);
+        PutPixel((uint8_t)(x + 16 + i), (uint8_t)(y + 7), true);
     }
-
-    UI_DrawRectangleBuffer(gFrameBuffer, x + 34u, y + 16u, x + 36u, y + 19u, true);
-    UI_DrawRectangleBuffer(gFrameBuffer, x + 34u, y + 22u, x + 36u, y + 25u, true);
+    UI_MENU_IconRect(x, y, 9, 12, 18, 12, false);
+    UI_MENU_IconRect(x, y, 9, 17, 18, 17, false);
+    UI_MENU_IconRect(x, y, 9, 22, 14, 22, false);
 }
 
-static void UI_MENU_DrawLauncherAbout40(uint8_t x, uint8_t y)
-{
-    const int16_t cx = (int16_t)x + 24;
-    const int16_t cy = (int16_t)y + 18;
+static void UI_MENU_DrawLauncherDispAud(uint8_t x, uint8_t y)
+{   /* スピーカー */
+    UI_MENU_IconRect(x, y, 2, 9, 6, 18, true);
+    for (uint8_t i = 0; i <= 6; i++)
+    {
+        PutPixel((uint8_t)(x + 7 + i), (uint8_t)(y + 9 - i), true);
+        PutPixel((uint8_t)(x + 7 + i), (uint8_t)(y + 18 + i), true);
+    }
+    UI_MENU_IconRect(x, y, 7, 9, 7, 18, false);
+    UI_MENU_IconRect(x, y, 13, 3, 13, 24, false);
+    UI_MENU_IconRing(x, y, 14, 13, 42, 56, 1, 0);        /* 音波（小） */
+    UI_MENU_IconRing(x, y, 14, 13, 90, 110, 1, 0);       /* 音波（大） */
+}
 
-    // Outer circle ring
-    for (int16_t yy = -16; yy <= 16; yy++)
-        for (int16_t xx = -16; xx <= 16; xx++)
-        {
-            const int32_t r2 = xx * xx + yy * yy;
-            if (r2 <= (16 * 16) && r2 >= (13 * 13))
-                PutPixel((uint8_t)(cx + xx), (uint8_t)(cy + yy), true);
-        }
+static void UI_MENU_DrawLauncherKeys(uint8_t x, uint8_t y)
+{   /* キーパッド（2x2） */
+    UI_MENU_IconRect(x, y, 3, 3, 12, 12, false);
+    UI_MENU_IconRect(x, y, 15, 3, 24, 12, false);
+    UI_MENU_IconRect(x, y, 3, 15, 12, 24, false);
+    UI_MENU_IconRect(x, y, 15, 15, 24, 24, false);
+    UI_MENU_IconRect(x, y, 6, 6, 9, 9, true);
+}
 
-    // Exclamation mark dot (upper), separated from stem.
-    for (int16_t yy = -2; yy <= 2; yy++)
-        for (int16_t xx = -2; xx <= 2; xx++)
-            if ((xx * xx + yy * yy) <= 4)
-                PutPixel((uint8_t)(cx + xx), (uint8_t)(y + 10 + yy), true);
+static void UI_MENU_DrawLauncherSystem(uint8_t x, uint8_t y)
+{   /* 歯車 */
+    UI_MENU_IconRing(x, y, 14, 14, 36, 70, 0, 0);
+    UI_MENU_IconRing(x, y, 14, 14, 0, 6, 0, 0);
+    UI_MENU_IconRect(x, y, 12, 3, 16, 6, true);
+    UI_MENU_IconRect(x, y, 12, 22, 16, 25, true);
+    UI_MENU_IconRect(x, y, 3, 12, 6, 16, true);
+    UI_MENU_IconRect(x, y, 22, 12, 25, 16, true);
+    UI_MENU_IconRect(x, y, 6, 6, 8, 8, true);
+    UI_MENU_IconRect(x, y, 20, 6, 22, 8, true);
+    UI_MENU_IconRect(x, y, 6, 20, 8, 22, true);
+    UI_MENU_IconRect(x, y, 20, 20, 22, 22, true);
+}
 
-    // Stem (lower) with rounded ends and explicit gap from dot.
-    for (uint8_t yy = 18; yy <= 28; yy++)
-        for (uint8_t xx = 22; xx <= 26; xx++)
-            PutPixel((uint8_t)(x + xx), (uint8_t)(y + yy), true);
-    for (int16_t yy = -2; yy <= 2; yy++)
-        for (int16_t xx = -2; xx <= 2; xx++)
-            if ((xx * xx + yy * yy) <= 4)
-            {
-                PutPixel((uint8_t)(x + 24 + xx), (uint8_t)(y + 18 + yy), true);
-                PutPixel((uint8_t)(x + 24 + xx), (uint8_t)(y + 28 + yy), true);
-            }
+static void UI_MENU_DrawLauncherScan(uint8_t x, uint8_t y)
+{   /* 電波（スキャン） */
+    UI_MENU_IconRing(x, y, 4, 23, 0, 8, 0, 0);
+    UI_MENU_IconRing(x, y, 4, 23, 64, 80, 1, -1);
+    UI_MENU_IconRing(x, y, 4, 23, 156, 188, 1, -1);
+    UI_MENU_IconRing(x, y, 4, 23, 380, 424, 1, -1);
 }
 
 static void UI_MENU_DrawLauncherPage(void)
 {
-    static const char * const names_en[] = {"Channel", "Settings", "Display", "Other", "About"};
+    static const char * const names_en[] = {"Channel", "Disp/Audio", "Keys", "System", "Scan"};
     static const char * const names_cn[] = {
         "チャンネル",
-        "設定",
-        "表示",
-        "その他",
-        "情報"
+        "表示/音声",
+        "キー設定",
+        "システム",
+        "スキャン"
     };
     const uint8_t icon_count = MENU_MainPageIconCount();
     const uint8_t idx = icon_count > 0 ? ((uint8_t)gSubMenuSelection % icon_count) : 0;
-    const uint8_t icon_left = 40;
-    const uint8_t icon_top = 3;
+    const uint8_t icon_left = 50;   /* JA: アイコンは 28x28 px（旧 40x40 より小さく） */
+    const uint8_t icon_top = 8;
     char index_str[12];
 
     UI_DisplayClear();
     UI_DrawLineBuffer(gFrameBuffer, 0, 0, LCD_WIDTH - 1, 0, true);
 
     if (idx == 0)
-    {
-        UI_MENU_DrawLauncherChannel40(icon_left, icon_top);
-    }
+        UI_MENU_DrawLauncherChannel(icon_left, icon_top);
     else if (idx == 1)
-    {
-        UI_MENU_DrawLauncherGear40(icon_left, icon_top);
-    }
+        UI_MENU_DrawLauncherDispAud(icon_left, icon_top);
     else if (idx == 2)
-    {
-        UI_MENU_DrawLauncherDisplay40(icon_left, icon_top);
-    }
+        UI_MENU_DrawLauncherKeys(icon_left, icon_top);
     else if (idx == 3)
-    {
-        UI_MENU_DrawLauncherOther40(icon_left, icon_top);
-    }
+        UI_MENU_DrawLauncherSystem(icon_left, icon_top);
     else if (idx == 4)
-    {
-        UI_MENU_DrawLauncherAbout40(icon_left, icon_top);
-    }
+        UI_MENU_DrawLauncherScan(icon_left, icon_top);
     else
-    {
-        UI_DrawRectangleBuffer(gFrameBuffer, icon_left + 5, icon_top + 5, icon_left + 34, icon_top + 34, true);
-    }
+        UI_DrawRectangleBuffer(gFrameBuffer, icon_left + 5, icon_top + 5, icon_left + 22, icon_top + 22, true);
 
     UI_MENU_DrawChevron(false, 15, 23, 12, 3);
     UI_MENU_DrawChevron(true, 112, 23, 12, 3);
