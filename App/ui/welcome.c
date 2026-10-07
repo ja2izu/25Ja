@@ -119,6 +119,16 @@ static void UI_Welcome_DrawBootHintBottom(void)
     const uint8_t boot_hint_bottom_y_end = 63u;
 
 #ifdef ENABLE_CHINESE
+    /* JA: 値1はNeonPlugで書いたユーザー文言があればそれを出す(言語に関係なく) */
+    {
+        char user_hint[BOOT_HINT_TEXT_BYTES + 1u];
+
+        if (gSetting_boot_hint == 1 && SETTINGS_FetchBootHintText(user_hint))
+        {
+            UI_PrintStringSmallAtPixel(user_hint, 0, 127, boot_hint_bottom_y_start, boot_hint_bottom_y_end, 3u);
+            return;
+        }
+    }
     if (gUiLanguage == UI_LANGUAGE_CN)
     {
         if (gSetting_boot_hint == 0)
@@ -127,11 +137,11 @@ static void UI_Welcome_DrawBootHintBottom(void)
         }
         else if (gSetting_boot_hint == 1)
         {
-            UI_PrintStringSmallAtPixel("魅力漢字", 0, 127, boot_hint_bottom_y_start, boot_hint_bottom_y_end, 3u);
+            UI_PrintStringSmallAtPixel("漢字万歳", 0, 127, boot_hint_bottom_y_start, boot_hint_bottom_y_end, 3u);
         }
         else
         {
-            UI_PrintStringSmallAtPixel("２０２６版", 0, 127, boot_hint_bottom_y_start, boot_hint_bottom_y_end, 3u);
+            UI_PrintStringSmallAtPixel("2026年版", 0, 127, boot_hint_bottom_y_start, boot_hint_bottom_y_end, 3u);
         }
     }
     else
@@ -317,9 +327,9 @@ void UI_DisplayWelcome(void)
             if (gSetting_boot_hint == 0) {
                 UI_PrintStringSmallAtPixel("にこじゃ", 0, 127, 4u, 15u, 3u);
             } else if (gSetting_boot_hint == 1) {
-                UI_PrintStringSmallAtPixel("魅力漢字", 0, 127, 4u, 15u, 3u);
+                UI_PrintStringSmallAtPixel("漢字万歳", 0, 127, 4u, 15u, 3u);
             } else {
-                UI_PrintStringSmallAtPixel("２０２６版", 0, 127, 4u, 15u, 3u);
+                UI_PrintStringSmallAtPixel("2026年版", 0, 127, 4u, 15u, 3u);
             }
         } else
 #endif

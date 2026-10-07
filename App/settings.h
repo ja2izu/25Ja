@@ -369,6 +369,12 @@ bool     SETTINGS_ChannelNameHasCjkUtf8(const char *s);
 void     SETTINGS_FetchListName(char *s, uint8_t list);
 /* JA: 表示用 "03 防災" / 名前なしは "03" / ALL。out は 20 B 以上 */
 void     SETTINGS_FormatListLabel(char *out, uint8_t list);
+/* JA: 起動表示(BootHnt)の値1のユーザー文言 (SPI 0x0089A0, 24 B, UTF-8)。
+ * 有効な文字列があれば true。s は 25 B 以上。表示幅 128 px を超える分は切る
+ * (半角 7 px、漢字・かな 13 px 送り) */
+#define BOOT_HINT_TEXT_BASE    0x0089A0u
+#define BOOT_HINT_TEXT_BYTES   24u
+bool     SETTINGS_FetchBootHintText(char *s);
 #endif
 /* mode: 0=VFO, 1=ALL, 2=OEM (wipe AES sector, then power-off prompt) */
 void     SETTINGS_FactoryReset(uint8_t mode);

@@ -2525,17 +2525,22 @@ void UI_DisplayMenu(void)
             break;
 
         case MENU_BOOT_HINT:
+        {
+            /* JA: 値1にユーザー文言(NeonPlugで書込)があるか */
+            char user_hint[BOOT_HINT_TEXT_BYTES + 1u];
+            const bool has_user_hint = (gSubMenuSelection == 1) && SETTINGS_FetchBootHintText(user_hint);
+
             if (gSubMenuSelection == 1 && !gIsInSubMenu)
             {
 #ifdef ENABLE_CHINESE
                 if (gUiLanguage == UI_LANGUAGE_CN)
                 {
-                    strcpy(String, "魅力\n漢字");
+                    strcpy(String, has_user_hint ? "ユーザー\n設定" : "漢字\n万歳");   /* JA */
                 }
                 else
 #endif
                 {
-                    strcpy(String, "Beautiful\nBJ");
+                    strcpy(String, has_user_hint ? "User\ntext" : "Beautiful\nBJ");   /* JA */
                 }
             }
             else if (gSubMenuSelection == 2 && !gIsInSubMenu)
@@ -2543,7 +2548,7 @@ void UI_DisplayMenu(void)
 #ifdef ENABLE_CHINESE
                 if (gUiLanguage == UI_LANGUAGE_CN)
                 {
-                    strcpy(String, "２０２６版");
+                    strcpy(String, "2026年版");
                 }
                 else
 #endif
@@ -2551,11 +2556,16 @@ void UI_DisplayMenu(void)
                     strcpy(String, "happy\n55th");
                 }
             }
+            else if (has_user_hint)
+            {
+                strcpy(String, SUBV("User text", "ユーザー設定"));   /* JA */
+            }
             else
             {
                 strcpy(String, SUBV(gSubMenu_BOOT_HINT[gSubMenuSelection], gSubMenu_BOOT_HINT_CN[gSubMenuSelection]));
             }
             break;
+        }
 
         case MENU_BOOT_SOUND:
         case MENU_BREATH:

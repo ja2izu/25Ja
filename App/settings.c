@@ -1725,6 +1725,49 @@ void SETTINGS_FetchListName(char *s, uint8_t list)
     s[SCAN_LIST_KANJI_BYTES] = 0;
 }
 
+/* JA: 起動表示ユーザー文言の取得。不正バイト列・未書込(0xFF)・空は false */
+bool SETTINGS_FetchBootHintText(char *s)
+{
+    uint8_t n = 0;
+    uint8_t i = 0;
+    uint16_t w = 0;     /* 表示幅 (px)。半角 7、漢字・かな 13 の送り */
+
+    if (s == NULL)
+        return false;
+    s[0] = 0;
+
+    PY25Q16_ReadBuffer(BOOT_HINT_TEXT_BASE, s, BOOT_HINT_TEXT_BYTES);
+
+    while (i < BOOT_HINT_TEXT_BYTES)
+    {
+        const uint8_t c = (uint8_t)s[i];
+        if (c == 0 || c == 0xFF)
+            break;
+        if (c >= 0x20 && c < 0x7F)
+        {
+            if ((uint16_t)(w + 7u - 1u) > 128u)
+                break;
+            w += 7u;
+            n = ++i;
+            continue;
+        }
+        if (c >= 0xE3 && c <= 0xEF && (i + 3u) <= BOOT_HINT_TEXT_BYTES &&
+            ((uint8_t)s[i + 1] & 0xC0) == 0x80 && ((uint8_t)s[i + 2] & 0xC0) == 0x80)
+        {
+            if ((uint16_t)(w + 13u - 1u) > 128u)
+                break;
+            w += 13u;
+            i += 3;
+            n = i;
+            continue;
+        }
+        break;      /* 不正: ここで打ち切り */
+    }
+    s[n] = 0;
+    s[BOOT_HINT_TEXT_BYTES] = 0;
+    return n != 0;
+}
+
 void SETTINGS_FormatListLabel(char *out, uint8_t list)
 {
     char name[SCAN_LIST_KANJI_BYTES + 1u];
