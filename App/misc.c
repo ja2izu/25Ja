@@ -117,6 +117,7 @@ enum BacklightOnRxTx_t gSetting_backlight_on_tx_rx;
 #endif
 
 #ifdef ENABLE_FEAT_F4HWN_SCAN_FASTER
+    /* JA: 高速スキャン（F4HWN SCAN_FASTER から移植）の設定 */
     bool          gSetting_set_scn = 1;
 #endif
 
@@ -240,7 +241,7 @@ bool              gCssBackgroundScan;
 
 volatile bool     gScheduleScanListen = true;
 volatile uint16_t gScanPauseDelayIn_10ms;
-volatile uint16_t gScanListNameCountdown_10ms;
+volatile uint16_t gScanListNameCountdown_10ms;   /* JA: スキャングループ名ポップアップの残り時間 */
 
 #if defined(ENABLE_ALARM) || defined(ENABLE_TX1750)
     AlarmState_t  gAlarmState;

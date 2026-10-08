@@ -80,5 +80,19 @@ to the Dondji source code. It is not an official Dondji product.
     switched while scanning
   * Serial protocol: 25Ja version number (major.minor.patch) returned in the
     hello reply (Padding[2]); EEPROM address map entry for 0x008880-0x0089A0
+  * Menu: regrouped into five categories (Channel / Display-Audio / Keys /
+    System / Scan), selected with new 24x24 launcher icons; many items
+    renamed (Japanese titles); the scan list is called "scan group" in the
+    Japanese menu. Items from "F Lock" on remain in the hidden menu
+    (PTT + SIDE1 at power-on), as in Dondji / F4HWN.
+  * Transmit power: the "USER" level was removed from the channel Power menu
+    (Low1-5 / Mid / High remain); the global "SetPwr" item is hidden from the
+    menu (the stored value is kept)
+  * Boot hint: labels replaced with Japanese text in the Japanese menu;
+    value 1 can show a 24-byte user text written by the CPS (SPI 0x0089A0)
+  * Japanese labels for the side keys (PF1 / PF2); F Lock option "JA/CE HAM"
+    (144-146 MHz / 430-440 MHz) in the Dondji F Lock list
+  * Boot logo: replaced with an image made for 25Ja
+  * MDC1200 / Yan ID signalling: disabled in the build (ENABLE_MDC_YAN_ID off)
   * Removed: TX 1750 Hz tone, Dondji web site / documentation / archive files
     and branding assets

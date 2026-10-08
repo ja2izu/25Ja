@@ -301,7 +301,7 @@ const eq = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
     async (w, r, L) => { console.log('   dropped=' + r.stats.dropped + ' / ' + L.find(s => s.includes('再送'))); return eq(r.spi.slice(0x024000, 0x024000 + font.length), font) && L.some(s => s.includes('照合 OK')); },
     r => { r.dropEvery = 37; }));
 
-  // ---- 9 ファイル選択の表示・ログのコピー／消去・25Ja の目印（0.1.8）----
+  // ---- 9 ファイル選択の表示・ログのコピー／消去・25Ja の目印（0.1.9）----
   res.push(await runCase('9a ファイルを選ぶ → 名前が出る（標準部品は隠す）', 'normal', async w => {
       await setFile(w, 'fwFile', '25Ja.fusion.bin', fw); await setFile(w, 'fmCsvFile', 'k.csv', Buffer.from('82.5,NHK\n', 'utf8')); },
     async (w, r, L) => {
@@ -316,7 +316,7 @@ const eq = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
       await w.document.getElementById('logCopyBtn').onclick();
       w.__copied = w.__clip; w.document.getElementById('logClearBtn').onclick(); },
     async (w, r, L) => { console.log('   clip=' + JSON.stringify(w.__copied.slice(0, 60)));
-      return /^25Ja Tool Ver 0\.1\.8 \/ /.test(w.__copied) && w.__copied.includes('25Ja Tool を開きました') && L.length === 1 && L[0].includes('ログを消しました')
+      return /^25Ja Tool Ver 0\.1\.9 \/ /.test(w.__copied) && w.__copied.includes('25Ja Tool を開きました') && L.length === 1 && L[0].includes('ログを消しました')
         && w.document.getElementById('logMsg').textContent.includes('消しました'); }));
   res.push(await runCase('9c 25Ja の目印（CH 名 31 B）をログに出す', 'normal', async w => click(w, 'calibDumpBtn'),
     async (w, r, L) => L.some(s => s.includes('F4HWN v5.2.8（25Ja, CH 名 31 B）')), r => { r.jaFlag = 1; }));

@@ -1,4 +1,5 @@
 /* UTF-8 menu titles when UI language is Chinese */
+/* JA: 25Ja では日本語の題名に置き換えている（スキャン グループ、受信 モード、待受方式、機種依存 キー など） */
 
 #include <stddef.h>
 
