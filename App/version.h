@@ -19,7 +19,7 @@
 
 /* JA: 派生版の名前と版（画面表示用。PC ツールが読む UART_Version は変えない） */
 #define JA_FW_NAME     "25Ja"
-#define JA_FW_VERSION  "v0.1"
+#define JA_FW_VERSION  "v0.4"
 
 extern const char Version[];
 extern const char UART_Version[];
