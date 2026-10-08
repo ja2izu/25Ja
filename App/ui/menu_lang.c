@@ -1,5 +1,5 @@
 /* UTF-8 menu titles when UI language is Chinese */
-/* JA: 25Ja では日本語の題名に置き換えている（スキャン グループ、受信 モード、待受方式、機種依存 キー など） */
+/* JA: 25Ja では日本語の題名に置き換えている（所属 グループ、スキャン グループ、受信 モード、待受方式、機種依存 キー など） */
 
 #include <stddef.h>
 
@@ -33,7 +33,7 @@ const char *UI_MENU_GetMenuTitle(const t_menu_item *item)
 #ifdef ENABLE_FEAT_F4HWN
     case MENU_TX_LOCK:      return "バンド外 送信禁止";
 #endif
-    case MENU_LIST_CH:      return "スキャン グループ";
+    case MENU_LIST_CH:      return "所属 グループ";
     case MENU_MEM_CH:       return "CH保存";
     case MENU_DEL_CH:       return "CH削除";
     case MENU_MEM_NAME:     return "CH名 編集";
