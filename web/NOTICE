@@ -12,7 +12,7 @@ Third-party work
   https://github.com/EthanYan6/Dondji
 - font/25Ja_font_v4.bin is generated from the Shinonome 12-dot Gothic font,
   The Electronic Font Open Laboratory, Public Domain.
-- firmware/25Ja.fusion.bin is built from Dondji v5.2.8 (Copyright (c) 2026 BD1AHN,
+- firmware/25Ja_v0.4.bin is built from Dondji v5.2.8 (Copyright (c) 2026 BD1AHN,
   Apache License 2.0; based on F4HWN / muzkr / egzumer / DualTachyon et al.)
   with the 25Ja modifications (Copyright (c) 2026 JA2IZU). The Dondji name,
   logo and official site are not used.

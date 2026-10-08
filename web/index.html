@@ -113,7 +113,7 @@ table.fm button { min-height: 40px; padding: 2px 12px; }
 </style>
 </head>
 <body>
-<div id="verBadge">Ver 0.1.9  JA2IZU</div>
+<div id="verBadge">Ver 0.1.10  JA2IZU</div>
 <header>
   <h1>25Ja Tool</h1>
   <p>UV-K1 / UV-K5(K6) V3 用 25Ja（にこじゃ）ファームの書込・字庫・校正バックアップ。Chrome / Edge（Web Serial）で使います。<a href="manual.html" target="_blank">説明書</a></p>
@@ -121,7 +121,7 @@ table.fm button { min-height: 40px; padding: 2px 12px; }
 
 <main>
   <div class="card warnbox" id="fileProto" hidden>ファイルを直接開いています。この開き方では同梱のファーム・字庫を自動で読めないため、2・3 の欄の「ファイルを選ぶ」で
-    <code>firmware/25Ja.fusion.bin</code>・<code>font/25Ja_font_v4.bin</code> を選んでください。</div>
+    <code>firmware/25Ja_v0.4.bin</code>・<code>font/25Ja_font_v4.bin</code> を選んでください。</div>
   <div class="card warnbox" id="noSerial" hidden>このブラウザは Web Serial に対応していません。PC の Chrome か Edge で開いてください。</div>
 
   <section class="card" id="sec0">
@@ -269,7 +269,7 @@ const MSG_SPI_STAGE = 0x0523, MSG_SPI_STAGE_RESP = 0x0524;   // 25Ja: 段階書�
 const MSG_NOTIFY_BL_VER = 0x0530, MSG_REBOOT = 0x05DD;
 const OBFUS = new Uint8Array([0x16,0x6c,0x14,0xe6,0x2e,0x91,0x0d,0x40,0x21,0x35,0xd5,0x40,0x13,0x03,0xe9,0x80]);
 
-const FW_URL = 'firmware/25Ja.fusion.bin';
+const FW_URL = 'firmware/25Ja_v0.4.bin';
 const FW_MAX = 118 * 1024;                      // FLASH (rx) LENGTH = 118K, ORIGIN 0x08002800
 const FONT_URL = 'font/25Ja_font_v4.bin';
 const FONT_BASE = 0x024000, FONT_SIZE = 186117, FONT_VERSION = 4;   // App/settings.h CN_FONT_*

@@ -54,7 +54,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 </style>
 </head>
 <body>
-<div id="verBadge">Ver 0.1.9  JA2IZU</div>
+<div id="verBadge">Ver 0.1.10  JA2IZU</div>
 <main>
 <h1>25Ja（にこじゃ）説明書</h1>
 <p class="lead">UV-K1 / UV-K5(K6) V3 用 日本語ファーム 25Ja と 書込ツール 25Ja Tool の使い方</p>
@@ -89,7 +89,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><th>ファイル</th><th>内容</th></tr>
   <tr><td class="nowrap"><code>index.html</code></td><td>25Ja Tool（書込ツール本体）。PC の Chrome / Edge で使います</td></tr>
   <tr><td class="nowrap"><code>manual.html</code></td><td>この説明書</td></tr>
-  <tr><td class="nowrap"><code>firmware/25Ja.fusion.bin</code></td><td>25Ja ファーム（同梱）</td></tr>
+  <tr><td class="nowrap"><code>firmware/25Ja_v0.4.bin</code></td><td>25Ja ファーム（同梱）</td></tr>
   <tr><td class="nowrap"><code>font/25Ja_font_v4.bin</code></td><td>字庫（東雲 12 ドット, 6,647 字, 版数 4）</td></tr>
   <tr><td class="nowrap"><code>LICENSE</code> / <code>NOTICE</code></td><td>ライセンスと出典</td></tr>
   <tr><td class="nowrap"><code>README.md</code></td><td>ツールの概要（開発者向け）</td></tr>
@@ -104,7 +104,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <li>配布の ZIP を展開し、<code>25Ja_Tool</code> フォルダの <b><code>index.html</code> をダブルクリック</b>して開きます。<br>
      Chrome / Edge 以外で開いたときは、<code>index.html</code> を右クリック →「プログラムから開く」→ Chrome（または Edge）を選びます。</li>
   <li>この開き方では、同梱のファーム・字庫をツールが自動では読めません。2・3 の欄の「ファイルを選ぶ」で、
-     同じフォルダの <code>firmware/25Ja.fusion.bin</code>（ファーム）、<code>font/25Ja_font_v4.bin</code>（字庫）を選んでください。</li>
+     同じフォルダの <code>firmware/25Ja_v0.4.bin</code>（ファーム）、<code>font/25Ja_font_v4.bin</code>（字庫）を選んでください。</li>
 </ol>
 <div class="note">
   ・違うファイルを選んでも、ツールが大きさ・中身の目印・版数を確かめて受け付けません（ファーム欄に字庫を選んだときも止めます）。<br>
@@ -116,7 +116,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <table>
   <tr><th>順</th><th>欄</th><th>無線機の状態</th><th>操作</th></tr>
   <tr><td>1</td><td>1 校正データのバックアップ</td><td>普通に起動</td><td>「校正データを読み出す」→「calibration.dat を保存」。<b>この無線機専用の大切なデータ</b>です。必ず保管してください</td></tr>
-  <tr><td>2</td><td>2 ファームの書込</td><td>電源を切り、<b>PTT を押したまま電源 ON</b>（刷机モード）</td><td>ファイルを選び（<code>firmware/25Ja.fusion.bin</code>）→「書き込む」。終わると再起動します</td></tr>
+  <tr><td>2</td><td>2 ファームの書込</td><td>電源を切り、<b>PTT を押したまま電源 ON</b>（刷机モード）</td><td>ファイルを選び（<code>firmware/25Ja_v0.4.bin</code>）→「書き込む」。終わると再起動します</td></tr>
   <tr><td>3</td><td>（本体）</td><td>再起動後</td><td>本体の<b>隠しメニュー</b>（PTT と SIDE1 を押したまま電源 ON。8 を参照）の <b>リセット → 全部</b> を実行し、手順の「済んだ」に印を付けます</td></tr>
   <tr><td>4</td><td>3 字庫の書込</td><td>普通に起動</td><td>ファイルを選び（<code>font/25Ja_font_v4.bin</code>）→「書き込む」。最後に全体を照合します</td></tr>
   <tr><td>5</td><td>4 校正データの復元</td><td>普通に起動</td><td>「書き戻す」。1 で読み出した直後なら、ファイルを選び直す必要はありません。終わると再起動します</td></tr>
@@ -266,7 +266,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><td>「刷机モードになっています」と出る</td><td>その操作は普通に起動した状態で行います。電源を入れ直してください</td></tr>
   <tr><td>「無線機が通常起動しています」と出る</td><td>ファームの書込は刷机モードで行います（PTT を押したまま電源 ON）</td></tr>
   <tr><td>側面キーに割り当てた 1750Hz が効かない</td><td>25Ja では 1750Hz トーンを外しました。そのキーは何もしなくなるので、メニュー「PF1短押」などで別の機能を割り当ててください</td></tr>
-  <tr><td>「ファイルが選ばれませんでした」</td><td>ファイル選択で <code>firmware/25Ja.fusion.bin</code> または <code>font/25Ja_font_v4.bin</code> を選んでください</td></tr>
+  <tr><td>「ファイルが選ばれませんでした」</td><td>ファイル選択で <code>firmware/25Ja_v0.4.bin</code> または <code>font/25Ja_font_v4.bin</code> を選んでください</td></tr>
   <tr><td>書込がとても遅い</td><td>ツールのタブを前に出したままにしてください</td></tr>
   <tr><td>字庫の書込で「照合で不一致」</td><td>もう一度書き込んでください。続くときは USB ケーブル・接続を確かめてください</td></tr>
   <tr><td>FM の局名が出ない</td><td>その局がプリセットにあるか、周波数が表とぴったり同じかを確かめます。バンドが 76〜108MHz かも確かめてください</td></tr>
@@ -286,21 +286,21 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <h2 id="hash">11. 配布物の照合値</h2>
 <table>
   <tr><th>ファイル</th><th>サイズ</th><th>SHA-256</th></tr>
-  <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">67,066 B</td><td class="hash">6cbc2d9147c989cac283fd78378f0d956874cd7dcc40f1019cb0e4247e6048de</td></tr>
-  <tr><td class="nowrap"><code>firmware/25Ja.fusion.bin</code></td><td class="nowrap">114,300 B</td><td class="hash">9b0c9109fdffd96c86adce497d52e36ca401b062af33195d11c48dcb4b7da1bc</td></tr>
+  <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">67,063 B</td><td class="hash">eb9b22973e5b0d18f5bc91e3c81ab821bf77c042d6a0c3282fd6e5e24d917faa</td></tr>
+  <tr><td class="nowrap"><code>firmware/25Ja_v0.4.bin</code></td><td class="nowrap">114,296 B</td><td class="hash">0f7a1df20677344a9ef3ad2daaf2d295f9e07d465aefdb77423b4a4b43e25edc</td></tr>
   <tr><td class="nowrap"><code>font/25Ja_font_v4.bin</code></td><td class="nowrap">186,117 B</td><td class="hash">ca5d44656e91a9eb8f04a37af2e158456fd05fce2228167ae522a652da23e825</td></tr>
   <tr><td class="nowrap"><code>LICENSE</code></td><td class="nowrap">11,357 B</td><td class="hash">c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4</td></tr>
-  <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">1,249 B</td><td class="hash">4f9b686f3bc41d9a508604266da113634eb7d2b959dc89e503793491d733d485</td></tr>
-  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">3,068 B</td><td class="hash">ee8bca4b45950a7136845431f968d70c5fb851d552b8430dac909de881de3ff3</td></tr>
+  <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">1,247 B</td><td class="hash">53811df60f87dfc1469826f0f9dc1cc74da61b40a20e6a243517210bb12cd377</td></tr>
+  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">3,067 B</td><td class="hash">1a45252d77888d499131329a3ec2400f5855ccd10ece0b0cb17f6226cba9dd3c</td></tr>
 </table>
-<p>ファームの版：25Ja v0.4（Dondji v5.2.8 ベース、F4HWN 由来）。同梱 BIN の本体情報のビルド番号は <code>63c2a88</code> です（ビルドしたコミットの短縮ハッシュ。ソースを再ビルドすると、コミットごとに変わります）</p>
+<p>ファームの版：25Ja v0.4（Dondji v5.2.8 ベース、F4HWN 由来）。同梱 BIN の本体情報のビルド番号は <code>c865e13</code> です（ビルドしたコミットの短縮ハッシュ。ソースを再ビルドすると、コミットごとに変わります）</p>
 
 <h2>12. 配布前の確認表（実機）</h2>
 <table class="check">
   <tr><th>□</th><th>確認すること</th></tr>
-  <tr><td>□</td><td>index.html をダブルクリックで開き、右上に「Ver 0.1.9  JA2IZU」、上部に「ファイルを直接開いています」の案内が出る</td></tr>
+  <tr><td>□</td><td>index.html をダブルクリックで開き、右上に「Ver 0.1.10  JA2IZU」、上部に「ファイルを直接開いています」の案内が出る</td></tr>
   <tr><td>□</td><td>ログの上の取っ手をドラッグして高さを変えられる（ダブルクリックで大小切替）</td></tr>
-  <tr><td>□</td><td>「ログをコピー」→ メモ帳に貼ると先頭に「25Ja Tool Ver 0.1.9 / 日時」。「ログを消す」で空になる</td></tr>
+  <tr><td>□</td><td>「ログをコピー」→ メモ帳に貼ると先頭に「25Ja Tool Ver 0.1.10 / 日時」。「ログを消す」で空になる</td></tr>
   <tr><td>□</td><td>「ファイルを選ぶ」でファイルを選ぶと、欄に ✔ とファイル名が出る（同じファイルを続けて選び直しても出る）</td></tr>
   <tr><td>□</td><td>新ファームで普通に起動して接続すると、ログの「本体:」の行に「（25Ja, CH 名 31 B）」と出る</td></tr>
   <tr><td>□</td><td>手順の番号を押すと各欄へ移動し、欄の操作が終わると手順に ✔ が付く</td></tr>
