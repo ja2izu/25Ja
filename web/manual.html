@@ -119,7 +119,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><td>2</td><td>2 ファームの書込</td><td>電源を切り、<b>PTT を押したまま電源 ON</b>（刷机モード）</td><td>ファイルを選び（<code>firmware/25Ja_v0.4.bin</code>）→「書き込む」。終わると再起動します</td></tr>
   <tr><td>3</td><td>（本体）</td><td>再起動後</td><td>本体の<b>隠しメニュー</b>（PTT と SIDE1 を押したまま電源 ON。8 を参照）の <b>リセット → 全部</b> を実行し、手順の「済んだ」に印を付けます</td></tr>
   <tr><td>4</td><td>3 字庫の書込</td><td>普通に起動</td><td>ファイルを選び（<code>font/25Ja_font_v4.bin</code>）→「書き込む」。最後に全体を照合します</td></tr>
-  <tr><td>（5）</td><td>4 校正データの復元（<b>必要なときだけ</b>）</td><td>普通に起動</td><td>通常は不要です（ソースでは、本体の リセット は校正データを残す作りです。実機未確認）。受信感度や送信出力がおかしいときだけ「書き戻す」。1 で読み出した直後なら、ファイルを選び直す必要はありません。終わると再起動します</td></tr>
+  <tr><td>（5）</td><td>4 校正データの復元（<b>必要なときだけ</b>）</td><td>普通に起動</td><td>通常は不要です（ソース上、本体の リセット は校正データを消さない作りです。実機未確認）。受信感度や送信出力がおかしいときだけ「書き戻す」。1 で読み出した直後なら、ファイルを選び直す必要はありません。終わると再起動します</td></tr>
 </table>
 <p>最後に本体メニュー「<b>表示言語</b>」を<b>日本語</b>にします。本体情報の「字形」が「6647 字・正常」になっていれば字庫は正しく入っています。</p>
 <div class="note">
@@ -178,7 +178,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <h2>7. そのほかの機能（ツール）</h2>
 <table>
   <tr><th>欄</th><th>内容</th></tr>
-  <tr><td>5 設定のバックアップ・復元</td><td>本体の設定（SPI 0xA000〜0xA21F, 544 バイト）を保存・書き戻し。CH とその名前は含みません</td></tr>
+  <tr><td>5 設定領域の一括バックアップ・復元</td><td>本体の設定領域（SPI 0xA000〜0xA21F, 544 バイト）を、そのままのバイト列で保存・書き戻し。NeonPlugJA の設定保存は画面に出る項目（0xA000〜0xA17F）だけなので、それ以外の領域も含めて丸ごと退避したいときに使います。CH とその名前は含みません（NeonPlugJA の Codeplug で保存）。本体の リセット（全部）で設定は消えます。旧 512 バイト形式も書き戻せます</td></tr>
   <tr><td>6 起動画像</td><td>128×64 の白黒画像を書込。本体メニュー「起動画面」を「ロゴ」にすると表示。「画像を無効にする」で組み込みのロゴに戻ります</td></tr>
   <tr><td>画面下のログ</td><td>上の取っ手をドラッグで高さを変えられます（ダブルクリックで大小切替、取っ手を選んで上下キーでも可）。高さはブラウザが覚えます。<br>
       「<b>ログをコピー</b>」でツールの版と日時を付けてクリップボードへ（問い合わせのときにそのまま貼れます）。「<b>ログを消す</b>」で空にします</td></tr>
@@ -286,12 +286,12 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <h2 id="hash">11. 配布物の照合値</h2>
 <table>
   <tr><th>ファイル</th><th>サイズ</th><th>SHA-256</th></tr>
-  <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">67,330 B</td><td class="hash">c3f05edbb20c8af740f1d1eb9730b123145b3a6d03bc3e7771f1587db5d7bb2e</td></tr>
+  <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">67,789 B</td><td class="hash">f046bb1cd104da5b338d9dc0c15969e92d5f99a0abafb1ea6d999d74e9d1fe73</td></tr>
   <tr><td class="nowrap"><code>firmware/25Ja_v0.4.bin</code></td><td class="nowrap">114,324 B</td><td class="hash">9859bbacae6a20b36f0bb88304dc26f40ec2de5c7c033937a4fa3fd2bf16ca17</td></tr>
   <tr><td class="nowrap"><code>font/25Ja_font_v4.bin</code></td><td class="nowrap">186,117 B</td><td class="hash">ca5d44656e91a9eb8f04a37af2e158456fd05fce2228167ae522a652da23e825</td></tr>
   <tr><td class="nowrap"><code>LICENSE</code></td><td class="nowrap">11,357 B</td><td class="hash">c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4</td></tr>
   <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">1,247 B</td><td class="hash">53811df60f87dfc1469826f0f9dc1cc74da61b40a20e6a243517210bb12cd377</td></tr>
-  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">3,067 B</td><td class="hash">70d5d9371bc13c46676f94a19ff2bc9e288911ee6a868916a1f2095d54e85920</td></tr>
+  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">3,139 B</td><td class="hash">9fb5e0d146063a3019d99ce6f8ce2f9eef7b2c13e17ff3bb7d1e9a586860a3dd</td></tr>
 </table>
 <p>ファームの版：25Ja v0.4（Dondji v5.2.8 ベース、F4HWN 由来）。同梱 BIN の本体情報のビルド番号は <code>bd4eb21</code> です（ビルドしたコミットの短縮ハッシュ。ソースを再ビルドすると、コミットごとに変わります）</p>
 
@@ -320,7 +320,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><td>□</td><td>FM：プリセット取込 → 局名入力 → 書込 → 局名が表示される</td></tr>
   <tr><td>□</td><td>FM：「表の周波数を書く」→ 再起動後、表の局を CH で選べ局名が出る</td></tr>
   <tr><td>□</td><td>ファームだけの更新で、字庫・CH・設定が残る</td></tr>
-  <tr><td>□</td><td>設定のバックアップ・復元、起動画像の書込・無効化</td></tr>
+  <tr><td>□</td><td>設定領域の一括バックアップ・復元、起動画像の書込・無効化</td></tr>
   <tr><td>□</td><td>F→8：バックライトが点灯。F→9：バックライトの操作。長押しの 8 は周波数反転、長押しの 9 は従来のコール CH</td></tr>
   <tr><td>□</td><td>スキャン中に F→↑↓ でスキャン グループを切り替えると、ステータスバーのリスト名がすぐ変わる</td></tr>
   <tr><td>□</td><td>レンジスキャン中に MENU 長押し：止まった周波数が除外され、スキャンが続く（MR チャンネルのスキャンでは従来のチャンネル除外）</td></tr>

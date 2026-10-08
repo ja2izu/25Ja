@@ -170,14 +170,14 @@ table.fm button { min-height: 40px; padding: 2px 12px; }
 
   <section class="card" id="sec4">
     <h2><span class="no">4</span>校正データの復元 <span class="mode">通常起動</span> <span class="note-inline">必要なときだけ</span></h2>
-    <p class="desc">通常は不要です（本体の リセット は校正データを残す作りです）。受信感度や送信出力がおかしいときだけ、保存した calibration.dat を書き戻します（1 で読み出した直後なら選び直し不要）。終わると再起動します。</p>
+    <p class="desc">通常は不要です（ソース上、本体の リセット は校正データを消さない作りです。実機未確認）。受信感度や送信出力がおかしいときだけ、保存した calibration.dat を書き戻します（1 で読み出した直後なら選び直し不要）。終わると再起動します。</p>
     <div class="row"><input type="file" id="calibFile" data-info="calibInfo" aria-label="校正データのファイル" accept=".dat,.bin"><button id="calibRestoreBtn" disabled>書き戻す</button></div>
     <div class="file" id="calibInfo">未選択</div>
   </section>
 
   <section class="card" id="sec5">
-    <h2><span class="no">5</span>設定のバックアップ・復元 <span class="mode">通常起動</span></h2>
-    <p class="desc">本体の設定（SPI 0xA000〜0xA21F, 544 バイト）。CH とその名前は含みません。</p>
+    <h2><span class="no">5</span>設定領域の一括バックアップ・復元 <span class="mode">通常起動</span></h2>
+    <p class="desc">本体の設定領域（SPI 0xA000〜0xA21F, 544 バイト）を、そのままのバイト列で保存・書き戻します。NeonPlugJA の設定保存は画面に出る項目（0xA000〜0xA17F）だけなので、それ以外の領域も含めて丸ごと退避したいときに使います。CH とその名前は含みません（それらは NeonPlugJA の Codeplug で保存します）。本体の リセット（全部）で設定は消えます。旧 512 バイト形式も書き戻せます。</p>
     <div class="row">
       <button id="cfgBackupBtn">設定を読み出す</button>
       <a id="cfgBackupLink" download="25Ja_config.bin" hidden>25Ja_config.bin を保存</a>
