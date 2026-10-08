@@ -139,7 +139,7 @@ table.fm button { min-height: 40px; padding: 2px 12px; }
   <div class="grid">
   <section class="card" id="sec1">
     <h2><span class="no">1</span>校正データのバックアップ <span class="mode">通常起動</span></h2>
-    <p class="desc">書込前のファームのうちに一度取り、大切に保管してください（512 バイト）。読み出すと 4 の欄にも入ります。</p>
+    <p class="desc">書込前のファームのうちに一度取り、大切に保管してください（512 バイト）。読み出すと 4 の欄にも入ります。隠しメニューの「電池校正」を変えたときは、取り直しておくと復元で戻りません。</p>
     <div class="row">
       <button id="calibDumpBtn">校正データを読み出す</button>
       <a id="calibDumpLink" download="calibration.dat" hidden>calibration.dat を保存</a>
@@ -170,7 +170,7 @@ table.fm button { min-height: 40px; padding: 2px 12px; }
 
   <section class="card" id="sec4">
     <h2><span class="no">4</span>校正データの復元 <span class="mode">通常起動</span> <span class="note-inline">必要なときだけ</span></h2>
-    <p class="desc">通常は不要です（ソース上、本体の リセット は校正データを消さない作りです。実機未確認）。受信感度や送信出力がおかしいときだけ、保存した calibration.dat を書き戻します（1 で読み出した直後なら選び直し不要）。終わると再起動します。</p>
+    <p class="desc">通常は不要です。校正データは、リセット・ファーム書込・字庫書込・NeonPlugJA の操作では書き換わりません（ソース上の確認。実機未確認）。変わるのは、隠しメニューの「電池校正」（12 バイト）とこの復元だけです。受信感度や送信出力がおかしいときだけ、保存した calibration.dat を書き戻します。<b>書き戻すと、バックアップを取った後に行った電池校正は上書きされ、バックアップ時点の値に戻ります</b>（電池校正を変えていなければ影響はありません）。1 で読み出した直後なら選び直し不要です。終わると再起動します。</p>
     <div class="row"><input type="file" id="calibFile" data-info="calibInfo" aria-label="校正データのファイル" accept=".dat,.bin"><button id="calibRestoreBtn" disabled>書き戻す</button></div>
     <div class="file" id="calibInfo">未選択</div>
   </section>
