@@ -54,7 +54,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 </style>
 </head>
 <body>
-<div id="verBadge">Ver 0.1.10  JA2IZU</div>
+<div id="verBadge">Ver 0.1.11  JA2IZU</div>
 <main>
 <h1>25Ja（にこじゃ）説明書</h1>
 <p class="lead">UV-K1 / UV-K5(K6) V3 用 日本語ファーム 25Ja と 書込ツール 25Ja Tool の使い方</p>
@@ -119,12 +119,12 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><td>2</td><td>2 ファームの書込</td><td>電源を切り、<b>PTT を押したまま電源 ON</b>（刷机モード）</td><td>ファイルを選び（<code>firmware/25Ja_v0.4.bin</code>）→「書き込む」。終わると再起動します</td></tr>
   <tr><td>3</td><td>（本体）</td><td>再起動後</td><td>本体の<b>隠しメニュー</b>（PTT と SIDE1 を押したまま電源 ON。8 を参照）の <b>リセット → 全部</b> を実行し、手順の「済んだ」に印を付けます</td></tr>
   <tr><td>4</td><td>3 字庫の書込</td><td>普通に起動</td><td>ファイルを選び（<code>font/25Ja_font_v4.bin</code>）→「書き込む」。最後に全体を照合します</td></tr>
-  <tr><td>5</td><td>4 校正データの復元</td><td>普通に起動</td><td>「書き戻す」。1 で読み出した直後なら、ファイルを選び直す必要はありません。終わると再起動します</td></tr>
+  <tr><td>（5）</td><td>4 校正データの復元（<b>必要なときだけ</b>）</td><td>普通に起動</td><td>通常は不要です（ソースでは、本体の リセット は校正データを残す作りです。実機未確認）。受信感度や送信出力がおかしいときだけ「書き戻す」。1 で読み出した直後なら、ファイルを選び直す必要はありません。終わると再起動します</td></tr>
 </table>
 <p>最後に本体メニュー「<b>表示言語</b>」を<b>日本語</b>にします。本体情報の「字形」が「6647 字・正常」になっていれば字庫は正しく入っています。</p>
 <div class="note">
   ・ボタンを押すたびに、ブラウザがシリアルポートの選択を求めます。無線機のポートを選んでください。<br>
-  ・ページを開き直した後は、保存した <code>calibration.dat</code> を 4 の欄で選んで書き戻してください。<br>
+  ・校正の復元（4）が必要になったときは、ページを開き直した後でも、保存した <code>calibration.dat</code> を 4 の欄で選んで書き戻せます。<br>
   ・途中で止まったら、その欄からやり直せます。
 </div>
 
@@ -286,21 +286,21 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <h2 id="hash">11. 配布物の照合値</h2>
 <table>
   <tr><th>ファイル</th><th>サイズ</th><th>SHA-256</th></tr>
-  <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">67,063 B</td><td class="hash">eb9b22973e5b0d18f5bc91e3c81ab821bf77c042d6a0c3282fd6e5e24d917faa</td></tr>
+  <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">67,330 B</td><td class="hash">c3f05edbb20c8af740f1d1eb9730b123145b3a6d03bc3e7771f1587db5d7bb2e</td></tr>
   <tr><td class="nowrap"><code>firmware/25Ja_v0.4.bin</code></td><td class="nowrap">114,324 B</td><td class="hash">9859bbacae6a20b36f0bb88304dc26f40ec2de5c7c033937a4fa3fd2bf16ca17</td></tr>
   <tr><td class="nowrap"><code>font/25Ja_font_v4.bin</code></td><td class="nowrap">186,117 B</td><td class="hash">ca5d44656e91a9eb8f04a37af2e158456fd05fce2228167ae522a652da23e825</td></tr>
   <tr><td class="nowrap"><code>LICENSE</code></td><td class="nowrap">11,357 B</td><td class="hash">c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4</td></tr>
   <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">1,247 B</td><td class="hash">53811df60f87dfc1469826f0f9dc1cc74da61b40a20e6a243517210bb12cd377</td></tr>
-  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">3,067 B</td><td class="hash">1a45252d77888d499131329a3ec2400f5855ccd10ece0b0cb17f6226cba9dd3c</td></tr>
+  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">3,067 B</td><td class="hash">70d5d9371bc13c46676f94a19ff2bc9e288911ee6a868916a1f2095d54e85920</td></tr>
 </table>
 <p>ファームの版：25Ja v0.4（Dondji v5.2.8 ベース、F4HWN 由来）。同梱 BIN の本体情報のビルド番号は <code>bd4eb21</code> です（ビルドしたコミットの短縮ハッシュ。ソースを再ビルドすると、コミットごとに変わります）</p>
 
 <h2>12. 配布前の確認表（実機）</h2>
 <table class="check">
   <tr><th>□</th><th>確認すること</th></tr>
-  <tr><td>□</td><td>index.html をダブルクリックで開き、右上に「Ver 0.1.10  JA2IZU」、上部に「ファイルを直接開いています」の案内が出る</td></tr>
+  <tr><td>□</td><td>index.html をダブルクリックで開き、右上に「Ver 0.1.11  JA2IZU」、上部に「ファイルを直接開いています」の案内が出る</td></tr>
   <tr><td>□</td><td>ログの上の取っ手をドラッグして高さを変えられる（ダブルクリックで大小切替）</td></tr>
-  <tr><td>□</td><td>「ログをコピー」→ メモ帳に貼ると先頭に「25Ja Tool Ver 0.1.10 / 日時」。「ログを消す」で空になる</td></tr>
+  <tr><td>□</td><td>「ログをコピー」→ メモ帳に貼ると先頭に「25Ja Tool Ver 0.1.11 / 日時」。「ログを消す」で空になる</td></tr>
   <tr><td>□</td><td>「ファイルを選ぶ」でファイルを選ぶと、欄に ✔ とファイル名が出る（同じファイルを続けて選び直しても出る）</td></tr>
   <tr><td>□</td><td>新ファームで普通に起動して接続すると、ログの「本体:」の行に「（25Ja, CH 名 31 B）」と出る</td></tr>
   <tr><td>□</td><td>手順の番号を押すと各欄へ移動し、欄の操作が終わると手順に ✔ が付く</td></tr>
@@ -309,7 +309,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><td>□</td><td>起動画面：招き猫とその下の「電圧・25JA・版」の行が重ならない</td></tr>
   <tr><td>□</td><td>3 字庫：「高速」で書け、全体照合 OK。かかった秒数と「再送」の回数を控える（新ファームの USB 修正で、再送は 0 か数回に減るはず）</td></tr>
   <tr><td>□</td><td>本体情報の字形：6647 字・正常</td></tr>
-  <tr><td>□</td><td>4 校正復元：書き戻され、再起動後の受信・送信出力が以前と同じ</td></tr>
+  <tr><td>□</td><td>4 校正復元（必要なときだけ）：書き戻され、再起動後の受信・送信出力が以前と同じ。通常の手順では行わなくてよい</td></tr>
   <tr><td>□</td><td>メニューの日本語表示、漢字・かな CH 名（本体で入れる 5 字、NeonPlugJA で入れる 10 字）。長い名前のメイン画面での見え方</td></tr>
   <tr><td>□</td><td>周波数・CH 番号・スペクトラムの数値の表示が以前と同じ（数値の書式処理を入れ替えたため）</td></tr>
   <tr><td>□</td><td>メニュー「PF1短押」「PF1長押」「PF2短押」「PF2長押」の表記。ロジャー音の選択肢に MDC / Yan ID が無く、各音が鳴る。MDC / Yan の項目が無い</td></tr>
