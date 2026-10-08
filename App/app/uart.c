@@ -337,7 +337,8 @@ static void SendReply(uint32_t Port, void *pReply, uint16_t Size)
     UART_Send(&Footer, sizeof(Footer));
 }
 
-/* JA: 25Ja の版数。上げるときはここだけ変える（0.4 → 0.4.1 は PATCH を 1 に） */
+/* JA: 25Ja の版数。上げるときは、ここと App/version.h の JA_FW_VERSION（画面の表示）を同時に変える
+ * （0.4 → 0.4.1 は PATCH を 1 にし、version.h を "v0.4.1" にする） */
 #define JA_FW_VER_MAJOR  0
 #define JA_FW_VER_MINOR  4
 #define JA_FW_VER_PATCH  0

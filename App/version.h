@@ -17,7 +17,8 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-/* JA: 派生版の名前と版（画面表示用。PC ツールが読む UART_Version は変えない） */
+/* JA: 派生版の名前と版（画面表示用。PC ツールが読む UART_Version は変えない）。
+ * hello 応答の版数は app/uart.c の JA_FW_VER_*。版を上げるときは両方を同時に変える */
 #define JA_FW_NAME     "25Ja"
 #define JA_FW_VERSION  "v0.4"
 
