@@ -3,14 +3,14 @@
 #
 # Dondji JA: 東雲 12 ドット（ゴシック, JIS X 0208:1990）から SPI Flash 用字庫 cn_font.bin を作る
 #
-# 出力の配置はファームの SETTINGS_CNCharToIndex / SETTINGS_ReadCNFontBitmap と同じ:
+# 出力の配置はF/Wの SETTINGS_CNCharToIndex / SETTINGS_ReadCNFontBitmap と同じ:
 #   [ビットマップ N×24B][索引 N×4B (unicode<<16 | 字番号, Unicode 昇順)][拼音表 0B][版数 1B]
 #   - ビットマップは 1 字 12 行 × uint16 (LE)、MSB が左端
 #   - 拼音表は持たない（ENABLE_CN_PINYIN=OFF 前提）
-#   - 先頭の字は「的」: ファーム・Web ツールのプローブ値 (0x1100, 0x2100) を満たすため
+#   - 先頭の字は「的」: F/W・Web ツールのプローブ値 (0x1100, 0x2100) を満たすため
 #
 # 対象: JIS X 0208 のうち U+3000〜U+FFFF（UTF-8 で 3 バイト、先頭 0xE3〜0xEF）の字
-#       2 バイトになる字（ギリシャ・キリル・一部記号）はファームが扱えないので除く
+#       2 バイトになる字（ギリシャ・キリル・一部記号）はF/Wが扱えないので除く
 #
 # 使い方: python3 App/tools/gen_ja_font.py
 #   → docs/font/cn_font.bin, docs/fonts/cn_font.bin を上書きし、settings.h / flash.js 用の定数を表示

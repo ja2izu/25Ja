@@ -1,6 +1,6 @@
 # 25Ja（にこじゃ）
 
-Quansheng UV-K1 / UV-K5(K6) V3 用ファームウェア（以下 F/W）。漢字・かな表示に対応した派生版です。
+Quansheng UV-K1 / UV-K5(K6) V3 用ファームウェア（以下F/W）。漢字・かな表示に対応した派生版です。
 
 **このプロジェクトは Dondji v5.2.8（BD1AHN、Apache License 2.0）をベースにしています。** Dondji 公式のものではなく、BD1AHN とは無関係です。Dondji はさらに F4HWN などをベースにしています（NOTICE 参照）。
 
