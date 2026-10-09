@@ -93,6 +93,26 @@ void UI_DisplayFM(void)
     UI_DrawLineBuffer(gFrameBuffer, 0, 0, (int16_t)(LCD_WIDTH - 1u), 0, true);
 #endif
 
+    /* JA: バンド範囲（例 87.5-108MHz）を右上に小さく表示（Dondji v5.2.8 と同じ。3 段化で抜けていたため戻した） */
+    {
+        const uint16_t freqMin = BK1080_GetFreqLoLimit(gEeprom.FM_Band);
+        const uint16_t freqMax = BK1080_GetFreqHiLimit(gEeprom.FM_Band);
+
+        sprintf(String, "%d%s-%dMHz",
+            freqMin / 10,
+            gEeprom.FM_Band == 0 ? ".5" : "",
+            freqMax / 10
+        );
+#ifdef ENABLE_FEAT_F4HWN
+        const uint8_t text_width = DualVfoU8g2_GetSmallTextWidth(String);
+        const uint8_t x = (uint8_t)(LCD_WIDTH - text_width - 2);
+        DualVfoU8g2_DrawSmallText(String, x, 2, true);
+#else
+        UI_PrintStringSmallNormal(String, 1, 0, 0);
+#endif
+        String[0] = '\0';
+    }
+
     /* ---- 上段 ---- */
     if (gAskToSave) {
         /* 保存先は上下キーで選ぶ（gFM_ChannelPosition） */
