@@ -51,7 +51,7 @@ class Radio {
     this.mcu = new Uint8Array(118 * 1024).fill(0xff);
     this.rx = []; this.ts = null; this.blOk = 0; this.rebooted = false; this.log = [];
     this.stats = { spiWrite: 0, fwPages: 0, badCrc: 0, stage: 0, secWrite: 0 };
-    this.legacy = false;                      // true: 0x0523（段階書込）を知らない古いファーム
+    this.legacy = false;                      // true: 0x0523（段階書込）を知らない古いF/W
     this.stageSec = -1; this.stageBuf = null; this.stageDirty = false;
   }
   eepromToSpi(off) { if (off >= 0xB000 && off < 0xB200) return 0x10000 + off - 0xB000; if (off >= 0x1E00 && off < 0x2000) return 0x10000 + off - 0x1E00; if (off >= 0xA000 && off < 0xA170) return off; return -1; }
@@ -193,20 +193,20 @@ const eq = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
   res.push(await runCase('1 校正の読み出し', 'normal', async w => click(w, 'calibDumpBtn'),
     async (w, r) => eq(await blobBytes(w), r.spi.slice(0x10000, 0x10200))));
 
-  res.push(await runCase('2 ファーム書込（同梱）', 'boot', async w => { click(w, 'fwBundledBtn'); await new Promise(r => setTimeout(r, 300)); click(w, 'fwFlashBtn'); },
+  res.push(await runCase('2 F/W書込（同梱）', 'boot', async w => { click(w, 'fwBundledBtn'); await new Promise(r => setTimeout(r, 300)); click(w, 'fwFlashBtn'); },
     async (w, r) => r.fwTotal === Math.ceil(fw.length / 256) && eq(r.mcu.slice(0, fw.length), fw)));
 
-  res.push(await runCase('2b 通常起動中にファーム書込 → 拒否', 'normal', async w => { click(w, 'fwBundledBtn'); await new Promise(r => setTimeout(r, 300)); click(w, 'fwFlashBtn'); },
+  res.push(await runCase('2b 通常起動中にF/W書込 → 拒否', 'normal', async w => { click(w, 'fwBundledBtn'); await new Promise(r => setTimeout(r, 300)); click(w, 'fwFlashBtn'); },
     async (w, r, L) => r.stats.fwPages === 0 && L.some(s => s.includes('刷机モード') || s.includes('通常起動'))));
 
-  res.push(await runCase('2c ファーム欄に字庫を選ぶ → 拒否', 'boot', async w => { await setFile(w, 'fwFile', 'cn_font.bin', font); },
+  res.push(await runCase('2c F/W欄に字庫を選ぶ → 拒否', 'boot', async w => { await setFile(w, 'fwFile', 'cn_font.bin', font); },
     async (w, r, L) => w.document.getElementById('fwFlashBtn').disabled && L.some(s => s.includes('字庫のファイル'))));
 
   res.push(await runCase('3 字庫書込（同梱, 高速）', 'normal', async w => { click(w, 'fontBundledBtn'); await new Promise(r => setTimeout(r, 300)); click(w, 'fontFlashBtn'); },
     async (w, r, L) => { console.log('   stage=' + r.stats.stage + ' secWrite=' + r.stats.secWrite); return eq(r.spi.slice(0x024000, 0x024000 + font.length), font) && L.some(s => s.includes('照合 OK')) && L.some(s => s.includes('高速')) && r.stats.secWrite === 46 && r.stats.spiWrite === 0; },
     r => { for (let i = 0; i < font.length; i++) r.spi[0x024000 + i] = (i * 31) & 0xff; }));   // 旧字庫が入っている状態から
 
-  res.push(await runCase('3c 旧ファームに字庫 → 従来方式', 'normal', async w => { click(w, 'fontBundledBtn'); await new Promise(r => setTimeout(r, 300)); click(w, 'fontFlashBtn'); },
+  res.push(await runCase('3c 旧F/Wに字庫 → 従来方式', 'normal', async w => { click(w, 'fontBundledBtn'); await new Promise(r => setTimeout(r, 300)); click(w, 'fontFlashBtn'); },
     async (w, r, L) => eq(r.spi.slice(0x024000, 0x024000 + font.length), font) && L.some(s => s.includes('従来の方式')) && L.some(s => s.includes('照合 OK')),
     r => { r.legacy = true; }));
 
@@ -277,18 +277,18 @@ const eq = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
   const call = (w, id) => w.document.getElementById(id).onclick();
   res.push(await runCase('0a 校正を読み出す → 4 の欄に入る → 書き戻し', 'normal', async w => { await call(w, 'calibDumpBtn'); await call(w, 'calibRestoreBtn'); },
     async (w, r) => st(w, 1).startsWith('✔') && st(w, 5).startsWith('✔') && r.rebooted && w.document.getElementById('calibInfo').textContent.includes('1 で読み出した')));
-  res.push(await runCase('0b ファーム（刷机モード）→ 手順 2 に ✔', 'boot', async w => { await call(w, 'fwBundledBtn'); await call(w, 'fwFlashBtn'); },
+  res.push(await runCase('0b F/W（刷机モード）→ 手順 2 に ✔', 'boot', async w => { await call(w, 'fwBundledBtn'); await call(w, 'fwFlashBtn'); },
     async (w, r) => st(w, 2).startsWith('✔') && eq(r.mcu.slice(0, fw.length), fw)));
   res.push(await runCase('0c 字庫 → 手順 3 に ✔', 'normal', async w => { await call(w, 'fontBundledBtn'); await call(w, 'fontFlashBtn'); },
     async (w, r) => st(w, 4).startsWith('✔') && eq(r.spi.slice(0x024000, 0x024000 + font.length), font)));
-  res.push(await runCase('0d 通常起動のままファーム → 手順 2 に ✖', 'normal', async w => { await call(w, 'fwBundledBtn'); await call(w, 'fwFlashBtn'); },
+  res.push(await runCase('0d 通常起動のままF/W → 手順 2 に ✖', 'normal', async w => { await call(w, 'fwBundledBtn'); await call(w, 'fwFlashBtn'); },
     async (w, r) => st(w, 2).startsWith('✖') && r.stats.fwPages === 0));
   res.push(await runCase('0e 手順の番号 → その欄へ移動（処理はしない）', 'normal', async w => { w.HTMLElement.prototype.scrollIntoView = function () { w.__scrolled = this.id; }; w.document.querySelector('a.jump[href="#sec3"]').dispatchEvent(new w.MouseEvent('click', { bubbles: true, cancelable: true })); },
     async (w, r) => w.__scrolled === 'sec3' && r.stats.spiWrite === 0 && !r.ts));
 
   // ---- 直開き（file://）: 同梱ボタンは隠し、ファイル選択だけ ----
   const F = 'file:///C:/Users/x/25Ja_Tool/index.html';
-  res.push(await runCase('F1 直開き: 同梱ボタンを隠す・ファイル選択でファームを書く', 'boot', async w => { await setFile(w, 'fwFile', '25Ja_v0.4.1.bin', fw); await call(w, 'fwFlashBtn'); },
+  res.push(await runCase('F1 直開き: 同梱ボタンを隠す・ファイル選択でF/Wを書く', 'boot', async w => { await setFile(w, 'fwFile', '25Ja_v0.4.1.bin', fw); await call(w, 'fwFlashBtn'); },
     async (w, r, L) => !w.document.getElementById('fileProto').hidden && w.document.getElementById('fwBundledBtn').hidden && w.document.getElementById('fontBundledBtn').hidden && eq(r.mcu.slice(0, fw.length), fw),
     null, { url: F }));
   res.push(await runCase('F2 直開き: 字庫を選ぶと局名の字の検査が効く', 'normal', async w => {
@@ -316,11 +316,11 @@ const eq = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
       await w.document.getElementById('logCopyBtn').onclick();
       w.__copied = w.__clip; w.document.getElementById('logClearBtn').onclick(); },
     async (w, r, L) => { console.log('   clip=' + JSON.stringify(w.__copied.slice(0, 60)));
-      return /^25Ja Tool Ver 0\.1\.12 \/ /.test(w.__copied) && w.__copied.includes('25Ja Tool を開きました') && L.length === 1 && L[0].includes('ログを消しました')
+      return /^25Ja Tool Ver 0\.1\.13 \/ /.test(w.__copied) && w.__copied.includes('25Ja Tool を開きました') && L.length === 1 && L[0].includes('ログを消しました')
         && w.document.getElementById('logMsg').textContent.includes('消しました'); }));
   res.push(await runCase('9c 25Ja の目印（CH 名 31 B）をログに出す', 'normal', async w => click(w, 'calibDumpBtn'),
     async (w, r, L) => L.some(s => s.includes('F4HWN v5.2.8（25Ja, CH 名 31 B）')), r => { r.jaFlag = 1; }));
-  res.push(await runCase('9d 目印なし（旧ファーム）は従来どおり', 'normal', async w => click(w, 'calibDumpBtn'),
+  res.push(await runCase('9d 目印なし（旧F/W）は従来どおり', 'normal', async w => click(w, 'calibDumpBtn'),
     async (w, r, L) => L.some(s => s.includes('本体: F4HWN v5.2.8 / '))));
 
   console.log(res.every(Boolean) ? 'ALL PASS' : 'SOME FAILED');
