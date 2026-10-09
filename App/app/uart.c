@@ -341,7 +341,7 @@ static void SendReply(uint32_t Port, void *pReply, uint16_t Size)
  * （0.4 → 0.4.1 は PATCH を 1 にし、version.h を "v0.4.1" にする） */
 #define JA_FW_VER_MAJOR  0
 #define JA_FW_VER_MINOR  4
-#define JA_FW_VER_PATCH  0
+#define JA_FW_VER_PATCH  1
 
 static void SendVersion(uint32_t Port)
 {
