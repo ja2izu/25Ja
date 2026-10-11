@@ -20,7 +20,7 @@ Quansheng UV-K1 / UV-K5(K6) V3 用ファームウェア（以下F/W）。漢字�
 - 書込ツール **25Ja Tool**（`web/`、Chrome / Edge の Web Serial で動作）
 
 ## 関連：PC の CPS「NeonPlugJA」
-本体の設定・CH の書込は PC のブラウザ CPS「NeonPlugJA」で行えます（この配布物には含まれません）。NeonPlugJA は、infamy 氏の NeonPlug（MIT License、https://github.com/infamy/NeonPlug）をもとにしたフォークです。
+本体の設定・CH の書込は PC のブラウザ CPS「NeonPlugJA」（https://github.com/ja2izu/NeonPlugJA）で行えます（この配布物には含まれません）。NeonPlugJA は、infamy 氏の NeonPlug（MIT License、https://github.com/infamy/NeonPlug）をもとにしたフォークです。
 
 ## 使い方
 `web/manual.html` を参照してください。`web/index.html` をブラウザで開き、手順に従ってF/W・字庫を書き込みます。校正データのバックアップを先に取ってください。

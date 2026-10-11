@@ -22,14 +22,14 @@ UV-K1 / UV-K5(K6) V3 用 25Ja（にこじゃ）F/Wの書込ツール。PC の Ch
 - 実機の Chrome（Windows）で、直開き（file://）でも Web Serial の接続・読み書き（FM 局名表）ができることを確認済み（2026-09-28）。
 
 ## ファイル
-- index.html — ツール本体（外部ライブラリなし, Ver 0.1.17）
+- index.html — ツール本体（外部ライブラリなし, Ver 0.1.18）
 - manual.html — 説明書（初回の書込・更新・キー・スキャン・スペクトラム・FM 放送の操作・FM 局名・困ったとき・配布前の確認表）
 - firmware/25Ja_v0.4.1.bin — 同梱F/W
 - font/25Ja_font_v4.bin — 同梱字庫
 - test/sim.js — 模擬無線機を使った動作試験（Node.js + jsdom）。`CASES='^7' node sim.js` で一部だけ実行（全 30 件）
 
 ## 関連
-PC の CPS「NeonPlugJA」（この配布物には含まれません）は、infamy 氏の NeonPlug（MIT License、https://github.com/infamy/NeonPlug）をもとにしたフォークです。
+PC の CPS「NeonPlugJA」（https://github.com/ja2izu/NeonPlugJA。この配布物には含まれません）は、infamy 氏の NeonPlug（MIT License、https://github.com/infamy/NeonPlug）をもとにしたフォークです。
 
 ## ライセンス
 Apache License 2.0（LICENSE / NOTICE）。© 2026 JA2IZU。Dondji 公式のものではありません。
