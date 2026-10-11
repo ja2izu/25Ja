@@ -58,7 +58,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 </style>
 </head>
 <body>
-<div id="verBadge">Ver 0.1.16  JA2IZU</div>
+<div id="verBadge">Ver 0.1.17  JA2IZU</div>
 <main>
 <h1>25Ja（にこじゃ）説明書</h1>
 <p class="lead">UV-K1 / UV-K5(K6) V3 用 日本語ファームウェア（以下F/W）25Ja と 書込ツール 25Ja Tool の使い方</p>
@@ -189,7 +189,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><td>範囲スキャン</td><td>VFO の A・B に周波数を入れ、A で 5 長押し</td><td>A・B の周波数の間</td><td>もう一度 5 長押しで解除</td></tr>
   <tr><td>スキャン速度</td><td>メニュー「スキャン 速度」</td><td>通常／高速</td><td>10 章を参照（F/W 0.4 から）</td></tr>
 </table>
-<p>PC の CPS（NeonPlugJA）で CH ごとのグループを設定するときは、「NeonPlugJA 取扱説明書（暫定名）」を見てください。</p>
+<p>PC の CPS（NeonPlugJA）で CH ごとのグループを設定するときは、「NeonPlugJA 取扱説明書」を見てください。</p>
 <div class="note">範囲スキャンの 5 長押しは、2 画面表示（または 2 つの VFO を使う設定）のときだけ使えます。メインのみの表示では、エラー音が鳴ります。</div>
 <h3>7.4 操作例</h3>
 <p><b>例 1　よく聞くレピータだけを巡回する</b></p>
@@ -313,7 +313,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 </div>
 
 <h2>10. CH 名・CH表示・スキャン グループ（本体メニュー）</h2>
-<div class="note">PC の CPS「NeonPlugJA」の使いかたは、「NeonPlugJA 取扱説明書（暫定名）」を見てください。</div>
+<div class="note">PC の CPS「NeonPlugJA」の使いかたは、「NeonPlugJA 取扱説明書」を見てください。NeonPlugJA は、infamy 氏の NeonPlug（MIT License、<code>https://github.com/infamy/NeonPlug</code>）をもとにしたフォークです。</div>
 <h3>本体メニューの構成と「CH表示」（ChDisp）</h3>
 <ul>
   <li>メニューの最初の画面は、<b>5 つの分類</b>のアイコンです：<b>チャンネル／表示/音声／キー設定／システム／スキャン</b>。分類ごとの項目と並びは次のとおりです（日本語表示。ソース上の分類で、実機の表示は配布前確認で確かめます）。
@@ -402,27 +402,28 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <li>東雲フォント（電子書体オープンラボ）— Public Domain</li>
   <li>F/W に内蔵の画面表示用フォント（Dondji／F4HWN から引き継いだもの。ごく一部の字だけを埋め込み、フォントファイルとしては配布していません）：Small Bold Pixel-7（Style-7、配布元の表記は「Freeware, Non-Commercial」＝非商用。商用はデザイナーに連絡してライセンスを得る形）、Blocktopia（memesbruh03、配布元の表記は「100% free」）、SG04（SHAKAGRAPHICS、著作権表示のみで使用条件は見つかっていません）。配布元の表記であり、作者には確認していません。25Ja を商用で使う場合は、Pixel-7 の条件に注意してください</li>
   <li>U8G2 ライブラリ（olikraus、BSD 2-Clause）</li>
+  <li>NeonPlugJA（PC の CPS。この配布物には含まれません）は、NeonPlug（infamy 氏、MIT License、<code>https://github.com/infamy/NeonPlug</code>）をもとにしたフォークです</li>
   <li>詳しくは <code>LICENSE</code> / <code>NOTICE</code> を参照</li>
 </ul>
 
 <h2 id="hash">15. 配布物の照合値</h2>
 <table>
   <tr><th>ファイル</th><th>サイズ</th><th>SHA-256</th></tr>
-  <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">69,218 B</td><td class="hash">7199282f5c23193f3511b97575c02a804e831332c21f2d302a8936edb78c7071</td></tr>
+  <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">69,218 B</td><td class="hash">353f44435c596004ed000f879687a25e7acc6c90cc283d623c7b6640f1557160</td></tr>
   <tr><td class="nowrap"><code>firmware/25Ja_v0.4.1.bin</code></td><td class="nowrap">114,448 B</td><td class="hash">2997fe5a2a3f501204d247341c85962295cea52044791341287c36a2f3892409</td></tr>
   <tr><td class="nowrap"><code>font/25Ja_font_v4.bin</code></td><td class="nowrap">186,117 B</td><td class="hash">ca5d44656e91a9eb8f04a37af2e158456fd05fce2228167ae522a652da23e825</td></tr>
   <tr><td class="nowrap"><code>LICENSE</code></td><td class="nowrap">11,357 B</td><td class="hash">c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4</td></tr>
   <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">1,601 B</td><td class="hash">5017f3f728a0262e6eff3dfe8ecb03276688ca1f4097e11fcb44eec21227deec</td></tr>
-  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">3,042 B</td><td class="hash">d29611cf1fccc9ba0290d91c52c69d49683a454e80315cd0e9a1be2510477607</td></tr>
+  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">3,246 B</td><td class="hash">2a67ac4e68ff2971d49be2204a376e097648c4764cdf78cb88f96dbca58893e6</td></tr>
 </table>
 <p>F/Wの版：25Ja v0.4.1（Dondji v5.2.8 ベース、F4HWN 由来）。同梱 BIN をビルドしたコミットは <code>0bf0b1e</code> です（短縮ハッシュ）。本体情報の画面に出るのは「ビルド日時」だけで、コミット名は実機では表示されません（実機で確認）。BIN の照合は、下の SHA-256 で行います</p>
 
 <h2>16. 配布前の確認表（実機）</h2>
 <table class="check">
   <tr><th>□</th><th>確認すること</th></tr>
-  <tr><td>□</td><td>index.html をダブルクリックで開き、右上に「Ver 0.1.16  JA2IZU」、上部に「ファイルを直接開いています」の案内が出る</td></tr>
+  <tr><td>□</td><td>index.html をダブルクリックで開き、右上に「Ver 0.1.17  JA2IZU」、上部に「ファイルを直接開いています」の案内が出る</td></tr>
   <tr><td>□</td><td>ログの上の取っ手をドラッグして高さを変えられる（ダブルクリックで大小切替）</td></tr>
-  <tr><td>□</td><td>「ログをコピー」→ メモ帳に貼ると先頭に「25Ja Tool Ver 0.1.16 / 日時」。「ログを消す」で空になる</td></tr>
+  <tr><td>□</td><td>「ログをコピー」→ メモ帳に貼ると先頭に「25Ja Tool Ver 0.1.17 / 日時」。「ログを消す」で空になる</td></tr>
   <tr><td>□</td><td>「ファイルを選ぶ」でファイルを選ぶと、欄に ✔ とファイル名が出る（同じファイルを続けて選び直しても出る）</td></tr>
   <tr><td>□</td><td>新F/Wで普通に起動して接続すると、ログの「本体:」の行に「（25Ja, CH 名 31 B）」と出る</td></tr>
   <tr><td>□</td><td>手順の番号を押すと各欄へ移動し、欄の操作が終わると手順に ✔ が付く</td></tr>
