@@ -59,6 +59,26 @@ to the Dondji source code. It is not an official Dondji product.
   Public Domain (see App/bdf/shinonome/LICENSE)
   Source used: https://github.com/code4fukui/shinonome-font (053b21e)
 
+- Fonts embedded in the firmware (inherited from Dondji / F4HWN; not added by 25Ja)
+  App/ui/font_u8g2/ holds subsets of three bitmap fonts converted to u8g2 data,
+  used for the frequency / small text on the dual-watch screen. Only a few
+  glyphs of each are embedded (glyph counts from the file headers); the fonts
+  are not distributed as font files. The terms below are as shown on the
+  distribution sites (October 2026) and were not confirmed with the authors.
+  * font_10_tr.h: "Small Bold Pixel-7", Copyright (c) 2013 Style-7
+    (14 of 220 glyphs). Listed as "Freeware, Non-Commercial"; a commercial
+    license is available from the designer. Commercial use of this firmware
+    may therefore require a license for this font from the designer.
+  * font_bn_tn.h: "Blocktopia", memesbruh03 (14 of 196 glyphs).
+    Listed as "100% free".
+  * font_5_tr.h: "SG04", Copyright (C) 2000 SHAKAGRAPHICS (64 of 104 glyphs).
+    Only the copyright line was found; no usage terms were found.
+
+- U8G2 graphics library (external/U8G2/)
+  Copyright (c) 2016, olikraus@gmail.com, BSD 2-Clause License
+  (the license text is in the header of each source file)
+  https://github.com/olikraus/u8g2
+
 - Changes made by 25Ja (Apache License 2.0, section 4(b)); modified files carry
   "JA:" comments in the source:
   * Japanese (kanji / kana) display: channel names (31 bytes, SPI back half

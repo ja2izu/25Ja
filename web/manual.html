@@ -58,7 +58,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 </style>
 </head>
 <body>
-<div id="verBadge">Ver 0.1.15  JA2IZU</div>
+<div id="verBadge">Ver 0.1.16  JA2IZU</div>
 <main>
 <h1>25Ja（にこじゃ）説明書</h1>
 <p class="lead">UV-K1 / UV-K5(K6) V3 用 日本語ファームウェア（以下F/W）25Ja と 書込ツール 25Ja Tool の使い方</p>
@@ -400,27 +400,29 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <li>F4HWN（armel）、muzkr、egzumer、DualTachyon ほか各氏のF/W — Apache License 2.0。高速スキャン・RSSI は F4HWN の SCAN_FASTER（commit 3a50e212）からの移植</li>
   <li>FM 局名表示の着想：steranian/uv-k1-k5v3-firmware-custom（Apache License 2.0）。25Ja では専用の局名表として作り直し</li>
   <li>東雲フォント（電子書体オープンラボ）— Public Domain</li>
+  <li>F/W に内蔵の画面表示用フォント（Dondji／F4HWN から引き継いだもの。ごく一部の字だけを埋め込み、フォントファイルとしては配布していません）：Small Bold Pixel-7（Style-7、配布元の表記は「Freeware, Non-Commercial」＝非商用。商用はデザイナーに連絡してライセンスを得る形）、Blocktopia（memesbruh03、配布元の表記は「100% free」）、SG04（SHAKAGRAPHICS、著作権表示のみで使用条件は見つかっていません）。配布元の表記であり、作者には確認していません。25Ja を商用で使う場合は、Pixel-7 の条件に注意してください</li>
+  <li>U8G2 ライブラリ（olikraus、BSD 2-Clause）</li>
   <li>詳しくは <code>LICENSE</code> / <code>NOTICE</code> を参照</li>
 </ul>
 
 <h2 id="hash">15. 配布物の照合値</h2>
 <table>
   <tr><th>ファイル</th><th>サイズ</th><th>SHA-256</th></tr>
-  <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">69,218 B</td><td class="hash">0d9ba14c4010b2fc23a3b59a200595eb7abb6847e07caa21805ab676e41aa414</td></tr>
+  <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">69,218 B</td><td class="hash">7199282f5c23193f3511b97575c02a804e831332c21f2d302a8936edb78c7071</td></tr>
   <tr><td class="nowrap"><code>firmware/25Ja_v0.4.1.bin</code></td><td class="nowrap">114,448 B</td><td class="hash">2997fe5a2a3f501204d247341c85962295cea52044791341287c36a2f3892409</td></tr>
   <tr><td class="nowrap"><code>font/25Ja_font_v4.bin</code></td><td class="nowrap">186,117 B</td><td class="hash">ca5d44656e91a9eb8f04a37af2e158456fd05fce2228167ae522a652da23e825</td></tr>
   <tr><td class="nowrap"><code>LICENSE</code></td><td class="nowrap">11,357 B</td><td class="hash">c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4</td></tr>
-  <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">1,249 B</td><td class="hash">12c91df9a03941f6f9e12bb86c467b4e83557827ec4e14bb99fe34f5fefd74c0</td></tr>
-  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">3,042 B</td><td class="hash">59acdca0abfb0b2ce2f320d4828291be4fcedd2fe392e3fa35752448dc7e4438</td></tr>
+  <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">1,601 B</td><td class="hash">5017f3f728a0262e6eff3dfe8ecb03276688ca1f4097e11fcb44eec21227deec</td></tr>
+  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">3,042 B</td><td class="hash">d29611cf1fccc9ba0290d91c52c69d49683a454e80315cd0e9a1be2510477607</td></tr>
 </table>
 <p>F/Wの版：25Ja v0.4.1（Dondji v5.2.8 ベース、F4HWN 由来）。同梱 BIN をビルドしたコミットは <code>0bf0b1e</code> です（短縮ハッシュ）。本体情報の画面に出るのは「ビルド日時」だけで、コミット名は実機では表示されません（実機で確認）。BIN の照合は、下の SHA-256 で行います</p>
 
 <h2>16. 配布前の確認表（実機）</h2>
 <table class="check">
   <tr><th>□</th><th>確認すること</th></tr>
-  <tr><td>□</td><td>index.html をダブルクリックで開き、右上に「Ver 0.1.15  JA2IZU」、上部に「ファイルを直接開いています」の案内が出る</td></tr>
+  <tr><td>□</td><td>index.html をダブルクリックで開き、右上に「Ver 0.1.16  JA2IZU」、上部に「ファイルを直接開いています」の案内が出る</td></tr>
   <tr><td>□</td><td>ログの上の取っ手をドラッグして高さを変えられる（ダブルクリックで大小切替）</td></tr>
-  <tr><td>□</td><td>「ログをコピー」→ メモ帳に貼ると先頭に「25Ja Tool Ver 0.1.15 / 日時」。「ログを消す」で空になる</td></tr>
+  <tr><td>□</td><td>「ログをコピー」→ メモ帳に貼ると先頭に「25Ja Tool Ver 0.1.16 / 日時」。「ログを消す」で空になる</td></tr>
   <tr><td>□</td><td>「ファイルを選ぶ」でファイルを選ぶと、欄に ✔ とファイル名が出る（同じファイルを続けて選び直しても出る）</td></tr>
   <tr><td>□</td><td>新F/Wで普通に起動して接続すると、ログの「本体:」の行に「（25Ja, CH 名 31 B）」と出る</td></tr>
   <tr><td>□</td><td>手順の番号を押すと各欄へ移動し、欄の操作が終わると手順に ✔ が付く</td></tr>

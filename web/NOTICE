@@ -22,3 +22,8 @@ Third-party work
   The fast scan and the RSSI graph during scanning are ported from F4HWN
   (armel/uv-k1-k5v3-firmware-custom, Apache License 2.0). See the NOTICE of
   the firmware source for details.
+- The firmware contains subsets of three bitmap fonts inherited from Dondji /
+  F4HWN (Small Bold Pixel-7 by Style-7, listed as "Freeware, Non-Commercial";
+  Blocktopia by memesbruh03; SG04 by SHAKAGRAPHICS, no usage terms found), and
+  the U8G2 library (BSD 2-Clause, Copyright (c) 2016 olikraus). See the NOTICE
+  of the firmware source for details.
