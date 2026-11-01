@@ -91,12 +91,12 @@ const char gSubMenu_RESET_CN[][8] = {
 
 const char *const gSubMenu_F_LOCK_CN[] = {
     "標準\n137-174\n400-470",
-    "FCCアマ\n144-148\n420-450",
+    "FCC HAM\n144-148\n420-450",
 #ifdef ENABLE_FEAT_F4HWN_CA
-    "CAアマ\n144-148\n430-450",
+    "CA HAM\n144-148\n430-450",
 #endif
-    "JA/CEアマ\n144-146\n430-440",
-    "GBアマ\n144-148\n430-440",
+    "JA/CE HAM\n144-146\n430-440",
+    "GB HAM\n144-148\n430-440",
     "137-174\n400-430",
     "137-174\n400-438",
 #ifdef ENABLE_FEAT_F4HWN_PMR
