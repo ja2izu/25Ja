@@ -113,8 +113,9 @@ to the Dondji source code. It is not an official Dondji product.
   * Japanese labels for the side keys (PF1 / PF2); F Lock option "JA/CE HAM"
     (144-146 MHz / 430-440 MHz) in the Dondji F Lock list
   * Boot logo: replaced with an image made for 25Ja
-  * Quick scan: long press of key 7 (or F+7) opens a pop-up to pick a scan
-    group and starts scanning at once; the menu opens on the last used category
+  * Quick Scan: long press of key 7 (or F+7) opens a pop-up to pick a scan
+    group and starts scanning at once
+  * Menu: opens on the last used category
   * Scan speed: the wait after a full tune is timed in 1 ms units (70 ms)
   * Font: SPI font version 5 (all 6879 characters of JIS X 0208); UTF-8
     2-byte characters and 3-byte characters starting with 0xE0-0xE2 are

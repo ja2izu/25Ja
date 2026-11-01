@@ -23,7 +23,7 @@ UV-K1 / UV-K5(K6) V3 用 25Ja（にこじゃ）F/Wの書込ツール。PC の Ch
 
 ## ファイル
 - index.html — ツール本体（外部ライブラリなし, Ver 0.1.19）
-- manual.html — 説明書（初回の書込・更新・キー・スキャン・スペクトラム・FM 放送の操作・FM 局名・困ったとき・配布前の確認表）
+- manual.html — 説明書（初回の書込・更新・キー・スキャン・スペクトラム・FM 放送の操作・FM 局名・困ったとき）
 - firmware/25Ja_v0.5.1.bin — 同梱F/W
 - font/25Ja_font_v5.bin — 同梱書体データ
 - test/sim.js — 模擬無線機を使った動作試験（Node.js + jsdom）。`CASES='^7' node sim.js` で一部だけ実行（全 30 件）
