@@ -44,6 +44,67 @@
 
 static volatile uint32_t gGlobalSysTickCounter;
 
+#ifdef ENABLE_FASTER_CHANNEL_SCAN
+/* JA: スキャンのフルチューン後の待ちを 1ms 単位で扱う。
+ * 10ms 刻みの gScanPauseDelayIn_10ms は設定時点から最初の刻みまでの 0〜10ms が揺らぐので、
+ * SysTick の VAL（カウントダウン）を使った 1us 単位の時刻で期限を判定する。 */
+static volatile bool gJaScanWaitArmed;
+static uint32_t      gJaScanWaitDeadlineUs;
+
+static uint32_t JA_NowUs(void)
+{
+    uint32_t t1, t2, v, p1, p2;
+    do {
+        p1 = SCB->ICSR & SCB_ICSR_PENDSTSET_Msk;
+        t1 = gGlobalSysTickCounter;
+        v  = SysTick->VAL;
+        t2 = gGlobalSysTickCounter;
+        p2 = SCB->ICSR & SCB_ICSR_PENDSTSET_Msk;
+    } while (t1 != t2 || p1 != p2);
+
+    if (p2)     /* 周期をまたいだが SysTick_Handler が未実行 */
+        t1++;
+
+    return t1 * 10000u + (SysTick->LOAD - v) / (SystemCoreClock / 1000000u);
+}
+
+void JA_ScanWaitArm(uint16_t ms)
+{
+    gJaScanWaitDeadlineUs = JA_NowUs() + (uint32_t)ms * 1000u;
+    gJaScanWaitArmed      = true;
+}
+
+void JA_ScanWaitDisarm(void)
+{
+    gJaScanWaitArmed = false;
+}
+
+/* メインループ（APP_Update）から毎回呼ぶ。期限が来たらスキャン再開を予約する */
+void JA_ScanWaitPoll(void)
+{
+    if (!gJaScanWaitArmed)
+        return;
+
+    if (gScanStateDir == SCAN_OFF ||
+        gScanPauseDelayIn_10ms != 0 ||            /* 他の処理が一時停止などを設定した */
+        gCurrentFunction == FUNCTION_INCOMING ||
+        gCurrentFunction == FUNCTION_RECEIVE)
+    {
+        gJaScanWaitArmed = false;
+        return;
+    }
+
+    if (gCurrentFunction == FUNCTION_MONITOR || gCurrentFunction == FUNCTION_TRANSMIT)
+        return;                                   /* 従来どおり、モニター・送信中は進めない */
+
+    if ((int32_t)(JA_NowUs() - gJaScanWaitDeadlineUs) >= 0)
+    {
+        gJaScanWaitArmed    = false;
+        gScheduleScanListen = true;
+    }
+}
+#endif
+
 // we come here every 10ms
 void SysTick_Handler(void)
 {
@@ -79,6 +140,8 @@ void SysTick_Handler(void)
 
     if (gScanListNameCountdown_10ms > 0 && --gScanListNameCountdown_10ms == 0)
         gUpdateDisplay = true;   /* JA: ポップアップを消すため再描画 */
+
+    DECREMENT_AND_TRIGGER(gJaScanGroupSelCountdown_10ms, gJaScanGroupSelTimeout);   /* JA: スキャン グループ選択の無操作 */
 
     DECREMENT(gFoundCDCSSCountdown_10ms);
 

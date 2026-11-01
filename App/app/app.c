@@ -939,6 +939,10 @@ void APP_Update(void)
         return;
 #endif
 
+#ifdef ENABLE_FASTER_CHANNEL_SCAN
+    JA_ScanWaitPoll();   // JA: 1ms 単位のスキャン待ちの期限判定
+#endif
+
 #ifdef ENABLE_VOICE
     if (!SCANNER_IsScanning() && gScanStateDir != SCAN_OFF && gScheduleScanListen && !gPttIsPressed && gVoiceWriteIndex == 0)
 #else
@@ -1272,8 +1276,17 @@ void APP_TimeSlice10ms(void)
 
     if (gUpdateDisplayCurrent) {
         gUpdateDisplay = false;
-        GUI_DisplayScreen();
-        UI_MAIN_DrawScanListPopup();   /* JA: スキャンリスト名ポップアップ */
+        GUI_DisplayScreen();   /* JA: スキャン グループ名・グループ選択のポップアップは UI_DisplayMain の中で送信前に描く */
+    }
+
+    if (gJaScanGroupSelTimeout) {   /* JA: スキャン グループ選択の無操作 5 秒 → 確定（メイン画面以外なら取消） */
+        gJaScanGroupSelTimeout = false;
+        if (gJaScanGroupSelActive) {
+            if (gScreenToDisplay == DISPLAY_MAIN)
+                MAIN_JaScanGroupSelConfirm();
+            else
+                MAIN_JaScanGroupSelCancel();
+        }
     }
 
 #ifdef ENABLE_AUDIO_BAR

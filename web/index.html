@@ -115,26 +115,26 @@ table.fm button { min-height: 40px; padding: 2px 12px; }
 </style>
 </head>
 <body>
-<div id="verBadge">Ver 0.1.18  JA2IZU</div>
+<div id="verBadge">Ver 0.1.19  JA2IZU</div>
 <header>
   <h1>25Ja Tool</h1>
-  <p>UV-K1 / UV-K5(K6) V3 用 25Ja（にこじゃ）F/Wの書込・字庫・校正バックアップ。Chrome / Edge（Web Serial）で使います。<a href="manual.html" target="_blank">説明書</a></p>
+  <p>UV-K1 / UV-K5(K6) V3 用 25Ja（にこじゃ）F/Wと書体データの書込・校正バックアップ。Chrome / Edge（Web Serial）で使います。<a href="manual.html" target="_blank">説明書</a></p>
 </header>
 
 <main>
-  <div class="card warnbox" id="fileProto" hidden>ファイルを直接開いています。この開き方では同梱のF/W・字庫を自動で読めないため、2・3 の欄の「ファイルを選ぶ」で
-    <code>firmware/25Ja_v0.4.1.bin</code>・<code>font/25Ja_font_v4.bin</code> を選んでください。</div>
+  <div class="card warnbox" id="fileProto" hidden>ファイルを直接開いています。この開き方では同梱のF/W・書体データを自動で読めないため、2・3 の欄の「ファイルを選ぶ」で
+    <code>firmware/25Ja_v0.5.1.bin</code>・<code>font/25Ja_font_v5.bin</code> を選んでください。</div>
   <div class="card warnbox" id="noSerial" hidden>このブラウザは Web Serial に対応していません。PC の Chrome か Edge で開いてください。</div>
 
   <div class="card warnbox" id="firstNote"><b>最初にお読みください</b>：元のデータが必要なときは、先にバックアップしておいてください。F/Wは、公式その他のツールで元に戻したり、上書きしたりできます。</div>
 
   <section class="card" id="sec0">
-    <h2><span class="no">0</span>初めて 25Ja を入れる手順 <span class="note-inline">番号を押すとその欄へ移動します。F/Wだけ更新するときは 2 だけで済みます（字庫は残ります）</span></h2>
+    <h2><span class="no">0</span>初めて 25Ja を入れる手順 <span class="note-inline">番号を押すとその欄へ移動します。F/Wだけ更新するときは 2 だけで済みます（書体データは残ります。ただし F/W 0.4.x から 0.5 以降へ更新するときは、3 も必要です）</span></h2>
     <ol class="setup" aria-live="polite">
       <li><a href="#sec1" class="jump">1 校正バックアップ</a><small>普通に起動</small><span class="st" id="suSt1"></span></li>
       <li><a href="#sec2" class="jump">2 F/W</a><small>PTT を押したまま電源 ON</small><span class="st" id="suSt2"></span></li>
       <li><span class="step">本体で リセット → 全部</span><small>隠しメニューで実行</small><label class="st"><input type="checkbox" id="suResetChk"> 済んだ</label></li>
-      <li><a href="#sec3" class="jump">3 字庫</a><small>普通に起動</small><span class="st" id="suSt4"></span></li>
+      <li><a href="#sec3" class="jump">3 書体データ</a><small>普通に起動</small><span class="st" id="suSt4"></span></li>
       <li><a href="#sec4" class="jump">4 校正復元（必要なときだけ）</a><small>校正がおかしいときだけ。終わると再起動</small><span class="st" id="suSt5"></span></li>
     </ol>
     <p class="warnline">書込は自己責任です。技適のない無線機から電波を出すのは電波法違反です。</p>
@@ -151,8 +151,9 @@ table.fm button { min-height: 40px; padding: 2px 12px; }
   </section>
 
   <section class="card" id="sec2">
-    <h2><span class="no">2</span>F/Wの書込 <span class="mode boot">刷机モード</span></h2>
-    <p class="desc">電源を切り、<b>PTT を押したまま電源を入れて</b>（刷机モード＝F/Wを書き込むための状態）から「書き込む」を押します。</p>
+    <h2><span class="no">2</span>F/Wの書込 <span class="mode boot">F/W 書込モード</span></h2>
+    <p class="desc">電源を切り、<b>PTT を押したまま電源を入れて</b>（F/W 書込モード）から「書き込む」を押します。</p>
+    <p class="desc"><b>25Ja を初めて入れた直後は、すべての周波数で送信できません。</b>PF1 と PTT を押しながら電源を入れ、隠しメニュー「バンド ロック」で使う範囲（例：JA/CE HAM）を選ぶと送信できます。</p>
     <div class="row">
       <button class="sub bundled" id="fwBundledBtn">同梱のF/Wを使う</button>
       <input type="file" id="fwFile" data-info="fwInfo" aria-label="F/Wのファイル" accept=".bin">
@@ -162,19 +163,19 @@ table.fm button { min-height: 40px; padding: 2px 12px; }
   </section>
 
   <section class="card" id="sec3">
-    <h2><span class="no">3</span>字庫（東雲フォント）の書込 <span class="mode">通常起動</span></h2>
-    <p class="desc">F/Wを書いた後に書きます。最後に全体を読み戻して照合します。F/Wと字庫は同じ版の組で使ってください。</p>
+    <h2><span class="no">3</span>書体データ（東雲フォント）の書込 <span class="mode">通常起動</span></h2>
+    <p class="desc">F/Wを書いた後に書きます。最後に全体を読み戻して照合します。F/Wと書体データは同じ版の組で使ってください（F/W 0.5 以降は書体データ v5）。</p>
     <div class="row">
-      <button class="sub bundled" id="fontBundledBtn">同梱の字庫を使う</button>
-      <input type="file" id="fontFile" data-info="fontInfo" aria-label="字庫のファイル" accept=".bin">
+      <button class="sub bundled" id="fontBundledBtn">同梱の書体データを使う</button>
+      <input type="file" id="fontFile" data-info="fontInfo" aria-label="書体データのファイル" accept=".bin">
       <button id="fontFlashBtn" disabled>書き込む</button>
     </div>
-    <div class="file" id="fontInfo">未選択（「ファイルを選ぶ」か「同梱の字庫を使う」）</div>
+    <div class="file" id="fontInfo">未選択（「ファイルを選ぶ」か「同梱の書体データを使う」）</div>
   </section>
 
   <section class="card" id="sec4">
     <h2><span class="no">4</span>校正データの復元 <span class="mode">通常起動</span> <span class="note-inline">必要なときだけ</span></h2>
-    <p class="desc">通常は不要です。校正データは、リセット・F/W書込・字庫書込・NeonPlugJA の操作では書き換わりません（ソース上の確認。実機未確認）。変わるのは、隠しメニューの「電池校正」（12 バイト）とこの復元だけです。受信感度や送信出力がおかしいときだけ、保存した calibration.dat を書き戻します。<b>書き戻すと、バックアップを取った後に行った電池校正は上書きされ、バックアップ時点の値に戻ります</b>（電池校正を変えていなければ影響はありません）。1 で読み出した直後なら選び直し不要です。終わると再起動します。</p>
+    <p class="desc">通常は不要です。校正データは、リセット・F/W書込・書体データの書込・NeonPlugJA の操作では書き換わりません。変わるのは、隠しメニューの「電池校正」（12 バイト）とこの復元だけです。受信感度や送信出力がおかしいときだけ、保存した calibration.dat を書き戻します。<b>書き戻すと、バックアップを取った後に行った電池校正は上書きされ、バックアップ時点の値に戻ります</b>（電池校正を変えていなければ影響はありません）。1 で読み出した直後なら選び直し不要です。終わると再起動します。</p>
     <div class="row"><input type="file" id="calibFile" data-info="calibInfo" aria-label="校正データのファイル" accept=".dat,.bin"><button id="calibRestoreBtn" disabled>書き戻す</button></div>
     <div class="file" id="calibInfo">未選択</div>
   </section>
@@ -265,7 +266,7 @@ table.fm button { min-height: 40px; padding: 2px 12px; }
 <footer>
   25Ja Tool © 2026 JA2IZU — Apache License 2.0（LICENSE / NOTICE）。<br>
   通信処理は Dondji Web Tool（© 2026 BD1AHN, Apache-2.0）を元にしています。本ツールおよび 25Ja は Dondji 公式のものではありません。<br>
-  字庫: 東雲フォント（Public Domain）。
+  書体データ: 東雲フォント（Public Domain）。
 </footer>
 
 <script>
@@ -282,10 +283,10 @@ const MSG_SPI_STAGE = 0x0523, MSG_SPI_STAGE_RESP = 0x0524;   // 25Ja: 段階書�
 const MSG_NOTIFY_BL_VER = 0x0530, MSG_REBOOT = 0x05DD;
 const OBFUS = new Uint8Array([0x16,0x6c,0x14,0xe6,0x2e,0x91,0x0d,0x40,0x21,0x35,0xd5,0x40,0x13,0x03,0xe9,0x80]);
 
-const FW_URL = 'firmware/25Ja_v0.4.1.bin';
+const FW_URL = 'firmware/25Ja_v0.5.1.bin';
 const FW_MAX = 118 * 1024;                      // FLASH (rx) LENGTH = 118K, ORIGIN 0x08002800
-const FONT_URL = 'font/25Ja_font_v4.bin';
-const FONT_BASE = 0x024000, FONT_SIZE = 186117, FONT_VERSION = 4;   // App/settings.h CN_FONT_*
+const FONT_URL = 'font/25Ja_font_v5.bin';
+const FONT_BASE = 0x024000, FONT_SIZE = 192613, FONT_VERSION = 5;   // App/settings.h CN_FONT_*
 const CALIB_SIZE = 512, CALIB_CHUNK = 16;
 const CFG_BASE = 0x00A000, CFG_SIZE = 0x220, CFG_SIZE_OLD = 0x200, CFG_CHUNK = 32;
 const LOGO_ADDR = 0x1FF000, LOGO_HDR = 8, LOGO_SIZE = 1024;
@@ -372,7 +373,7 @@ let port = null, reader = null, writer = null, reading = false, rb = [];
 async function connect() {
   log('シリアルポートを選んでください…');
   port = await navigator.serial.requestPort();
-  await port.open({ baudRate: BAUDRATE });
+  await port.open({ baudRate: BAUDRATE, bufferSize: 65536 });   // 受信バッファを大きくする（既定 255 B だと F/W 書込モードの通知であふれる）
   reader = port.readable.getReader(); writer = port.writable.getWriter();
   reading = true; rb = []; readLoop();
   await sleep(500);
@@ -386,16 +387,27 @@ async function disconnect() {
   log('切断しました');
 }
 async function readLoop() {
-  try {
-    while (reading && reader) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      if (value && value.length) {
-        for (const b of value) rb.push(b);
-        if (rxWaiter) { const f = rxWaiter; rxWaiter = null; f(); }   // 受信を待っている処理にすぐ知らせる
+  // Buffer overrun などは続けられるエラー。reader を取り直して受信を続ける（0.1.18 まではここで受信が止まっていた）
+  while (reading && port) {
+    try {
+      while (reading && reader) {
+        const { value, done } = await reader.read();
+        if (done) return;
+        if (value && value.length) {
+          for (const b of value) rb.push(b);
+          if (rxWaiter) { const f = rxWaiter; rxWaiter = null; f(); }   // 受信を待っている処理にすぐ知らせる
+        }
       }
+      return;
+    } catch (e) {
+      if (!reading) return;
+      log('読み取りエラー: ' + e.message + '（受信を続けます）', 'warn');
     }
-  } catch (e) { if (reading) log('読み取りエラー: ' + e.message, 'error'); }
+    try { reader.releaseLock(); } catch {}
+    reader = null;
+    if (!reading || !port || !port.readable) return;
+    try { reader = port.readable.getReader(); } catch (e) { log('受信を再開できません: ' + e.message, 'error'); return; }
+  }
 }
 async function send(msg) { await writer.write(makePacket(msg)); }
 // 受信待ち: データが届いたらすぐ返る（タイマーの 10ms 刻みに頼らない。タブが裏に回っても遅くなりにくい）
@@ -435,7 +447,7 @@ async function openSession(purpose) {
     const m = fetchMessage(rb);
     if (!m) continue;
     if (m.type === MSG_NOTIFY_DEV_INFO)
-      throw new Error('刷机モードになっています。いったん電源を切り、普通に起動してからやり直してください');
+      throw new Error('F/W 書込モードになっています。いったん電源を切り、普通に起動してからやり直してください');
     if (m.type === MSG_DEV_INFO_RESP) {
       let ver = '';
       for (const b of m.data) { if (b === 0 || b === 0xff) break; if (b >= 32 && b < 127) ver += String.fromCharCode(b); }
@@ -510,7 +522,7 @@ async function run(title, fn) {
 
 // ===== ファイルの検査 =====
 function checkFirmware(u8) {
-  if (u8.length === FONT_SIZE || checkFont(u8) === null) return '字庫のファイルです。3 の欄で選んでください';
+  if (u8.length === FONT_SIZE || checkFont(u8) === null) return '書体データのファイルです。3 の欄で選んでください';
   if (u8.length < 1024 || u8.length > FW_MAX) return 'サイズが範囲外（' + u8.length + ' B, 最大 ' + FW_MAX + ' B）';
   const v = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
   const sp = v.getUint32(0, true), rv = v.getUint32(4, true);
@@ -584,7 +596,7 @@ $('fwFile').onchange = async e => {
   e.target.value = ''; refreshButtons();
 };
 async function waitBootloader() {
-  log('刷机モードの無線機を待っています…');
+  log('F/W 書込モードの無線機を待っています…');
   let acc = 0, last = 0;
   for (let t = 0; t < 500; t++) {
     await sleep(10);
@@ -604,7 +616,7 @@ async function waitBootloader() {
     } else acc = 0;
     last = now;
   }
-  throw new Error('刷机モードの無線機が見つかりません（PTT を押したまま電源 ON）');
+  throw new Error('F/W 書込モードの無線機が見つかりません（PTT を押したまま電源 ON）');
 }
 async function blHandshake(bl) {
   let acc = 0;
@@ -622,7 +634,7 @@ async function blHandshake(bl) {
 }
 $('fwFlashBtn').onclick = () => {
   if (!fwData) return;
-  if (!confirm('F/Wを書き込みます。無線機は刷机モード（PTT を押したまま電源 ON）になっていますか？')) return;
+  if (!confirm('F/Wを書き込みます。無線機は F/W 書込モード（PTT を押したまま電源 ON）になっていますか？')) return;
   return run('F/Wの書込', async () => {
     const bl = await waitBootloader();
     await blHandshake(bl);
@@ -652,7 +664,7 @@ $('fwFlashBtn').onclick = () => {
   });
 };
 
-// ===== 3 字庫 =====
+// ===== 3 書体データ =====
 let fontData = null;
 $('fontBundledBtn').onclick = async () => {
   try { const u8 = await fetchBin(FONT_URL); fontData = (await showFile('fontInfo', FONT_URL, u8, checkFont(u8))) ? u8 : null; }
@@ -668,19 +680,19 @@ $('fontFile').onchange = async e => {
 };
 $('fontFlashBtn').onclick = () => {
   if (!fontData) return;
-  return run('字庫の書込', async () => {
-    const s = await openSession('字庫の書込');
+  return run('書体データの書込', async () => {
+    const s = await openSession('書体データの書込');
     const n = fontData.length, t0 = Date.now();
     // 25Ja の段階書込が使えるか、先頭の塊で確かめる（古いF/Wは 0x0523 に応答しない）
     const first = fontData.subarray(0, Math.min(STAGE_CHUNK, n));
     retryCount = 0;
     if (await spiStage(s.ts, FONT_BASE, first, n <= STAGE_CHUNK, 3)) {
-      log('字庫を書き込みます（高速: セクタごとにまとめて書込）');
+      log('書体データを書き込みます（高速: セクタごとにまとめて書込）');
       for (let off = STAGE_CHUNK; off < n; off += STAGE_CHUNK) {
         const end = Math.min(off + STAGE_CHUNK, n);
         if (!await spiStage(s.ts, FONT_BASE + off, fontData.subarray(off, end), end === n)) throw new Error('書込失敗 @ 0x' + (FONT_BASE + off).toString(16));
         progress(off / n * 80);
-        if ((off / STAGE_CHUNK) % 200 === 0) log('字庫 ' + off + '/' + n + ' B');
+        if ((off / STAGE_CHUNK) % 200 === 0) log('書体データ ' + off + '/' + n + ' B');
       }
       if (n > STAGE_CHUNK && !await spiStage(s.ts, FONT_BASE + n, new Uint8Array(0), true)) throw new Error('確定の応答がありません');
     } else {
@@ -689,7 +701,7 @@ $('fontFlashBtn').onclick = () => {
         const chunk = fontData.subarray(off, Math.min(off + SPI_CHUNK, n));
         if (!await spiWrite(s.ts, FONT_BASE + off, chunk)) throw new Error('書込失敗 @ 0x' + (FONT_BASE + off).toString(16));
         progress(off / n * 80);
-        if ((off / SPI_CHUNK) % 400 === 0) log('字庫 ' + off + '/' + n + ' B');
+        if ((off / SPI_CHUNK) % 400 === 0) log('書体データ ' + off + '/' + n + ' B');
         await sleep(50);   // 消去中のF/Wに詰め込み過ぎない（元ツールと同じ間隔）
       }
     }
@@ -703,7 +715,7 @@ $('fontFlashBtn').onclick = () => {
       for (let i = 0; i < len; i++) if (c[i] !== fontData[off + i]) throw new Error('照合で不一致 @ 0x' + (FONT_BASE + off + i).toString(16) + '。もう一度書き込んでください');
       progress(80 + off / n * 20);
     }
-    log('字庫の書込が完了しました（全 ' + n + ' B 照合 OK, 照合 ' + ((Date.now() - t1) / 1000).toFixed(0) + ' 秒）', 'success');
+    log('書体データの書込が完了しました（全 ' + n + ' B 照合 OK, 照合 ' + ((Date.now() - t1) / 1000).toFixed(0) + ' 秒）', 'success');
   });
 };
 
@@ -833,17 +845,17 @@ $('logoClearBtn').onclick = () => run('起動画像の無効化', async () => {
 //   見出し 16B: "FMST", 版数 1, 件数(0-127), 残り 0xFF
 //   項目 32B: 周波数 u16 LE（100kHz 単位）, 予備 0xFFFF, 局名 28B（UTF-8, 余りは 0x00）
 let fmRows = [];            // { f: '82.5', n: 'NHK FM' }
-let fmGlyphs = null;        // 字庫にある文字（U+3000〜U+FFFF）の集合。読めなければ null（字の検査を省く）
+let fmGlyphs = null;        // 書体データにある文字（U+0080〜U+FFFF）の集合。読めなければ null（字の検査を省く）
 async function fmLoadGlyphs() {
   if (fmGlyphs) return;
-  if (!fontData && isFileProto) return;   // 直開き: 3 で字庫を選ぶと検査できるようになる
+  if (!fontData && isFileProto) return;   // 直開き: 3 で書体データを選ぶと検査できるようになる
   try {
     const u8 = fontData || await fetchBin(FONT_URL);
-    if (checkFont(u8)) throw new Error('字庫ファイルが不正');
+    if (checkFont(u8)) throw new Error('書体データのファイルが不正');
     const n = (FONT_SIZE - 1) / 28, idx = n * 24, dv = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
     fmGlyphs = new Set();
     for (let i = 0; i < n; i++) fmGlyphs.add(dv.getUint32(idx + i * 4, true) >>> 16);
-  } catch (e) { log('字庫を読めないため、局名の字の検査を省きます（' + e.message + '）', 'warn'); }
+  } catch (e) { log('書体データを読めないため、局名の字の検査を省きます（' + e.message + '）', 'warn'); }
 }
 function fmParseFreq(t) {
   const v = parseFloat(String(t).trim());
@@ -853,14 +865,14 @@ function fmParseFreq(t) {
   if (f < FM_FREQ_MIN || f > FM_FREQ_MAX) return { err: '64.0〜108.0MHz の範囲外' };
   return { f };
 }
-// 画面のドット幅: 漢字・かな 12+1, 半角 6+1（F/W UI_SmallStringPixelWidth と同じ）
+// 画面のドット幅: 書体データの字 12+1, 半角 6+1（F/W UI_SmallStringPixelWidth と同じ。F/W 0.5 以降は U+0080〜U+FFFF を書体データの字として扱う）
 function fmCheckName(name) {
   let w = 0;
   for (const ch of name) {
     const cp = ch.codePointAt(0);
     if (cp >= 0x20 && cp <= 0x7E) { w += 7; continue; }
-    if (cp >= 0x3000 && cp <= 0xFFFF) {
-      if (fmGlyphs && !fmGlyphs.has(cp)) return { err: '字庫にない字「' + ch + '」' };
+    if (cp >= 0x80 && cp <= 0xFFFF) {
+      if (fmGlyphs && !fmGlyphs.has(cp)) return { err: '書体データにない字「' + ch + '」' };
       w += 13; continue;
     }
     return { err: '使えない字「' + ch + '」' };
@@ -1139,11 +1151,11 @@ document.querySelectorAll('a.jump').forEach(a => a.addEventListener('click', e =
 });
 
 // ===== 起動時 =====
-if (isFileProto) { document.querySelectorAll('.bundled').forEach(b => b.hidden = true); $('fileProto').hidden = false; log('ファイルを直接開いています。F/W・字庫は 2・3 の欄の「ファイルを選ぶ」で選んでください', 'warn'); }
+if (isFileProto) { document.querySelectorAll('.bundled').forEach(b => b.hidden = true); $('fileProto').hidden = false; log('ファイルを直接開いています。F/W・書体データは 2・3 の欄の「ファイルを選ぶ」で選んでください', 'warn'); }
 if (!('serial' in navigator)) { $('noSerial').hidden = false; log('Web Serial 非対応のブラウザです（PC の Chrome / Edge を使ってください）', 'error'); }
 refreshButtons();
 log('25Ja Tool を開きました');
-fmLoadGlyphs().then(fmUpdateChecks);   // 局名の字の検査用（同梱の字庫を読む）
+fmLoadGlyphs().then(fmUpdateChecks);   // 局名の字の検査用（同梱の書体データを読む）
 </script>
 </body>
 </html>

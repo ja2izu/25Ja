@@ -148,8 +148,15 @@ async function runCase(name, mode, act, check, setup, opts = {}) {
   const port = {
     async open() {
       let ctrl;
+      const self = this;
       this.readable = new ReadableStream({ start(c) { ctrl = c; } });
       this.writable = new WritableStream({ write(chunk) { radio.onData(chunk); } });
+      if (process.env.SIM_OVERRUN) {   // 開いた直後に Buffer overrun（Web Serial: 続けられるエラー。readable が新しいストリームに替わる）
+        setTimeout(() => {
+          const e = new Error('Buffer overrun'); e.name = 'BufferOverrunError';
+          const old = ctrl; self.readable = new ReadableStream({ start(c) { ctrl = c; } }); old.error(e);
+        }, 30);
+      }
       radio.start(b => { try { ctrl.enqueue(b); } catch {} });
     },
     async close() { radio.stop(); },
@@ -186,8 +193,8 @@ async function setFile(w, id, name, bytes) {
 const eq = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
 
 (async () => {
-  const fw = new Uint8Array(fs.readFileSync(path.join(WEB, 'firmware/25Ja_v0.4.1.bin')));
-  const font = new Uint8Array(fs.readFileSync(path.join(WEB, 'font/25Ja_font_v4.bin')));
+  const fw = new Uint8Array(fs.readFileSync(path.join(WEB, 'firmware/25Ja_v0.5.1.bin')));
+  const font = new Uint8Array(fs.readFileSync(path.join(WEB, 'font/25Ja_font_v5.bin')));
   const res = [];
 
   res.push(await runCase('1 校正の読み出し', 'normal', async w => click(w, 'calibDumpBtn'),
@@ -197,21 +204,21 @@ const eq = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
     async (w, r) => r.fwTotal === Math.ceil(fw.length / 256) && eq(r.mcu.slice(0, fw.length), fw)));
 
   res.push(await runCase('2b 通常起動中にF/W書込 → 拒否', 'normal', async w => { click(w, 'fwBundledBtn'); await new Promise(r => setTimeout(r, 300)); click(w, 'fwFlashBtn'); },
-    async (w, r, L) => r.stats.fwPages === 0 && L.some(s => s.includes('刷机モード') || s.includes('通常起動'))));
+    async (w, r, L) => r.stats.fwPages === 0 && L.some(s => s.includes('F/W 書込モード') || s.includes('通常起動'))));
 
-  res.push(await runCase('2c F/W欄に字庫を選ぶ → 拒否', 'boot', async w => { await setFile(w, 'fwFile', 'cn_font.bin', font); },
-    async (w, r, L) => w.document.getElementById('fwFlashBtn').disabled && L.some(s => s.includes('字庫のファイル'))));
+  res.push(await runCase('2c F/W欄に書体データを選ぶ → 拒否', 'boot', async w => { await setFile(w, 'fwFile', 'cn_font.bin', font); },
+    async (w, r, L) => w.document.getElementById('fwFlashBtn').disabled && L.some(s => s.includes('書体データのファイル'))));
 
-  res.push(await runCase('3 字庫書込（同梱, 高速）', 'normal', async w => { click(w, 'fontBundledBtn'); await new Promise(r => setTimeout(r, 300)); click(w, 'fontFlashBtn'); },
-    async (w, r, L) => { console.log('   stage=' + r.stats.stage + ' secWrite=' + r.stats.secWrite); return eq(r.spi.slice(0x024000, 0x024000 + font.length), font) && L.some(s => s.includes('照合 OK')) && L.some(s => s.includes('高速')) && r.stats.secWrite === 46 && r.stats.spiWrite === 0; },
-    r => { for (let i = 0; i < font.length; i++) r.spi[0x024000 + i] = (i * 31) & 0xff; }));   // 旧字庫が入っている状態から
+  res.push(await runCase('3 書体データ書込（同梱, 高速）', 'normal', async w => { click(w, 'fontBundledBtn'); await new Promise(r => setTimeout(r, 300)); click(w, 'fontFlashBtn'); },
+    async (w, r, L) => { console.log('   stage=' + r.stats.stage + ' secWrite=' + r.stats.secWrite); return eq(r.spi.slice(0x024000, 0x024000 + font.length), font) && L.some(s => s.includes('照合 OK')) && L.some(s => s.includes('高速')) && r.stats.secWrite === 48 && r.stats.spiWrite === 0; },
+    r => { for (let i = 0; i < font.length; i++) r.spi[0x024000 + i] = (i * 31) & 0xff; }));   // 旧書体データが入っている状態から
 
-  res.push(await runCase('3c 旧F/Wに字庫 → 従来方式', 'normal', async w => { click(w, 'fontBundledBtn'); await new Promise(r => setTimeout(r, 300)); click(w, 'fontFlashBtn'); },
+  res.push(await runCase('3c 旧F/Wに書体データ → 従来方式', 'normal', async w => { click(w, 'fontBundledBtn'); await new Promise(r => setTimeout(r, 300)); click(w, 'fontFlashBtn'); },
     async (w, r, L) => eq(r.spi.slice(0x024000, 0x024000 + font.length), font) && L.some(s => s.includes('従来の方式')) && L.some(s => s.includes('照合 OK')),
     r => { r.legacy = true; }));
 
-  res.push(await runCase('3b 刷机モードで字庫書込 → 拒否', 'boot', async w => { click(w, 'fontBundledBtn'); await new Promise(r => setTimeout(r, 300)); click(w, 'fontFlashBtn'); },
-    async (w, r, L) => r.stats.spiWrite === 0 && L.some(s => s.includes('刷机モードになっています'))));
+  res.push(await runCase('3b F/W 書込モードで書体データ書込 → 拒否', 'boot', async w => { click(w, 'fontBundledBtn'); await new Promise(r => setTimeout(r, 300)); click(w, 'fontFlashBtn'); },
+    async (w, r, L) => r.stats.spiWrite === 0 && L.some(s => s.includes('F/W 書込モードになっています'))));
 
   const cal = new Uint8Array(512).map((_, i) => (255 - i) & 0xff);
   res.push(await runCase('4 校正の復元', 'normal', async w => { await setFile(w, 'calibFile', 'calibration.dat', cal); click(w, 'calibRestoreBtn'); },
@@ -251,10 +258,10 @@ const eq = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
       return t === '\uFEFF周波数,局名\r\n82.5,NHK FM 名古屋\r\n77.8,ZIP-FM\r\n80.7,エフエム愛知名古屋\r\n89.9,東海ラジオ放送\r\n' && L.some(s => s.includes('4 局'));
     }, r => r.spi.set(fmTable(fmList), 0x12000)));
 
-  // 検査: 10 字（幅超過）/ 字庫にない字（半角カナ）/ 範囲外 / 同じ周波数 → 書かない
+  // 検査: 10 字（幅超過）/ 書体データにない字（半角カナ）/ 範囲外 / 同じ周波数 → 書かない
   const csvBad = Buffer.from('82.5,あいうえおかきくけこ\n77.8,ｱｲｳ\n120.0,X\n82.5,Y\n80.05,Z\n', 'utf8');
   res.push(await runCase('7d 不正な行 → 書込拒否', 'normal', async w => { await setFile(w, 'fmCsvFile', 'bad.csv', csvBad); await new Promise(r => setTimeout(r, 500)); click(w, 'fmWriteBtn'); },
-    async (w, r, L) => r.stats.spiWrite === 0 && ['超過', '字庫にない字', '範囲外', '同じ周波数', '0.1MHz'].every(k => L.some(s => s.includes(k)))));
+    async (w, r, L) => r.stats.spiWrite === 0 && ['超過', '書体データにない字', '範囲外', '同じ周波数', '0.1MHz'].every(k => L.some(s => s.includes(k)))));
 
   res.push(await runCase('7e 局名表の消去', 'normal', async w => click(w, 'fmEraseBtn'),
     async (w, r) => eq(r.spi.slice(0x12000, 0x12010), new Uint8Array(16).fill(0xff)) && r.spi[0x12010] === 0x39, r => r.spi.set(fmTable(fmList), 0x12000)));
@@ -277,9 +284,9 @@ const eq = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
   const call = (w, id) => w.document.getElementById(id).onclick();
   res.push(await runCase('0a 校正を読み出す → 4 の欄に入る → 書き戻し', 'normal', async w => { await call(w, 'calibDumpBtn'); await call(w, 'calibRestoreBtn'); },
     async (w, r) => st(w, 1).startsWith('✔') && st(w, 5).startsWith('✔') && r.rebooted && w.document.getElementById('calibInfo').textContent.includes('1 で読み出した')));
-  res.push(await runCase('0b F/W（刷机モード）→ 手順 2 に ✔', 'boot', async w => { await call(w, 'fwBundledBtn'); await call(w, 'fwFlashBtn'); },
+  res.push(await runCase('0b F/W（F/W 書込モード）→ 手順 2 に ✔', 'boot', async w => { await call(w, 'fwBundledBtn'); await call(w, 'fwFlashBtn'); },
     async (w, r) => st(w, 2).startsWith('✔') && eq(r.mcu.slice(0, fw.length), fw)));
-  res.push(await runCase('0c 字庫 → 手順 3 に ✔', 'normal', async w => { await call(w, 'fontBundledBtn'); await call(w, 'fontFlashBtn'); },
+  res.push(await runCase('0c 書体データ → 手順 3 に ✔', 'normal', async w => { await call(w, 'fontBundledBtn'); await call(w, 'fontFlashBtn'); },
     async (w, r) => st(w, 4).startsWith('✔') && eq(r.spi.slice(0x024000, 0x024000 + font.length), font)));
   res.push(await runCase('0d 通常起動のままF/W → 手順 2 に ✖', 'normal', async w => { await call(w, 'fwBundledBtn'); await call(w, 'fwFlashBtn'); },
     async (w, r) => st(w, 2).startsWith('✖') && r.stats.fwPages === 0));
@@ -288,13 +295,13 @@ const eq = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
 
   // ---- 直開き（file://）: 同梱ボタンは隠し、ファイル選択だけ ----
   const F = 'file:///C:/Users/x/25Ja_Tool/index.html';
-  res.push(await runCase('F1 直開き: 同梱ボタンを隠す・ファイル選択でF/Wを書く', 'boot', async w => { await setFile(w, 'fwFile', '25Ja_v0.4.1.bin', fw); await call(w, 'fwFlashBtn'); },
+  res.push(await runCase('F1 直開き: 同梱ボタンを隠す・ファイル選択でF/Wを書く', 'boot', async w => { await setFile(w, 'fwFile', '25Ja_v0.5.1.bin', fw); await call(w, 'fwFlashBtn'); },
     async (w, r, L) => !w.document.getElementById('fileProto').hidden && w.document.getElementById('fwBundledBtn').hidden && w.document.getElementById('fontBundledBtn').hidden && eq(r.mcu.slice(0, fw.length), fw),
     null, { url: F }));
-  res.push(await runCase('F2 直開き: 字庫を選ぶと局名の字の検査が効く', 'normal', async w => {
-      await setFile(w, 'fontFile', '25Ja_font_v4.bin', font); await new Promise(r => setTimeout(r, 300));
+  res.push(await runCase('F2 直開き: 書体データを選ぶと局名の字の検査が効く', 'normal', async w => {
+      await setFile(w, 'fontFile', '25Ja_font_v5.bin', font); await new Promise(r => setTimeout(r, 300));
       await setFile(w, 'fmCsvFile', 'k.csv', Buffer.from('82.5,ｱｲｳ\n', 'utf8')); await new Promise(r => setTimeout(r, 300)); },
-    async (w, r, L) => w.document.querySelector('#fmBody td.w').textContent.includes('字庫にない字'),
+    async (w, r, L) => w.document.querySelector('#fmBody td.w').textContent.includes('書体データにない字'),
     null, { url: F }));
 
   res.push(await runCase('3d 応答が時々消える（37 回に 1 回）→ 再送で完了・照合 OK', 'normal', async w => { await call(w, 'fontBundledBtn'); await call(w, 'fontFlashBtn'); },
@@ -303,20 +310,20 @@ const eq = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
 
   // ---- 9 ファイル選択の表示・ログのコピー／消去・25Ja の目印（0.1.10）----
   res.push(await runCase('9a ファイルを選ぶ → 名前が出る（標準部品は隠す）', 'normal', async w => {
-      await setFile(w, 'fwFile', '25Ja_v0.4.1.bin', fw); await setFile(w, 'fmCsvFile', 'k.csv', Buffer.from('82.5,NHK\n', 'utf8')); },
+      await setFile(w, 'fwFile', '25Ja_v0.5.1.bin', fw); await setFile(w, 'fmCsvFile', 'k.csv', Buffer.from('82.5,NHK\n', 'utf8')); },
     async (w, r, L) => {
       const d = w.document, picks = d.querySelectorAll('button.pick'), nat = d.querySelectorAll('input[type=file]');
       const csvName = d.getElementById('fmCsvFile').nextElementSibling;
       console.log('   pick=' + picks.length + ' / fwInfo=' + d.getElementById('fwInfo').textContent + ' / csv=' + csvName.textContent);
       return picks.length === nat.length && Array.from(nat).every(i => i.classList.contains('native') && i.previousElementSibling.classList.contains('pick'))
-        && d.getElementById('fwInfo').textContent.startsWith('✔ 25Ja_v0.4.1.bin') && csvName.textContent.startsWith('✔ k.csv');
+        && d.getElementById('fwInfo').textContent.startsWith('✔ 25Ja_v0.5.1.bin') && csvName.textContent.startsWith('✔ k.csv');
     }));
   res.push(await runCase('9b ログをコピー → 版・日時付き、ログを消す → 1 行', 'normal', async w => {
       Object.defineProperty(w.navigator, 'clipboard', { value: { writeText: async t => { w.__clip = t; } } });
       await w.document.getElementById('logCopyBtn').onclick();
       w.__copied = w.__clip; w.document.getElementById('logClearBtn').onclick(); },
     async (w, r, L) => { console.log('   clip=' + JSON.stringify(w.__copied.slice(0, 60)));
-      return /^25Ja Tool Ver 0\.1\.18 \/ /.test(w.__copied) && w.__copied.includes('25Ja Tool を開きました') && L.length === 1 && L[0].includes('ログを消しました')
+      return /^25Ja Tool Ver 0\.1\.19 \/ /.test(w.__copied) && w.__copied.includes('25Ja Tool を開きました') && L.length === 1 && L[0].includes('ログを消しました')
         && w.document.getElementById('logMsg').textContent.includes('消しました'); }));
   res.push(await runCase('9c 25Ja の目印（CH 名 31 B）をログに出す', 'normal', async w => click(w, 'calibDumpBtn'),
     async (w, r, L) => L.some(s => s.includes('F4HWN v5.2.8（25Ja, CH 名 31 B）')), r => { r.jaFlag = 1; }));

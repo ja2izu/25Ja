@@ -132,12 +132,11 @@ static uint8_t VOL_line_band_height(const char *line)
     const char *p = line;
     while (*p != 0) {
         const uint8_t c0 = (uint8_t)p[0];
-        if (c0 >= 0xE3u && c0 <= 0xEFu && p[1] != 0 && p[2] != 0)
+        const uint8_t w = JA_Utf8WideLen(p, 3u);   /* JA: 2 または 3 バイトの字 */
+        (void)c0;
+        if (w != 0)
             return CH_CN_H;
-        if (c0 >= 0x80u)
-            p += 3;
-        else
-            p += 1;
+        p += 1;
     }
     return CH_SM_H;
 }
@@ -1011,15 +1010,16 @@ static void UI_MENU_DrawMemNameEdit(unsigned int sub_val_x1, unsigned int sub_va
         while (bi < max_b && x < sub_val_x2 && slot_count < 15)
         {
             slot_x[slot_count] = x;
-            if ((uint8_t)edit[bi] >= 0xE3 && (uint8_t)edit[bi] <= 0xEF)
+            const uint8_t wl = JA_Utf8WideLen(&edit[bi], max_b - bi);   /* JA: 2 または 3 バイト */
+            if (wl != 0)
             {
-                char ch[4] = { edit[bi], edit[bi + 1], edit[bi + 2], 0 };
+                char ch[4] = { edit[bi], edit[bi + 1], (wl == 3u) ? edit[bi + 2] : 0, 0 };
                 UI_PrintStringSmallAtPixel(ch, x, (uint8_t)(x + chn_cw), y_name, (uint8_t)(y_name + 11u), 0u);
                 slot_w[slot_count] = chn_cw;
                 if (edit_index >= 0 && (size_t)edit_index == bi)
                     cursor_slot = (int8_t)slot_count;
                 x += chn_cw + ul_spacing;
-                bi += 3;
+                bi += wl;
             }
             else if (edit[bi] == MEM_NAME_EDIT_PAD || edit[bi] == 0)
             {
@@ -1338,9 +1338,9 @@ static void UI_MENU_DrawLevel2SplitLayout(uint8_t menu_count, char *String)
             /* JA: 左欄（約48px）に収まらない題名は2行に分ける。空白があればそこで、無ければ文字数の半分で */
             size_t tb = 0, tcut = 0;
             unsigned tpx = 0, tn = 0;
-            for (tb = 0; t[tb] != 0; tb += ((uint8_t)t[tb] >= 0xE3u) ? 3u : 1u)
+            for (tb = 0; t[tb] != 0; tb += (JA_Utf8WideLen(&t[tb], 3u) != 0) ? JA_Utf8WideLen(&t[tb], 3u) : 1u)
             {
-                tpx += ((uint8_t)t[tb] >= 0xE3u) ? 13u : 7u;
+                tpx += (JA_Utf8WideLen(&t[tb], 3u) != 0) ? 13u : 7u;
                 tn++;
                 if (t[tb] == ' ' && tcut == 0)
                     tcut = tb;
@@ -1350,9 +1350,9 @@ static void UI_MENU_DrawLevel2SplitLayout(uint8_t menu_count, char *String)
             {
                 unsigned nfull = 0, nsp = 0, nother = 0;
                 size_t q;
-                for (q = 0; t[q] != 0; q += ((uint8_t)t[q] >= 0xE3u) ? 3u : 1u)
+                for (q = 0; t[q] != 0; q += (JA_Utf8WideLen(&t[q], 3u) != 0) ? JA_Utf8WideLen(&t[q], 3u) : 1u)
                 {
-                    if ((uint8_t)t[q] >= 0xE3u) nfull++;
+                    if (JA_Utf8WideLen(&t[q], 3u) != 0) nfull++;
                     else if (t[q] == ' ') nsp++;
                     else nother++;
                 }
@@ -1373,7 +1373,7 @@ static void UI_MENU_DrawLevel2SplitLayout(uint8_t menu_count, char *String)
                 if (tcut == 0)
                 {
                     unsigned k = 0;
-                    for (tcut = 0; k < (tn + 1u) / 2u; tcut += ((uint8_t)t[tcut] >= 0xE3u) ? 3u : 1u)
+                    for (tcut = 0; k < (tn + 1u) / 2u; tcut += (JA_Utf8WideLen(&t[tcut], 3u) != 0) ? JA_Utf8WideLen(&t[tcut], 3u) : 1u)
                         k++;
                     tl2 = t + tcut;
                 }

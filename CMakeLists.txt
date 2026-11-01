@@ -19,7 +19,7 @@ message("Build type: " ${CMAKE_BUILD_TYPE})
 
 # ON by default: UTF-8 Chinese labels (launcher / menu), Lang setting, font path in App/CMakeLists.txt
 option(ENABLE_CHINESE "UTF-8 Chinese menu UI" ON)
-# JA: 拼音入力（中文 CH 名の実機入力）。日本語版では OFF（字庫に拼音表を持たない）
+# JA: 拼音入力（中文 CH 名の実機入力）。日本語版では OFF（書体データに拼音表を持たない）
 # JA: FM 放送の局名表示（steranian/uv-k1-k5v3-firmware-custom より移植）
 option(ENABLE_FEAT_STERANIAN_DISP_RADIOSTATION_NAME "FM station name display" ON)
 # JA: MDC1200 / Yan ID（ID 送受信・ロジャー音の MDC / Yan ID）。日本では使わないので OFF

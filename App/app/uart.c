@@ -338,9 +338,9 @@ static void SendReply(uint32_t Port, void *pReply, uint16_t Size)
 }
 
 /* JA: 25Ja の版数。上げるときは、ここと App/version.h の JA_FW_VERSION（画面の表示）を同時に変える
- * （0.4 → 0.4.1 は PATCH を 1 にし、version.h を "v0.4.1" にする） */
+ * （例：0.5 → 0.5.1 は PATCH を 1 にし、version.h を "v0.5.1" にする） */
 #define JA_FW_VER_MAJOR  0
-#define JA_FW_VER_MINOR  4
+#define JA_FW_VER_MINOR  5
 #define JA_FW_VER_PATCH  1
 
 static void SendVersion(uint32_t Port)
@@ -626,7 +626,7 @@ static void CMD_0521(uint32_t Port, const uint8_t *pBuffer)
     SendReply(Port, &Reply, sizeof(Reply));
 }
 
-// JA: SPI Flash 段階書込 (0x0523)。字庫など大量の書込で、セクタごとの消去を 1 回にする
+// JA: SPI Flash 段階書込 (0x0523)。書体データなど大量の書込で、セクタごとの消去を 1 回にする
 static void CMD_0523(uint32_t Port, const uint8_t *pBuffer)
 {
     const CMD_0523_t *pCmd = (const CMD_0523_t *)pBuffer;

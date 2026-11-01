@@ -2062,7 +2062,8 @@ void UI_MAIN_ShowScanListPopup(void)
     gUpdateDisplay = true;
 }
 
-void UI_MAIN_DrawScanListPopup(void)
+/* JA: 画面バッファに描くだけ（LCD へは送らない）。メイン画面の送信前に呼ぶとちらつかない */
+static bool UI_MAIN_RenderScanListPopup(void)
 {
     char label[24];
     uint8_t x0;
@@ -2072,7 +2073,7 @@ void UI_MAIN_DrawScanListPopup(void)
     unsigned int ty;
 
     if (gScanListNameCountdown_10ms == 0 || gScanStateDir == SCAN_OFF || gScreenToDisplay != DISPLAY_MAIN)
-        return;
+        return false;
 
     SETTINGS_FormatListLabel(label, gEeprom.SCAN_LIST_DEFAULT);
 
@@ -2092,6 +2093,87 @@ void UI_MAIN_DrawScanListPopup(void)
 
     ty = (unsigned)y0 + 8u + 4u;     /* UI_PrintStringSmallAtPixel の y は画面座標(枠内 y = 引数 - 8) */
     UI_PrintStringSmallAtPixel(label, (uint8_t)(x0 + 2), (uint8_t)(x1 - 2), (uint8_t)ty, (uint8_t)(ty + 11u), 0u);
+    return true;
+}
+
+void UI_MAIN_DrawScanListPopup(void)
+{
+    if (!UI_MAIN_RenderScanListPopup())
+        return;
+
+#ifdef ENABLE_FEAT_F4HWN
+    if (UI_IsDualVfoMainScreen())
+        ST7565_BlitFullScreenDualVfoTightTop();
+    else
+#endif
+        ST7565_BlitFullScreen();
+}
+
+/* JA: スキャン グループ選択のポップアップ（3 行）
+ *     ＜ 01 本部      ← 一つ前（「＞」で移る。印は JA2IZU の指定でこのまま）
+ *    [02 消防     ]   ← 選択中（白黒反転）
+ *     ＞ 03 防災      ← 一つ後（「＜」で移る）
+ *   行は 13 ドット送り（漢字 12 ドット）。名前 4 字（"03 " + 52 ドット）が入る幅にする */
+#define SCAN_GROUP_SEL_POPUP_W      90
+#define SCAN_GROUP_SEL_ROW_H        13u
+#define SCAN_GROUP_SEL_POPUP_H      (3u * SCAN_GROUP_SEL_ROW_H + 5u)
+#define SCAN_GROUP_SEL_TEXT_DX      11u     /* 印（＜ ＞）の欄の幅 */
+
+static bool UI_MAIN_RenderScanGroupSelPopup(void)
+{
+    char label[24];
+    uint8_t x0;
+    uint8_t y0;
+    uint8_t x1;
+    uint8_t y1;
+    const bool one_only = (gJaScanGroupSelPrev == gJaScanGroupSel);         /* 有効なグループが 1 つだけ */
+    const bool two_only = (!one_only && gJaScanGroupSelPrev == gJaScanGroupSelNext);   /* 2 つだけ: 下の行だけに出す */
+
+    if (!gJaScanGroupSelActive || gScreenToDisplay != DISPLAY_MAIN)
+        return false;
+
+    x0 = (uint8_t)((LCD_WIDTH - SCAN_GROUP_SEL_POPUP_W) / 2);
+    x1 = (uint8_t)(x0 + SCAN_GROUP_SEL_POPUP_W - 1);
+    y0 = (uint8_t)(((unsigned)LCD_HEIGHT - SCAN_GROUP_SEL_POPUP_H) / 2u);
+#ifdef ENABLE_FEAT_F4HWN
+    if (!UI_IsDualVfoMainScreen())
+        y0 = (uint8_t)(y0 - 8u);    /* 単守は FB[0] が物理 2 行目 (マイクポップアップと同じ補正) */
+#endif
+    y1 = (uint8_t)(y0 + SCAN_GROUP_SEL_POPUP_H - 1);
+
+    for (uint8_t y = y0; y <= y1; y++)
+        for (uint8_t x = x0; x <= x1; x++)
+            UI_DrawPixelBuffer(gFrameBuffer, x, y, false);
+    UI_DrawRectangleBuffer(gFrameBuffer, x0, y0, x1, y1, true);
+
+    for (uint8_t row = 0; row < 3u; row++)
+    {
+        /* UI_PrintStringSmallAtPixel の y は画面座標(枠内 y = 引数 - 8) */
+        const uint8_t ty = (uint8_t)(y0 + 8u + 3u + row * SCAN_GROUP_SEL_ROW_H);
+        const uint8_t tx = (uint8_t)(x0 + SCAN_GROUP_SEL_TEXT_DX);
+        uint8_t list;
+
+        if (row == 1u) {
+            SETTINGS_FormatListLabel(label, gJaScanGroupSel);
+            /* CnInverse 系は PutPixel（フレームバッファ座標）で描くので、画面座標から 8 を引く */
+            UI_PrintStringSmallAtPixelCnInverseLeft(label, tx, (uint8_t)(x1 - 2u), (uint8_t)(ty - 8u), (uint8_t)(ty - 8u + 11u));
+            continue;
+        }
+        if (one_only || (two_only && row == 0u))
+            continue;
+
+        list = (row == 0u) ? gJaScanGroupSelPrev : gJaScanGroupSelNext;
+        UI_PrintStringSmallAtPixel((row == 0u) ? "<" : ">", (uint8_t)(x0 + 3u), (uint8_t)(x0 + 3u), ty, (uint8_t)(ty + 11u), 0u);
+        SETTINGS_FormatListLabel(label, list);
+        UI_PrintStringSmallAtPixel(label, tx, tx, ty, (uint8_t)(ty + 11u), 0u);   /* x_end = x_start で左寄せ */
+    }
+    return true;
+}
+
+void UI_MAIN_DrawScanGroupSelPopup(void)
+{
+    if (!UI_MAIN_RenderScanGroupSelPopup())
+        return;
 
 #ifdef ENABLE_FEAT_F4HWN
     if (UI_IsDualVfoMainScreen())
@@ -2189,6 +2271,10 @@ void UI_DisplayYanIdRxPopup(void)
 }
 
 #endif /* ENABLE_MDC_YAN_ID */
+
+/* JA: ポップアップ（スキャン グループ名・グループ選択）を、メイン画面の送信前に画面バッファへ描く */
+static bool UI_MAIN_RenderScanListPopup(void);
+static bool UI_MAIN_RenderScanGroupSelPopup(void);
 
 static void UI_DisplayMainRxIdPopups(void)
 {
@@ -2540,7 +2626,10 @@ void UI_MAIN_TimeSlice500ms(void)
     if (gScreenToDisplay == DISPLAY_MAIN) {
 
         if(FUNCTION_IsRx()) {
-            DisplayRSSIBar(true);
+            if (gJaScanGroupSelActive || gScanListNameCountdown_10ms > 0)
+                gUpdateDisplay = true;  /* JA: ポップアップ表示中は S メーターの行だけを送らず、全体を描き直す（行の送信がポップアップを上書きしてちらつくため） */
+            else
+                DisplayRSSIBar(true);
 #ifdef ENABLE_FEAT_F4HWN_RX_TX_TIMER
             // 接收时每 500ms 触发主屏刷新，使 RX 正计时实时更新
             gUpdateDisplay = true;
@@ -2794,6 +2883,8 @@ void UI_DisplayMain(void)
         }
 
         UI_DisplayMainRxIdPopups();
+        (void)UI_MAIN_RenderScanListPopup();       /* JA: 送信前に描く（ちらつき防止） */
+        (void)UI_MAIN_RenderScanGroupSelPopup();
         ST7565_BlitFullScreen();
         return;
     }
@@ -3937,6 +4028,8 @@ display_main_after_vfo_loop:
 #endif
 
     UI_DisplayMainRxIdPopups();
+    (void)UI_MAIN_RenderScanListPopup();       /* JA: 送信前に描く（ちらつき防止） */
+    (void)UI_MAIN_RenderScanGroupSelPopup();
 
 #ifdef ENABLE_FEAT_F4HWN
     ST7565_BlitMainPerMode();

@@ -61,6 +61,8 @@ void SETTINGS_InitEEPROM(void)
             // 1. Write new version to EEPROM
             char newVersion[16] = {0};
             strncpy(newVersion, VERSION_STRING_2, sizeof(newVersion));
+            if (strlen(VERSION_STRING_2) < 12u)
+                memcpy(newVersion + 12, storedVersion + 12, 4);   /* JA: 末尾 4 B の 25Ja の目印は残す（下の初回判定） */
             PY25Q16_WriteBuffer(0x00A160, newVersion, sizeof(newVersion));
 
             // 2. Reset sensitive parameters (MENU_LOCK, etc.)
@@ -129,6 +131,28 @@ void SETTINGS_InitEEPROM(void)
                     buf[i] = dBmCorrTable[i];
                 PY25Q16_WriteBuffer(0x00A0B9, buf, 7);
             }
+        }
+    }
+
+    //
+    // JA: 25Ja を初めて入れたときは、送信を全周波数で禁止する（隠しメニュー「バンド ロック」で解除）
+    //   目印 0x00A16C〜0x00A16F = '2' '5' 'J' 0x01（版の文字列 0x00A160 の空いている末尾 4 B）。
+    //   目印が無ければ初回とみなす：他の F/W から入れたとき、目印を書く前の 25Ja（0.4.x）から更新したとき、
+    //   全消去のリセットのあと、目印の無い設定バックアップを戻したとき。
+    //
+    {
+        static const uint8_t jaMark[4] = { '2', '5', 'J', 0x01 };
+        uint8_t curMark[4];
+
+        PY25Q16_ReadBuffer(0x00A16C, curMark, sizeof(curMark));
+        if (memcmp(curMark, jaMark, sizeof(jaMark)) != 0)
+        {
+            uint8_t lockByte[8];
+
+            PY25Q16_ReadBuffer(0x00A150, lockByte, sizeof(lockByte));
+            lockByte[0] = F_LOCK_ALL;     /* 0x00A150 の 0 バイト目 = バンド ロック（F_LOCK） */
+            PY25Q16_WriteBuffer(0x00A150, lockByte, sizeof(lockByte));
+            PY25Q16_WriteBuffer(0x00A16C, jaMark, sizeof(jaMark));
         }
     }
 
@@ -847,12 +871,14 @@ void SETTINGS_FetchChannelName(char *s, const uint16_t channel)
         uint8_t c = (uint8_t)s[i];
         if (c == 0 || c == 0xFF)
             break;
-        if (c >= 0xE3 && c <= 0xEF)
         {
-            if (i + 3 > (int)CHANNEL_NAME_MAX_BYTES)
-                break;              /* 途中で切れた字は捨てる */
-            i += 2;
-            continue;
+            /* JA: 書体データの字（2 または 3 バイト）。途中で切れた字・不正な並びは下の判定で捨てる */
+            const uint8_t w = JA_Utf8WideLen(&s[i], CHANNEL_NAME_MAX_BYTES - (size_t)i);
+            if (w != 0)
+            {
+                i += w - 1;
+                continue;
+            }
         }
         if (c < 32 || c > 127)
             break;
@@ -1455,7 +1481,8 @@ void SETTINGS_TruncateChannelName(char *s, size_t max)
     while (s[i] != 0 && i < max)
     {
         const uint8_t c = (uint8_t)s[i];
-        const size_t w = (c >= 0xE3 && c <= 0xEF) ? 3u : 1u;
+        const uint8_t wl = (c >= 0x80u) ? JA_Utf8WideLen(&s[i], 3u) : 0u;   /* s は NUL 終端 */
+        const size_t w = (wl != 0u) ? wl : 1u;      /* JA: 2 または 3 バイトの字を途中で切らない */
         if (i + w > max)
             break;
         i += w;
@@ -1675,7 +1702,7 @@ bool SETTINGS_ChannelNameHasCjkUtf8(const char *s)
     p = (const unsigned char *)s;
     while (*p != 0)
     {
-        if (*p >= 0xE3 && *p <= 0xEF)
+        if (JA_Utf8WideLen((const char *)p, 3u) != 0)     /* JA: 2 または 3 バイトの字 */
             return true;
         if (*p < 0x80u)
         {
@@ -1712,12 +1739,14 @@ void SETTINGS_FetchListName(char *s, uint8_t list)
             n = ++i;
             continue;
         }
-        if (c >= 0xE3 && c <= 0xEF && (i + 3u) <= SCAN_LIST_KANJI_BYTES &&
-            ((uint8_t)s[i + 1] & 0xC0) == 0x80 && ((uint8_t)s[i + 2] & 0xC0) == 0x80)
         {
-            i += 3;
-            n = i;
-            continue;
+            const uint8_t w = JA_Utf8WideLen(&s[i], SCAN_LIST_KANJI_BYTES - i);   /* JA: 2 または 3 バイト */
+            if (w != 0)
+            {
+                i += w;
+                n = i;
+                continue;
+            }
         }
         break;      /* 不正: ここで打ち切り */
     }
@@ -1751,15 +1780,17 @@ bool SETTINGS_FetchBootHintText(char *s)
             n = ++i;
             continue;
         }
-        if (c >= 0xE3 && c <= 0xEF && (i + 3u) <= BOOT_HINT_TEXT_BYTES &&
-            ((uint8_t)s[i + 1] & 0xC0) == 0x80 && ((uint8_t)s[i + 2] & 0xC0) == 0x80)
         {
-            if ((uint16_t)(w + 13u - 1u) > 128u)
-                break;
-            w += 13u;
-            i += 3;
-            n = i;
-            continue;
+            const uint8_t cw = JA_Utf8WideLen(&s[i], BOOT_HINT_TEXT_BYTES - i);   /* JA: 2 または 3 バイト */
+            if (cw != 0)
+            {
+                if ((uint16_t)(w + 13u - 1u) > 128u)
+                    break;
+                w += 13u;
+                i += cw;
+                n = i;
+                continue;
+            }
         }
         break;      /* 不正: ここで打ち切り */
     }

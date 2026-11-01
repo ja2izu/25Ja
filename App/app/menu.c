@@ -368,8 +368,11 @@ static uint8_t MENU_MemNameSlotWidthAt(int bi)
     if (bi < 0 || bi >= max_b)
         return 1u;
 
-    if ((uint8_t)edit[bi] >= 0xE3 && (uint8_t)edit[bi] <= 0xEF)
-        return 3u;
+    {
+        const uint8_t w = JA_Utf8WideLen(&edit[bi], (size_t)(max_b - bi));   /* JA: 2 または 3 バイト */
+        if (w != 0)
+            return w;
+    }
 
     return 1u;
 }
@@ -762,9 +765,8 @@ void MENU_ActivateMainPage(void)
 
 void MENU_OpenFromMainScreen(void)
 {
+    /* JA: 前回の分類（MENU_ActivateMainPage が復元する）を残す。起動後の初回は先頭（チャンネル） */
     MENU_ActivateMainPage();
-    gSubMenuSelection      = 0;
-    gMenuMainPageIconIndex = 0;
 }
 
 uint8_t MENU_MainPageIconCount(void)
@@ -2817,11 +2819,14 @@ static void MENU_Key_EXIT(bool bKeyPressed, bool bKeyHeld)
                     uint8_t c = (uint8_t)edit[edit_index];
                     if (c != MEM_NAME_EDIT_PAD)
                     {
-                        if (c >= 0xE3 && c <= 0xEF)
+                        const uint8_t wl = JA_Utf8WideLen(&edit[edit_index], (size_t)((int)CHANNEL_NAME_EDIT_MAX_BYTES - edit_index));
+                        (void)c;
+                        if (wl != 0)    /* JA: 2 または 3 バイトの字を消す */
                         {
                             edit[edit_index]     = MEM_NAME_EDIT_PAD;
                             edit[edit_index + 1] = MEM_NAME_EDIT_PAD;
-                            edit[edit_index + 2] = MEM_NAME_EDIT_PAD;
+                            if (wl == 3u)
+                                edit[edit_index + 2] = MEM_NAME_EDIT_PAD;
                         }
                         else
                         {

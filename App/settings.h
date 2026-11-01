@@ -34,6 +34,49 @@
 /* 無線機での名前編集と、英数字名の表示（大きい字は右端で止まらない）は従来どおり 15 B */
 #define CHANNEL_NAME_EDIT_MAX_BYTES 15u
 
+/*
+ * JA: 書体データの字（全角 12 ドット）として扱う UTF-8 の 1 字のバイト数を返す（書体データ v5）。
+ *   2 バイト：先頭 0xC2〜0xDF（ギリシャ・キリル・Latin-1 補助など）
+ *   3 バイト：先頭 0xE0〜0xEF（v4 までは 0xE3〜0xEF だけ。0xE2 の記号・矢印・罫線などを含める）
+ *   後続バイト（0x80〜0xBF）を確かめる。ASCII・不正な並び・remain 内で終わらない並びは 0
+ *   remain：p から読んでよいバイト数（NUL 終端の文字列なら 3 でよい。NUL は後続バイトにならない）
+ */
+static inline uint8_t JA_Utf8WideLen(const char *p, size_t remain)
+{
+    const uint8_t c0 = (uint8_t)p[0];
+
+    if (c0 >= 0xC2u && c0 <= 0xDFu)
+    {
+        if (remain >= 2u && ((uint8_t)p[1] & 0xC0u) == 0x80u)
+            return 2u;
+        return 0u;
+    }
+    if (c0 >= 0xE0u && c0 <= 0xEFu)
+    {
+        if (remain < 3u)
+            return 0u;
+        const uint8_t c1 = (uint8_t)p[1];
+        if ((c1 & 0xC0u) != 0x80u || ((uint8_t)p[2] & 0xC0u) != 0x80u)
+            return 0u;
+        if (c0 == 0xE0u && c1 < 0xA0u)      /* 冗長な表現 */
+            return 0u;
+        if (c0 == 0xEDu && c1 >= 0xA0u)     /* サロゲート */
+            return 0u;
+        return 3u;
+    }
+    return 0u;
+}
+
+/* JA: JA_Utf8WideLen() が 2 または 3 を返した字の Unicode（U+0080〜U+FFFF） */
+static inline uint16_t JA_Utf8WideDecode(const char *p, uint8_t len)
+{
+    if (len == 2u)
+        return (uint16_t)((((uint16_t)(uint8_t)p[0] & 0x1Fu) << 6) | ((uint8_t)p[1] & 0x3Fu));
+    return (uint16_t)((((uint16_t)(uint8_t)p[0] & 0x0Fu) << 12) |
+                      (((uint16_t)(uint8_t)p[1] & 0x3Fu) << 6) |
+                      ((uint8_t)p[2] & 0x3Fu));
+}
+
 #include "frequencies.h"
 #include <helper/battery.h>
 #include "radio.h"
@@ -392,19 +435,19 @@ void SETTINGS_SaveChannel(uint16_t Channel, uint8_t VFO, const VFO_Info_t *pVFO,
 /*
  * JA: 0x020000..0x023FFF (16 KB) は旧中文名の領域だった。起動時の移し替え
  * （SETTINGS_MigrateLegacyCnChannelNamesToUnified）を外し、CH 名の後半
- * （CHANNEL_NAME_EXT_BASE）に転用する。字庫は 0x024000 からで重ならない。
+ * （CHANNEL_NAME_EXT_BASE）に転用する。書体データは 0x024000 からで重ならない。
  */
 
 // CN font SPI Flash layout (data written via web tool)
 // NOTE: these must match the output of gen_cn_font.py / cn_font_data.h
 #define CN_FONT_FLASH_BASE      0x024000u
-#define CN_FONT_CHAR_COUNT      6647u
-#define CN_FONT_BITMAP_SIZE     159528u
-#define CN_FONT_INDEX_SIZE      26588u
-#define CN_FONT_PY_OFFSET       186116u
+#define CN_FONT_CHAR_COUNT      6879u
+#define CN_FONT_BITMAP_SIZE     165096u
+#define CN_FONT_INDEX_SIZE      27516u
+#define CN_FONT_PY_OFFSET       192612u
 #define CN_FONT_PY_COUNT        0u
-#define CN_FONT_VERSION         4u
-#define CN_FONT_VERSION_OFFSET  186116u
+#define CN_FONT_VERSION         5u
+#define CN_FONT_VERSION_OFFSET  192612u
 #define CN_FONT_PY_TOTAL_SIZE   0u
 #endif
 

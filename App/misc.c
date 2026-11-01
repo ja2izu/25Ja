@@ -242,6 +242,12 @@ bool              gCssBackgroundScan;
 volatile bool     gScheduleScanListen = true;
 volatile uint16_t gScanPauseDelayIn_10ms;
 volatile uint16_t gScanListNameCountdown_10ms;   /* JA: スキャングループ名ポップアップの残り時間 */
+bool              gJaScanGroupSelActive;          /* JA: スキャン グループ選択ポップアップ */
+uint8_t           gJaScanGroupSel;
+uint8_t           gJaScanGroupSelPrev;
+uint8_t           gJaScanGroupSelNext;
+volatile uint16_t gJaScanGroupSelCountdown_10ms;
+volatile bool     gJaScanGroupSelTimeout;
 
 #if defined(ENABLE_ALARM) || defined(ENABLE_TX1750)
     AlarmState_t  gAlarmState;

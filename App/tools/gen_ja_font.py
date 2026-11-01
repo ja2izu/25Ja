@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Dondji JA: 東雲 12 ドット（ゴシック, JIS X 0208:1990）から SPI Flash 用字庫 cn_font.bin を作る
+# Dondji JA: 東雲 12 ドット（ゴシック, JIS X 0208:1990）から SPI Flash 用の書体データ cn_font.bin を作る
 #
 # 出力の配置はF/Wの SETTINGS_CNCharToIndex / SETTINGS_ReadCNFontBitmap と同じ:
 #   [ビットマップ N×24B][索引 N×4B (unicode<<16 | 字番号, Unicode 昇順)][拼音表 0B][版数 1B]
@@ -9,8 +9,10 @@
 #   - 拼音表は持たない（ENABLE_CN_PINYIN=OFF 前提）
 #   - 先頭の字は「的」: F/W・Web ツールのプローブ値 (0x1100, 0x2100) を満たすため
 #
-# 対象: JIS X 0208 のうち U+3000〜U+FFFF（UTF-8 で 3 バイト、先頭 0xE3〜0xEF）の字
-#       2 バイトになる字（ギリシャ・キリル・一部記号）はF/Wが扱えないので除く
+# 対象: JIS X 0208 の全字（6,879 字）
+#   v4 までは U+3000〜U+FFFF（UTF-8 で 3 バイト、先頭 0xE3〜0xEF）の 6,647 字だけだった
+#   v5 で U+3000 未満の 232 字（ギリシャ・キリル・Latin-1 補助・記号。UTF-8 で 2 バイト、または先頭 0xE2 の 3 バイト）を追加
+#   v4 の字番号を変えないよう、追加の字は v4 の字の後ろに JIS 区点順で並べる
 #
 # 使い方: python3 App/tools/gen_ja_font.py
 #   → docs/font/cn_font.bin, docs/fonts/cn_font.bin を上書きし、settings.h / flash.js 用の定数を表示
@@ -23,7 +25,7 @@ import shutil
 import struct
 import sys
 
-FONT_VERSION = 4          # 2: 公式 WenQuanYi, 3: WenQuanYi+JIS 試作, 4: 東雲のみ
+FONT_VERSION = 5          # 2: 公式 WenQuanYi, 3: WenQuanYi+JIS 試作, 4: 東雲のみ, 5: 東雲 JIS X 0208 全字
 PROBE_CHAR = '的'
 PROBE_ROWS = (0x1100, 0x2100)
 
@@ -65,15 +67,19 @@ def main():
     glyphs = load_shinonome(src)
     print('Shinonome glyphs: %d' % len(glyphs))
 
-    # JIS 区点順、U+3000〜U+FFFF のみ
+    # JIS 区点順、U+3000〜U+FFFF（v4 と同じ並び）
     chars = sorted((c for c in glyphs if 0x3000 <= ord(c) <= 0xFFFF), key=lambda c: glyphs[c][0])
-    skipped = len(glyphs) - len(chars)
-    print('3-byte UTF-8 chars: %d (skipped 2-byte: %d)' % (len(chars), skipped))
+    # v5: U+3000 未満の字を後ろに追加（JIS 区点順）
+    extra = sorted((c for c in glyphs if ord(c) < 0x3000), key=lambda c: glyphs[c][0])
+    print('v4 chars (U+3000..U+FFFF): %d, v5 added (< U+3000): %d' % (len(chars), len(extra)))
+    if len(chars) + len(extra) != len(glyphs):
+        sys.exit('unexpected glyph outside U+0000..U+FFFF')
 
     if PROBE_CHAR not in chars or tuple(glyphs[PROBE_CHAR][1][:2]) != PROBE_ROWS:
         sys.exit('probe glyph mismatch: %r' % (glyphs.get(PROBE_CHAR),))
     chars.remove(PROBE_CHAR)
     chars.insert(0, PROBE_CHAR)
+    chars += extra
 
     n = len(chars)
     bitmap = bytearray()

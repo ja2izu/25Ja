@@ -131,6 +131,152 @@ static void toggle_chan_scanlist(void)
     gFlagResetVfos    = true;
 }
 
+/* JA: スキャン グループ選択（「7」長押し・F→7）
+ *   ポップアップ（3 行：一つ前／選択中／一つ後）で「＜」「＞」で選び、MENU（短押し）か無操作 5 秒で確定してすぐスキャンを始める。EXIT で取消。
+ *   「＞」（KEY_UP）で番号 -1（上の行へ）、「＜」（KEY_DOWN）で +1（下の行へ）（JA2IZU 指定。F+「＞」のグループ切替とは逆の向き）。
+ *   選んでいる間、スキャン中ならスキャンは今のグループのまま続ける。
+ *   初期値は今のスキャン グループ（SCAN_LIST_DEFAULT。起動時の既定は 1）。CH が無いグループは飛ばす。 */
+#define JA_SCAN_GROUP_SEL_TIMEOUT_10MS  500u    /* 無操作 5 秒で確定 */
+
+static uint8_t JA_ScanGroupNextValid(uint8_t list, int8_t dir)
+{
+    const uint8_t max_value = MR_CHANNELS_LIST + 1;     /* 1〜24、25 = ALL */
+
+    for (uint8_t n = 0; n < max_value; n++)
+    {
+        if (dir > 0)
+            list = (uint8_t)((list % max_value) + 1u);
+        else
+            list = (uint8_t)(((list + 2u * max_value - 2u) % max_value) + 1u);
+
+        if (RADIO_CheckValidList(list))
+            return list;
+    }
+    return max_value;   /* ALL は常に有効 */
+}
+
+/* 表示用の前後のグループ（全 CH を見るので、選択が変わったときだけ計算する） */
+static void JA_ScanGroupSelUpdateNeighbors(void)
+{
+    gJaScanGroupSelPrev = JA_ScanGroupNextValid(gJaScanGroupSel, -1);
+    gJaScanGroupSelNext = JA_ScanGroupNextValid(gJaScanGroupSel, 1);
+}
+
+void MAIN_JaScanGroupSelOpen(void)
+{
+    uint8_t list;
+
+    if (gJaScanGroupSelActive)
+        return;
+
+    if (gScreenToDisplay != DISPLAY_MAIN || SCANNER_IsScanning()) {
+        gBeepToPlay = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
+        return;
+    }
+
+    if (!IS_MR_CHANNEL(gTxVfo->CHANNEL_SAVE)) {
+        /* VFO（周波数）モード: 周波数スキャン中は使わない。止まっていればチャンネルモードに切り替える */
+        if (gScanStateDir != SCAN_OFF) {
+            gBeepToPlay = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
+            return;
+        }
+        COMMON_SwitchVFOMode();
+        if (!IS_MR_CHANNEL(gEeprom.ScreenChannel[gEeprom.TX_VFO])) {
+            gBeepToPlay = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;    /* チャンネルが 1 つも無い等 */
+            return;
+        }
+    }
+
+    list = gEeprom.SCAN_LIST_DEFAULT;
+    if (list < 1u || list > MR_CHANNELS_LIST + 1u || !RADIO_CheckValidList(list))
+        list = JA_ScanGroupNextValid(list, 1);
+
+    gJaScanGroupSel               = list;
+    JA_ScanGroupSelUpdateNeighbors();
+    gJaScanGroupSelTimeout        = false;
+    gJaScanGroupSelCountdown_10ms = JA_SCAN_GROUP_SEL_TIMEOUT_10MS;
+    gJaScanGroupSelActive         = true;
+    gUpdateDisplay                = true;
+}
+
+void MAIN_JaScanGroupSelCancel(void)
+{
+    gJaScanGroupSelActive         = false;
+    gJaScanGroupSelCountdown_10ms = 0;
+    gJaScanGroupSelTimeout        = false;
+    gUpdateDisplay                = true;
+}
+
+void MAIN_JaScanGroupSelConfirm(void)
+{
+    const uint8_t list = gJaScanGroupSel;
+
+    MAIN_JaScanGroupSelCancel();
+
+    if (gScreenToDisplay != DISPLAY_MAIN || SCANNER_IsScanning())
+        return;
+
+    gEeprom.SCAN_LIST_DEFAULT = list;
+
+    if (gScanStateDir != SCAN_OFF) {
+        /* スキャン中: 新しいグループで最初から（ACTION_Scan のグループ切替と同じ手順） */
+        if (!IS_MR_CHANNEL(gNextMrChannel))
+            return;
+        UI_MAIN_ShowScanListPopup();
+        #ifdef ENABLE_FEAT_F4HWN_RESUME_STATE
+            SETTINGS_WriteCurrentState();
+        #endif
+        CHFRSCANNER_Start(false, gScanStateDir);
+        gScanPauseDelayIn_10ms = 1;
+        gScheduleScanListen    = false;
+        gUpdateStatus          = true;
+    } else {
+        ACTION_Scan(false);     /* スキャン開始（RESUME_STATE ならここで SCAN_LIST_DEFAULT も保存） */
+        UI_MAIN_ShowScanListPopup();
+    }
+    gUpdateDisplay = true;
+}
+
+/* 選択中のキー。PTT 以外はここで使い切る（離したときの処理が他へ流れないように） */
+static void JA_ScanGroupSelKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
+{
+    if (bKeyPressed)
+        gJaScanGroupSelCountdown_10ms = JA_SCAN_GROUP_SEL_TIMEOUT_10MS;
+
+    switch (Key) {
+        case KEY_UP:
+        case KEY_DOWN:
+            if (bKeyPressed) {      /* 押したとき・押し続け（リピート） */
+                gJaScanGroupSel = JA_ScanGroupNextValid(gJaScanGroupSel, (Key == KEY_UP) ? -1 : 1);   /* 「＞」= -1（上の行へ）、「＜」= +1（下の行へ） */
+                JA_ScanGroupSelUpdateNeighbors();
+                if (!bKeyHeld)
+                    gBeepToPlay = BEEP_1KHZ_60MS_OPTIONAL;
+                gUpdateDisplay = true;
+            }
+            break;
+
+        case KEY_MENU:
+            if (bKeyPressed && !bKeyHeld)
+                gBeepToPlay = BEEP_1KHZ_60MS_OPTIONAL;
+            else if (!bKeyPressed && !bKeyHeld)
+                MAIN_JaScanGroupSelConfirm();      /* 短押しを離したとき */
+            break;
+
+        case KEY_EXIT:
+            if (bKeyPressed && !bKeyHeld)
+                gBeepToPlay = BEEP_1KHZ_60MS_OPTIONAL;
+            else if (!bKeyPressed && !bKeyHeld)
+                MAIN_JaScanGroupSelCancel();       /* 短押しを離したとき */
+            break;
+
+        default:
+            /* 「7」長押しを離したとき（bKeyHeld）を含め、何もしない */
+            if (bKeyPressed && !bKeyHeld && Key != KEY_7)
+                gBeepToPlay = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
+            break;
+    }
+}
+
 static void processFKeyFunction(const KEY_Code_t Key, const bool beep)
 {
     uint8_t Vfo = gEeprom.TX_VFO;
@@ -289,6 +435,8 @@ static void processFKeyFunction(const KEY_Code_t Key, const bool beep)
             ACTION_Vox();
 //#else
 //          toggle_chan_scanlist();
+#else
+            MAIN_JaScanGroupSelOpen();   /* JA: F→7 は「7」長押しと同じ（スキャン グループ選択） */
 #endif
             break;
 
@@ -464,7 +612,20 @@ static void MAIN_Key_DIGITS(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
 
         if (is_key_seven) {
             if (bKeyPressed) {
+#ifdef ENABLE_VOX
                 gBeepToPlay = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
+#else
+                /* JA: 「7」長押し = スキャン グループ選択 */
+                if (gScreenToDisplay == DISPLAY_MAIN) {
+                    if (gInputBoxIndex > 0) {
+                        gInputBoxIndex        = 0;
+                        gRequestDisplayScreen = DISPLAY_MAIN;
+                    }
+                    HideFKeyIcon();
+                    gBeepToPlay = BEEP_1KHZ_60MS_OPTIONAL;
+                    MAIN_JaScanGroupSelOpen();
+                }
+#endif
             }
             return;
         }
@@ -1077,6 +1238,16 @@ void MAIN_ProcessKeys(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
         return;
     }
 #endif
+
+    if (gJaScanGroupSelActive) {    /* JA: スキャン グループ選択中 */
+        if (Key == KEY_PTT) {
+            MAIN_JaScanGroupSelCancel();
+            GENERIC_Key_PTT(bKeyPressed);
+        } else {
+            JA_ScanGroupSelKey(Key, bKeyPressed, bKeyHeld);
+        }
+        return;
+    }
 
     if (gDTMF_InputMode && bKeyPressed && !bKeyHeld) {
         const char Character = DTMF_GetCharacter(Key);

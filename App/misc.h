@@ -182,6 +182,14 @@ extern enum BacklightOnRxTx_t gSetting_backlight_on_tx_rx;
     extern bool              gSetting_set_scn;
 #endif
 
+#ifdef ENABLE_FASTER_CHANNEL_SCAN
+    /* JA: スキャンのフルチューン後の待ち（1ms 単位）。実機で 67ms は取りこぼしがあり、70ms で安定（2026-11-01）。定義は scheduler.c */
+    #define JA_SCAN_FULL_WAIT_MS  70u
+    void JA_ScanWaitArm(uint16_t ms);
+    void JA_ScanWaitDisarm(void);
+    void JA_ScanWaitPoll(void);
+#endif
+
 #ifdef ENABLE_FEAT_F4HWN
     extern uint8_t            gSetting_set_pwr;
     extern bool               gSetting_set_ptt;
@@ -374,6 +382,13 @@ enum
 extern volatile bool     gScheduleScanListen;
 extern volatile uint16_t gScanPauseDelayIn_10ms;
 extern volatile uint16_t gScanListNameCountdown_10ms;   /* JA: スキャンリスト名ポップアップ残り時間 */
+/* JA: 「7」長押し・F→7 のスキャン グループ選択ポップアップ（app/main.c） */
+extern bool              gJaScanGroupSelActive;          /* 選択中 */
+extern uint8_t           gJaScanGroupSel;                /* 選択中のグループ（1〜24、25 = ALL） */
+extern uint8_t           gJaScanGroupSelPrev;            /* 一つ前（「＜」で移る）。表示用 */
+extern uint8_t           gJaScanGroupSelNext;            /* 一つ後（「＞」で移る）。表示用 */
+extern volatile uint16_t gJaScanGroupSelCountdown_10ms;  /* 無操作で確定するまでの残り時間 */
+extern volatile bool     gJaScanGroupSelTimeout;         /* 無操作の時間切れ */
 
 extern AlarmState_t          gAlarmState;
 extern uint16_t              gMenuCountdown;

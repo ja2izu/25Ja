@@ -781,18 +781,15 @@ void UI_DisplayClear()
 
 #ifdef ENABLE_CHINESE
 
-static bool IsChineseChar(const char *pStr)
+/* JA: 書体データの字なら、その字のバイト数（2 または 3）。それ以外は 0（書体データ v5） */
+static uint8_t IsChineseChar(const char *pStr)
 {
-    uint8_t c = (uint8_t)pStr[0];
-    return (c >= 0xE3 && c <= 0xEF);
+    return JA_Utf8WideLen(pStr, 3u);
 }
 
 static uint16_t Utf8ToUnicode(const char *pStr)
 {
-    uint8_t c1 = (uint8_t)pStr[0];
-    uint8_t c2 = (uint8_t)pStr[1];
-    uint8_t c3 = (uint8_t)pStr[2];
-    return ((c1 & 0x0F) << 12) | ((c2 & 0x3F) << 6) | (c3 & 0x3F);
+    return JA_Utf8WideDecode(pStr, IsChineseChar(pStr));
 }
 
 static void DrawChineseChar(uint16_t unicode, uint8_t x, uint8_t y_pixel, uint8_t y_pixel_end)
@@ -837,7 +834,7 @@ size_t UI_SmallStringPixelWidth(const char *pString)
     while (pString[i]) {
         if (IsChineseChar(&pString[i])) {
             total_width += chn_char_width + 1;
-            i += 3;
+            i += IsChineseChar(&pString[i]);   /* JA: 2 または 3 バイト */
         } else {
             total_width += eng_char_width + 1;
             i++;
@@ -860,7 +857,7 @@ void UI_PrintStringSmallAtPixel(const char *pString, uint8_t x_start, uint8_t x_
         if (IsChineseChar(&pString[i])) {
             has_chinese = true;
             total_width += chn_char_width + 1;
-            i += 3;
+            i += IsChineseChar(&pString[i]);   /* JA: 2 または 3 バイト */
         } else {
             total_width += eng_char_width + 1;
             i++;
@@ -877,7 +874,7 @@ void UI_PrintStringSmallAtPixel(const char *pString, uint8_t x_start, uint8_t x_
             uint16_t unicode = Utf8ToUnicode(&pString[i]);
             DrawChineseChar(unicode, x, y_pixel_start, y_pixel_end);
             x += chn_char_width + 1;
-            i += 3;
+            i += IsChineseChar(&pString[i]);   /* JA: 2 または 3 バイト */
         } else {
             const uint16_t y_range = (uint16_t)y_pixel_end - (uint16_t)y_pixel_start + 1u;
             unsigned y_offset = 0;
@@ -945,7 +942,7 @@ void UI_PrintStringSmallAtPixelInverse(const char *pString, uint8_t x_start, uin
         if (IsChineseChar(&pString[i])) {
             has_chinese = true;
             total_width += chn_char_width + 1;
-            i += 3;
+            i += IsChineseChar(&pString[i]);   /* JA: 2 または 3 バイト */
         } else {
             total_width += eng_char_width + 1;
             i++;
@@ -984,7 +981,7 @@ void UI_PrintStringSmallAtPixelInverse(const char *pString, uint8_t x_start, uin
                 }
             }
             x += chn_char_width + 1;
-            i += 3;
+            i += IsChineseChar(&pString[i]);   /* JA: 2 または 3 バイト */
         } else {
             const uint16_t y_range = (uint16_t)y_pixel_end - (uint16_t)y_pixel_start + 1u;
             unsigned y_offset = 0;
@@ -1035,7 +1032,7 @@ static void UI_PrintStringSmallAtPixelCnInverseEx(const char *pString, uint8_t x
     while (pString[i]) {
         if (IsChineseChar(&pString[i])) {
             total_width += chn_char_width + 1;
-            i += 3;
+            i += IsChineseChar(&pString[i]);   /* JA: 2 または 3 バイト */
         } else {
             total_width += 7;
             i++;
@@ -1080,7 +1077,7 @@ static void UI_PrintStringSmallAtPixelCnInverseEx(const char *pString, uint8_t x
                 }
             }
             x += chn_char_width + 1;
-            i += 3;
+            i += IsChineseChar(&pString[i]);   /* JA: 2 または 3 バイト */
         } else {
             /* 绘制白色 ASCII 字符（用 PutPixel 保持与中文一致） */
             const uint8_t eng_char_width = 6;

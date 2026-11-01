@@ -666,6 +666,9 @@ static void CHFRSCANNER_AbortActiveReception(void)
 
 void CHFRSCANNER_Start(const bool storeBackupSettings, const int8_t scan_direction)
 {
+#ifdef ENABLE_FASTER_CHANNEL_SCAN
+    JA_ScanWaitDisarm();   // JA: 時刻ベースの待ちを解除（従来の処理に任せる）
+#endif
     if (storeBackupSettings) {
         initialCROSS_BAND_RX_TX = gEeprom.CROSS_BAND_RX_TX;
         gEeprom.CROSS_BAND_RX_TX = CROSS_BAND_OFF;
@@ -776,6 +779,9 @@ void CHFRSCANNER_ContinueScanning(void)
 
 void CHFRSCANNER_Found(void)
 {
+#ifdef ENABLE_FASTER_CHANNEL_SCAN
+    JA_ScanWaitDisarm();   // JA: 時刻ベースの待ちを解除（従来の処理に任せる）
+#endif
 #ifdef ENABLE_FEAT_F4HWN_SCAN_FASTER
     // After a real reception the BK4819 AGC has shifted, biasing the next
     // few RSSI readings high. Reset the precheck state so it warms up from
@@ -851,6 +857,9 @@ void CHFRSCANNER_Found(void)
 
 void CHFRSCANNER_Stop(void)
 {
+#ifdef ENABLE_FASTER_CHANNEL_SCAN
+    JA_ScanWaitDisarm();   // JA: 時刻ベースの待ちを解除（従来の処理に任せる）
+#endif
     if(initialCROSS_BAND_RX_TX != CROSS_BAND_OFF) {
         gEeprom.CROSS_BAND_RX_TX = initialCROSS_BAND_RX_TX;
         initialCROSS_BAND_RX_TX = CROSS_BAND_OFF;
@@ -942,7 +951,9 @@ static void NextFreqChannel(void)
     RADIO_SetupRegisters(true);
 
 #ifdef ENABLE_FASTER_CHANNEL_SCAN
-    gScanPauseDelayIn_10ms = 9;   // 90ms
+    // JA: 従来は gScanPauseDelayIn_10ms = 9（10ms 刻みのため実際は 80〜90ms）。時刻ベース（1ms 単位）で 70ms 待つ
+    gScanPauseDelayIn_10ms = 0;
+    JA_ScanWaitArm(JA_SCAN_FULL_WAIT_MS);
 #else
     gScanPauseDelayIn_10ms = scan_pause_delay_in_6_10ms;
 #endif
@@ -1098,7 +1109,10 @@ static void NextMemChannel(void)
     }
 
 #ifdef ENABLE_FASTER_CHANNEL_SCAN
-    gScanPauseDelayIn_10ms = 9;  // 90ms .. <= ~60ms it misses signals (squelch response and/or PLL lock time) ?
+    // 90ms .. <= ~60ms it misses signals (squelch response and/or PLL lock time) ?
+    // JA: 従来は gScanPauseDelayIn_10ms = 9。時刻ベース（1ms 単位）で 70ms 待つ（実機で 67ms はやや取りこぼし、70ms で安定）
+    gScanPauseDelayIn_10ms = 0;
+    JA_ScanWaitArm(JA_SCAN_FULL_WAIT_MS);
 #else
     gScanPauseDelayIn_10ms = scan_pause_delay_in_3_10ms;
 #endif

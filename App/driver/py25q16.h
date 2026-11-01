@@ -24,7 +24,7 @@ void PY25Q16_Init();
 void PY25Q16_ReadBuffer(uint32_t Address, void *pBuffer, uint32_t Size);
 void PY25Q16_WriteBuffer(uint32_t Address, const void *pBuffer, uint32_t Size);
 void PY25Q16_SectorErase(uint32_t Address);
-// JA: 大量書込（字庫など）用。SectorCache に溜め、別セクタへ移るか Flush で消去 1 回＋書込 1 回
+// JA: 大量書込（書体データなど）用。SectorCache に溜め、別セクタへ移るか Flush で消去 1 回＋書込 1 回
 void PY25Q16_StageBuffer(uint32_t Address, const void *pBuffer, uint32_t Size);
 void PY25Q16_StageFlush(void);
 

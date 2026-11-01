@@ -58,7 +58,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 </style>
 </head>
 <body>
-<div id="verBadge">Ver 0.1.18  JA2IZU</div>
+<div id="verBadge">Ver 0.1.19  JA2IZU</div>
 <main>
 <h1>25Ja（にこじゃ）説明書</h1>
 <p class="lead">UV-K1 / UV-K5(K6) V3 用 日本語ファームウェア（以下F/W）25Ja と 書込ツール 25Ja Tool の使い方</p>
@@ -71,18 +71,26 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   ・25Ja は Dondji（BD1AHN）をもとにした派生版で、Dondji 公式のものではありません。
 </div>
 
+<div class="warn">
+  <b>送信について</b><br>
+  25Ja を初めて入れた直後は、<b>すべての周波数で送信できません</b>（隠しメニューの「バンド ロック」が「全送信 禁止」になっています）。<br>
+  <b>PF1 と PTT を押したまま電源を入れ</b>、隠しメニューの「バンド ロック」で使う範囲（例：JA/CEアマ 144〜146／430〜440MHz）を選ぶと送信できます（12 を参照）。
+</div>
+
 <h2>1. 25Ja とは</h2>
 <p>Dondji v5.2.8（F4HWN 系, PY32F071 版）をもとに、日本語で使えるようにしたF/Wです。</p>
 <ul>
-  <li><b>CH 名に漢字・かな</b>（東雲 12 ドットフォント, JIS 第 1・第 2 水準 6,647 字）。CH 名は UTF-8 で最大 31 バイト＝漢字・かな 10 字（英数字 31 字）。
+  <li><b>CH 名に漢字・かな</b>（東雲 12 ドットフォント, JIS X 0208 の全 6,879 字。漢字・かなのほか、ギリシャ文字・キリル文字・記号も使えます）。CH 名は UTF-8 で最大 31 バイト＝漢字・かな 10 字（英数字 31 字）。
       31 バイトの名前は PC の CPS（NeonPlugJA）で書きます。本体で名前を編集できるのは従来どおり 15 バイト（漢字・かな 5 字）までで、長い名前を本体で編集すると 15 バイトに切れます。
       メイン画面では、漢字・かなの長い名前は 7 字ほどまでしか見えません（表示は今後調整）</li>
   <li><b>メニューの日本語化</b>（本体メニュー「表示言語」で切替）</li>
   <li><b>メニューを 5 つの分類に再編成</b>：チャンネル／表示/音声／キー設定／システム／スキャン（アイコンで選びます。項目は 10 を参照）</li>
   <li><b>送信出力から USER をなくしました</b>：選べるのは Low1〜Low5・Medium・High。全体の「出力設定」はメニューから外しました</li>
-  <li><b>バンド ロック（F Lock）「JA/CE」</b>：隠しメニューの「バンド ロック」で選ぶと、送信を 144〜146MHz / 430〜440MHz に限定（CH ごとの送信許可より優先）</li>
+  <li><b>バンド ロック（F Lock）「JA/CE」</b>：隠しメニューの「バンド ロック」で選ぶと、送信を 144〜146MHz / 430〜440MHz に限定（CH ごとの送信許可より優先）。初めて入れた直後は「全送信 禁止」です（12 を参照）</li>
+  <li><b>スキャン グループの選択</b>：7 長押し（または F＋7）で、グループを選んですぐスキャンを始められます（7.2 を参照）</li>
+  <li><b>メニューの分類を覚える</b>：メニューを開くと、前回使った分類から始まります</li>
   <li><b>FM 放送の局名表示</b>：受信中の周波数に合う局名を周波数の下に表示（最大 127 局, 漢字・かな 9 字まで）</li>
-  <li><b>字庫の高速書込</b>：25Ja 同士なら字庫をセクタ単位でまとめて書くため、従来方式より速く、フラッシュの消去回数も少ない</li>
+  <li><b>書体データの高速書込</b>：25Ja 同士なら書体データをセクタ単位でまとめて書くため、従来方式より速く、フラッシュの消去回数も少ない</li>
   <li><b>画面転送</b>：PC の 25Dock / K5Viewer で本体の画面を見てキー操作できます（F4HWN の画面転送と同じ方式）</li>
   <li>本体の側面キーの呼び方を <b>PF1 / PF2</b> に統一（メニュー「PF1短押」など）</li>
   <li>起動ロゴ（招き猫）、名称表示を 25Ja に</li>
@@ -94,8 +102,8 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><th>ファイル</th><th>内容</th></tr>
   <tr><td class="nowrap"><code>index.html</code></td><td>25Ja Tool（書込ツール本体）。PC の Chrome / Edge で使います</td></tr>
   <tr><td class="nowrap"><code>manual.html</code></td><td>この説明書</td></tr>
-  <tr><td class="nowrap"><code>firmware/25Ja_v0.4.1.bin</code></td><td>25Ja F/W（同梱）</td></tr>
-  <tr><td class="nowrap"><code>font/25Ja_font_v4.bin</code></td><td>字庫（東雲 12 ドット, 6,647 字, 版数 4）</td></tr>
+  <tr><td class="nowrap"><code>firmware/25Ja_v0.5.1.bin</code></td><td>25Ja F/W（同梱）</td></tr>
+  <tr><td class="nowrap"><code>font/25Ja_font_v5.bin</code></td><td>書体データ（東雲 12 ドット, 6,879 字, 版数 5）</td></tr>
   <tr><td class="nowrap"><code>LICENSE</code> / <code>NOTICE</code></td><td>ライセンスと出典</td></tr>
   <tr><td class="nowrap"><code>README.md</code></td><td>ツールの概要（開発者向け）</td></tr>
   <tr><td class="nowrap"><code>test/sim.js</code></td><td>模擬無線機を使った動作試験（開発者向け, Node.js）</td></tr>
@@ -108,11 +116,11 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <li>無線機と PC を USB ケーブルでつなぎます。</li>
   <li>配布の ZIP を展開し、<code>25Ja_Tool</code> フォルダの <b><code>index.html</code> をダブルクリック</b>して開きます。<br>
      Chrome / Edge 以外で開いたときは、<code>index.html</code> を右クリック →「プログラムから開く」→ Chrome（または Edge）を選びます。</li>
-  <li>この開き方では、同梱のF/W・字庫をツールが自動では読めません。2・3 の欄の「ファイルを選ぶ」で、
-     同じフォルダの <code>firmware/25Ja_v0.4.1.bin</code>（F/W）、<code>font/25Ja_font_v4.bin</code>（字庫）を選んでください。</li>
+  <li>この開き方では、同梱のF/W・書体データをツールが自動では読めません。2・3 の欄の「ファイルを選ぶ」で、
+     同じフォルダの <code>firmware/25Ja_v0.5.1.bin</code>（F/W）、<code>font/25Ja_font_v5.bin</code>（書体データ）を選んでください。</li>
 </ol>
 <div class="note">
-  ・違うファイルを選んでも、ツールが大きさ・中身の目印・版数を確かめて受け付けません（F/W欄に字庫を選んだときも止めます）。<br>
+  ・違うファイルを選んでも、ツールが大きさ・中身の目印・版数を確かめて受け付けません（F/W欄に書体データを選んだときも止めます）。<br>
   ・書込中はツールのタブを開いたままにしてください。別のタブや画面に切り替えても止まりはしませんが、遅くなることがあります。
 </div>
 
@@ -121,12 +129,12 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <table>
   <tr><th>順</th><th>欄</th><th>無線機の状態</th><th>操作</th></tr>
   <tr><td>1</td><td>1 校正データのバックアップ</td><td>普通に起動</td><td>「校正データを読み出す」→「calibration.dat を保存」。<b>この無線機専用の大切なデータ</b>です。必ず保管してください</td></tr>
-  <tr><td>2</td><td>2 F/Wの書込</td><td>電源を切り、<b>PTT を押したまま電源 ON</b>（刷机モード）</td><td>ファイルを選び（<code>firmware/25Ja_v0.4.1.bin</code>）→「書き込む」。終わると再起動します</td></tr>
-  <tr><td>3</td><td>（本体）</td><td>再起動後</td><td>本体の<b>隠しメニュー</b>（PTT と SIDE1 を押したまま電源 ON。12 を参照）の <b>リセット → 全部</b> を実行し、手順の「済んだ」に印を付けます</td></tr>
-  <tr><td>4</td><td>3 字庫の書込</td><td>普通に起動</td><td>ファイルを選び（<code>font/25Ja_font_v4.bin</code>）→「書き込む」。最後に全体を照合します</td></tr>
-  <tr><td>（5）</td><td>4 校正データの復元（<b>必要なときだけ</b>）</td><td>普通に起動</td><td>通常は不要です。校正データは、リセット・F/W書込・字庫書込・NeonPlugJA の操作では書き換わりません（ソース上の確認。実機未確認）。変わるのは、隠しメニューの「電池校正」（12 バイト）とこの復元だけです。受信感度や送信出力がおかしいときだけ「書き戻す」。<b>書き戻すと、バックアップを取った後に行った電池校正は上書きされ、バックアップ時点の値に戻ります</b>（電池校正を変えていなければ影響なし）。電池校正を変えたときは、1 を取り直しておくと戻りません。1 で読み出した直後なら、ファイルを選び直す必要はありません。終わると再起動します</td></tr>
+  <tr><td>2</td><td>2 F/Wの書込</td><td>電源を切り、<b>PTT を押したまま電源 ON</b>（F/W 書込モード）</td><td>ファイルを選び（<code>firmware/25Ja_v0.5.1.bin</code>）→「書き込む」。終わると再起動します</td></tr>
+  <tr><td>3</td><td>（本体）</td><td>再起動後</td><td>本体の<b>隠しメニュー</b>（PF1 と PTT を押したまま電源 ON。12 を参照）の <b>リセット → 全部</b> を実行し、手順の「済んだ」に印を付けます。この時点では送信できません。送信するときは、同じ隠しメニューの「<b>バンド ロック</b>」で使う範囲を選びます（12 を参照）</td></tr>
+  <tr><td>4</td><td>3 書体データの書込</td><td>普通に起動</td><td>ファイルを選び（<code>font/25Ja_font_v5.bin</code>）→「書き込む」。最後に全体を照合します</td></tr>
+  <tr><td>（5）</td><td>4 校正データの復元（<b>必要なときだけ</b>）</td><td>普通に起動</td><td>通常は不要です。校正データは、リセット・F/W書込・書体データの書込・NeonPlugJA の操作では書き換わりません。変わるのは、隠しメニューの「電池校正」（12 バイト）とこの復元だけです。受信感度や送信出力がおかしいときだけ「書き戻す」。<b>書き戻すと、バックアップを取った後に行った電池校正は上書きされ、バックアップ時点の値に戻ります</b>（電池校正を変えていなければ影響なし）。電池校正を変えたときは、1 を取り直しておくと戻りません。1 で読み出した直後なら、ファイルを選び直す必要はありません。終わると再起動します</td></tr>
 </table>
-<p>最後に本体メニュー「<b>表示言語</b>」を<b>日本語</b>にします。本体情報の「字形」が「6647 字・正常」になっていれば字庫は正しく入っています。</p>
+<p>最後に本体メニュー「<b>表示言語</b>」を<b>日本語</b>にします。本体情報の「字形」が「6879 字・正常」になっていれば書体データは正しく入っています。</p>
 <div class="note">
   ・ボタンを押すたびに、ブラウザがシリアルポートの選択を求めます。無線機のポートを選んでください。<br>
   ・校正の復元（4）が必要になったときは、ページを開き直した後でも、保存した <code>calibration.dat</code> を 4 の欄で選んで書き戻せます。<br>
@@ -134,24 +142,24 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 </div>
 
 <h2>5. F/Wだけ更新する</h2>
-<p>字庫・CH・設定は無線機の SPI フラッシュに残るので、F/Wの更新は「<b>2 F/Wの書込</b>」だけで済みます。</p>
+<p>書体データ・CH・設定は無線機の SPI フラッシュに残るので、F/Wの更新は「<b>2 F/Wの書込</b>」だけで済みます。</p>
 <ol>
-  <li>電源を切り、PTT を押したまま電源 ON（刷机モード）。</li>
+  <li>電源を切り、PTT を押したまま電源 ON（F/W 書込モード）。</li>
   <li>「同梱のF/Wを使う」→「書き込む」。</li>
 </ol>
-<p>字庫の版数が変わったときだけ、字庫も書き直してください（その場合は配布時に案内します）。</p>
+<p>書体データの版数が変わったときは、書体データも書き直してください。<b>F/W 0.4.x から 0.5 以降に更新するときは、「3 書体データの書込」（v5）も必要です。</b>また、0.4.x からの更新では、一度だけ送信が全周波数で禁止になります（12 を参照）。</p>
 
 <h2>6. キーの呼び方</h2>
-<p>6〜9 章は、F/W の操作（スキャン・スペクトラム・FM 放送）の説明です。簡易取扱説明書 Ver 0.9.6 の内容を、この説明書に統合しました。記述は F/W 0.4.1 のソースと突き合わせてあります（実機での確認は 16 の確認表に残っています）。</p>
+<p>6〜9 章は、F/W の操作（スキャン・スペクトラム・FM 放送）の説明です。簡易取扱説明書 Ver 0.9.6 の内容を、この説明書に統合しました。記述は F/W 0.5.1 に合わせてあります。</p>
 <figure class="fig "><img src="data:image/png;base64,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EKMAAIhRDpHuc+jO0QMAYhQAAMRok5S+g5cOiwIAYpTGqUYlCgAgRhunHZUoAEBwn9E6SPHOozNmzAju/kjauM8oAMeWTENQW3U7qHlIIgAAEJymBwBAjAIAIEYBAECMAgAgRgEAQIwCACBGAQBAjAIAIEYBAECMAgAgRgEAQIwCACBGAQBAjAIAIEYBAECMAgAgRgEAEKMAANAYMg1BbRUWFtZhrquvvjqamDFjhjEEABCjDZSh1VUpAABO0zdoiaZpaQAAYlSJ6lEAADF67FSjHgUAxCgAAIjRJindBy8dHAUAxCgAAIhRAADEKAAAiFEAAMQoAACIUQAAxCgAAIhRAADEKADptmTJktGjRy9btizdK3r55ZdHjRq1dOlSYw6IUQBCCGHDhg1jxowpLi4eNGjQQw89lL4VFRYWXnDBBSUlJaNHj964caORB9It0xAANHHl5eXDhw8vLy8PIQwePPiGG26Inl+9evX69evrZRW9evXq169fCGHSpEklJSWvvvrq9u3bhw8f/te//vXEE0/0EQBiFKD5mjJlyttvvx1C6N69+/PPP5+Z+d//up977rmf/vSn9bKK73znO1GMZmVlzZkzJy8v7/3333/rrbfuu+++qVOn+giA9HGaHjiuFBYWxg7TsmXL0047beDAgePHjy8tLa35jIebO3duA/9Fb7755iOPPBJNT58+vXPnzuleY3Z29rRp06LpBx98MOpgADEKUEeVlZXvvPPO8uXLZ82aNXTo0F69elWXpLWyd+/eJ554YtiwYaeeemqbNm1ycnLGjh37xBNPJBKJetz4H/zgB5WVlSGEc88995JLLmmYEbv88sv79+8fQti3b98Pf/hDuxAgRgHqTTwev/DCC1955ZVUFrJ06dI+ffpceeWVf/zjH999992PP/54w4YNRUVFV1555bnnnvvmm2/Wy6aWlZXNnz8/mk4erUx64IEHEtWbMWNG8p1/+ctfEkf1s5/9rOqSY7FYcnXFxcXbt2+32wBp4jujwHHrnHPOmTx5cghh9+7dW7duLS0tXbRo0YEDB0IIFRUV11133RtvvHHEGXNycgoKCqp7KYQwe/bsCRMm7N+//4jvWb58+dixY1etWtWyZcsU/4Ti4uJog3v27Dlw4MCGHL1Bgwb16NHj3Xff3b9//7x58yZMmGCPAsQoQC106dLl4osvTj68+eab58+fP3LkyIMHD4YQ4vH4mjVr8vLyDp/x7LPPvv3224+y5MWLF0clmpGRUVBQMHz48IyMjJdeeumXv/xl1I7r1q2bOnXqj3/84xT/hKKiomiiwU7QVzV27Njp06dHmyFGATF6PFuRk2MQqBdPHu+71jnxeCqzjxgxol+/fitWrIgevv7660eM0U/1xBNPtG/f/umnn37uueeGDRsWPTlmzJi+ffted9110cOFCxemGKMVFRVLliyJpkePHp3KoqJvndbWmDFjohhdvHjxgQMHMjIy/BMD6p3vjALNy5lnnpmc3rZtW90WEovFHnnkkXg8nizRyFVXXdWqVato+h//+Ed0lLTOtmzZkvwmQJ8+fVJZ1DXXXDN06NDVq1fXaq7kSvft2/fBBx/YeQAxCpCqTZs2JadPPvnkVBbVpUuXQ57JyMg45ZRToum9e/d+9NFHqSz//fffjyY6duzYunXrVBa1YcOG0tLS/v37FxQUvPfeezWcq3379ieccEI0/e9//9vOA6SD0/RNQopnHiEp55Pn5eN2rU9auXJl8hx9CCE3N7d+l79z585kQXbq1KlDhw6pLC3Zf127dq2XzUskEs8880xJScmtt9566623Jg/iHkW3bt3++c9/Rhvz5S9/2S4E1DtHRoHj3969ezdu3Dh9+vThw4cnT3zn5uZWd+67pKTkiHe8371799FX9MQTTyRPzY8cOTLFzS4rK4smUr/RfdUl7Nmz58477+zbt++yZcs+dcbkgV6n6YE0cWQUOG5FTXnEl7Kysh577LH6XV1ZWdlPfvKTaLp169ZHvx6/Jjp27BhN7NixI8VFFRUVLV269J577tm3b1/0zMaNGwcPHjxx4sTCwsKjfAcg+bXaTp062aOAdHBkFGh2srOzi4uL8/Pz63GZBw8eHDduXPLm8N///vc///nPp7jM5Nn51L+v2bJlyzvuuGPdunWDBg1KPplIJB577LEBAwZs3ry5uhmT3zro1q2bPQdIB0dGgeYiFov17NnzxhtvvOaaa9q0aXOUd1Z30/uj3MT+pptu+uMf/xhN9+rVq15+QjPZfx9++GFFRUXqt9A/66yzXnrppd/85jff/e53q37loLoLufbs2VNeXn5IGQOIUYAayc/Pv/POO0MImZmZPXr06NGjR00u2Qk1uOn9ISZPnvzoo49G0506dZo/f37btm1T3/6uXbvGYrHo5zo3btzYu3fveinya6+9dtCgQZdddtnf//73Dh06FBUVVZfm0aVLIYSMjIzPfvaz9ihAjALUQnZ29iH3AU2HKVOmTJ06NZrOysoqKio6/fTT62XJrVu3zs/Pf+2110IIJSUl9RKjydp+7bXXxo8ff8UVV/Ts2bO6txUXF0cT559/flZWlj0KSAffGQWou3vvvTf5M0sZGRm//e1vq34pM3Vjx46NJl544YX63fK2bdsWFRV9/etfP8p75syZE02MGTPGZw2IUYCm5dZbb73jjjui6VgsNnPmzG984xv1u4rkr4CuW7du/fr1DfnXrV27NrpPbSwWGzVqlI8bSBOn6QFq7eDBg9dff/2vfvWr5DMFBQUnnnjizJkzd+zYUfVXQCdNmnT0i6WO7tRTTx00aNDSpUtDCLfddtvcuXMb7G+cPHlyNDFkyBCX0gNiFKAJueGGG6qWaAhh1qxZs2bNOvydV199dSoxGkKYNm3agAEDEonEvHnzlixZMmTIkAb4A1988cVFixaFEFq0aDFt2jSfOJA+TtMD1Nrq1asbbF39+/cfN25cND1p0qQ9e/ake427du266aaboukJEybk5eX5xAExCtB83X///dEPIK1fv/6qq65K67oSicSECROimzp17tz53nvvNf6AGAWoqVtuuSXxP8k7E9X7jKtWrUrUTL38ima3bt1KSkqim6Q+++yzyXuapsNDDz1UVFQUQmjduvXcuXPdXhQQowCE8847b+bMmbm5uU8++eS1116bvhVNnDjx8ccf/+IXv/jUU0/V7y+mAhyRC5gAjg0FBQVH/JHS6vTp0+d73/teNN2lS5caztWqVasrrrjiiiuuMOCAGAWg7vr379+/f3/jADRxTtMDACBGm6pbbrnlmF4+AIAYBQAAMVon6Tt46bAoACBGaZxqVKIAAGK0cdpRiQIAhBBiiUTCKNRKYWFhKrPPmDEjhBCPx40k6ZCTk1P1oT0NgCbOfUZrrW4HNQ9JBAAAgtP0AACIUQAAxCgAAIhRAADEKAAAiFEAAMQoAACIUQAAxCgAAIhRAADEKAAAiFEAAMQoAACIUQAAxCgAAIhRAADEKAAAYhQAAMQoAABiFAAAxCgAAGIUAADEKAAAYhQAAMQoAABiFAAAxCj15+2333711Ve3bNmSykJ2795tJAEAMUqtlZaWFhYWLlu2rM5L2LRp07e+9a0ZM2bUfJZZs2aNGzfurbfeMv4A0ExkGgKqS8kQwhlnnFHnJbzyyisHDhzo3r37qlWrVq1adfgbJk6cGIvFqj5TUVGxe/fugwcPRg8XLly4cOHCFP+QIUOGjB071gcKAGKUY0YikfjXv/6VSowmEolXX301KyvrvPPOW7hw4eLFiw9/z7e//e1YLFZSUtKuXbuvfvWrh79h165dKX5PIISwc+dOHygAiFGOJf/5z3/27t3buXPnz3zmM3Vbwtq1a8vKys4999wTTjgheuZnP/vZaaedFk3fddddf//736PpOXPmnHLKKUeM0csuu+yyyy6rbhWPP/74/Pnz+/Xrd9ttt/nIAECMckzasGHDww8/fMiT+/btCyGUl5dff/31NVnIj370oy5dulR9pqSkJIQwZMiQ9G15dOy2d+/ePkQAEKMcqyoqKqo7FV5ZWVnDs+SVlZVVH27atGndunWf+cxncnNz07fl77zzTgihT58+PkQAEKMcq/r27VtcXHzIk9dff/2WLVuqnlivlaeffjqE0LFjxxYt/v92DQsWLEie9H///fdT3OwdO3bs3LnzhBNOqNsWAgBilCbqww8/3LJlS/v27U899dQ6zL569eq//e1vhz9fWlpah6X99a9/veeee6p7ddeuXaNHjz7K7HfccceXvvQlnykAiFGOGdGlRX369Dnkvks18fHHH8+cOfOIL1V3AVNNtG/f/qSTToqmy8rK9u7d261bt4yMjOQbdu/evW3bto4dOyavl4re5tMEADHKMWbdunWhrhcGPfroo//5z3/OOuusjRs31uMmDR48+Morr4ymp06dumLFirvvvrtTp07JN7z00ksPP/zwpZdeOmzYsKpv82kCQBPnF5j4hEQiEcVoHS4MWrZs2Z///OcOHTpMmjTJSAIANeHIKJ+wdu3a8vLyDh06dO/evbbz9u3bt23btt/5zneSp9Sruvnmm+txO5955pnWrVsnH7733ns+OwAQoxzz/vSnP4UQ2rVrN2rUqBrO8o1vfCO6NX2HDh2mTJly+umn79mz5/C3XXDBBcmr6f/85z+XlZWlsp1LlizxYQGAGOW4snPnzpUrV4YQRowY8bvf/a7qS3v27Nm1a1fbtm2TVwgltWvXLjl9+umnV7fwiy66KHkB06ZNm1KM0RkzZhz+nVGfIACIUY5hL7/88v79+7/whS8MGzYseSVQZO7cuU8++eTXvva18ePHGygAoL64gIn/+vjjj6O731900UVGAwBoGI6M8l9z5swpLy8/66yz+vfvn47lP/fcc+3bt4+mN2/enOLSXMAEAGKUWojH4zk5OcmHOTk58Xi86WzeBx98MG/evBBCQUFBmlbxl7/8pR6X5gKmI6q6j0V7nTEBQIzS1CUSiRkzZlRWVg4YMKBv3771vvzLLrvs4osv3r59e9euXUMIBw4cePfddz//+c9Hr44fP75Nmza1XaYLmADg+OA7o4RZs2atWrXqxBNP/Pa3v52mVSxcuHDSpEmLFy8OIdx777133XVX8vZPw4YN+8pXvuJTAAAxSoM65IxqYyktLY3u4jRx4sTkfUDr1549e0pKSsL/fmI0Pz9/586dRUVF9oHjco8CgFpxmr7hHPK10aagvLz8l7/8ZQihoKBgwIABaVrLM888s2vXrosuuqhLly4hhCFDhhQXFy9YsGDkyJHJS5qObunSpa+//no0vXXr1hDC3XffnZn5/3vvrl27QggvvPDCiy++WPVtzXx/848OADFKk9ahQ4fLL7+8rKxs7Nix0TOXXnppZWVlde//3e9+d8jN8CMDBw78/ve/f8RZVq1a9fvf/75Tp06XXnpp9ExGRsbo0aN//vOfL1q06JJLLgkhVFZWZmRktGjR4qOPPgohZGVlHbKQnTt37ty5s+ozR7wef9u2bdu2bfOxAoAY5cia4DX1o0aNSiQSVfP0KDFanao/wlTVvn37fvGLX7Ro0eK73/1u1fcMGjSouLi4c+fO0cPbb7/9zTffjKazsrKiA6hVjRgx4sorr6zVJk2dOnXFihXNZ9dyHT0AYpRjVSwWS07/+te/Tn2BLVq0OOOMM7p27dqqVaspU6Zs3ry5V69eVd+QlZX18MMPZ2RkRA8vuOCCioqKVq1afe5znxs6dGjVG4h27979qquuSl56X3NDhw7t3bt39+7dfb4A0KQ7pOpRMRrA4V8bdRALOxUAzZar6Rva4ZXgImiUKABiFD2KEgUAMQoAgBglrRwcJXUOiwIgRtGjKFEAqDtX0ze5pFAV2GcAaD4cGW1kR2wIh0hRogCIUfQoShQA0stp+ibdGVIDuwcAYpRGDg7ZYZewSwAgRmn8+JAgdgO7AQBilCbRIjRbMhSA44kLmNQG9g0AaDSOjDZ1jpKiQQEQo0hSZCgAiFGEqQAFADEKAACpcwETAABiFAAAMQoAAGIUAAAxCgAAYhQAADEKAABiFAAAMQoAAGIUAAAxCgAAYhQAADEKAABiFAAAMQoAAGIUAAAxCgCAGAUAADEKAIAYBQAAMQoAgBgFAAAxCgCAGAUAADEKAIAYBQAAMQoAgBgFAAAxCgCAGAUAgMP9H57BkFUQDFGsAAAAAElFTkSuQmCC" alt="左側面のキー配置（PTT、PF1、PF2）"><figcaption>図1　左側面のキー（配置イメージ。上から PTT、PF1、PF2）</figcaption></figure>
 <table>
   <tr><th>キー</th><th>本書での呼び方・働き</th></tr>
   <tr><td>PF1（側面・上）</td><td>初期設定：短押しでモニター（メニュー「PF1短押」「PF1長押」で変更可）</td></tr>
   <tr><td>PF2（側面・下）</td><td>初期設定：短押しでスキャン（メニュー「PF2短押」「PF2長押」で変更可）</td></tr>
   <tr><td>F</td><td>F を押してから次のキーを押すと、そのキーの第 2 機能</td></tr>
-  <tr><td>長押し</td><td>数字キーの長押しは、<b>多くの数字で「F＋数字」と同じ働き</b>です（0・1・2・3・4・6）。<b>違うのは 5・7・8・9</b>：
+  <tr><td>長押し</td><td>数字キーの長押しは、<b>多くの数字で「F＋数字」と同じ働き</b>です（0・1・2・3・4・6・7）。<b>違うのは 5・8・9</b>：
     <b>5</b>＝F＋5 はスペクトラム、5 長押しはスキャン グループの切替（7.3）。
-    <b>7</b>＝長押しは何もしません。
+    <b>7</b>＝7 長押しと F＋7 は、どちらもスキャン グループの選択（7.2）。
     <b>8</b>＝F＋8 は照明の一時的な切替（最小／最大）、長押しは周波数の反転。
     <b>9</b>＝F＋9 は照明を設定どおりに戻す、長押しは呼出 CH。</td></tr>
 </table>
@@ -162,6 +170,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <table>
   <tr><th>目的</th><th>操作</th><th>向いている場面</th></tr>
   <tr><td>登録した CH を巡回</td><td>CH モードで ＊ 長押し（F＋＊、PF2 でも可）</td><td>ふだんの監視</td></tr>
+  <tr><td>グループを選んで巡回</td><td>7 長押し（F＋7）→ ＞・＜ で選ぶ → MENU</td><td>グループをすぐ切り替えたい</td></tr>
   <tr><td>空き周波数を探す</td><td>VFO モードで ＊ 長押し</td><td>バンドの様子見</td></tr>
   <tr><td>範囲を決めて探す</td><td>A・B に上限と下限を入れ、5 長押し → スキャン（2 画面表示のとき）</td><td>430.00〜431.00 MHz など</td></tr>
   <tr><td>相手の周波数を拾う</td><td>F＋4</td><td>近くの無線機の周波数を知りたい</td></tr>
@@ -178,7 +187,12 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><td>MENU 長押し（受信中）</td><td>その CH をスキャンから外す（記憶される）。範囲スキャン中は、今の周波数を外す</td><td>―</td></tr>
   <tr><td>MENU 短押し</td><td>止めて、その CH に留まる</td><td>―</td></tr>
   <tr><td>EXIT</td><td>止めて、元の CH に戻る</td><td>―</td></tr>
+  <tr><td>7 長押し、F＋7</td><td>グループを選ぶ画面を出す（下の説明）</td><td>CH が入っているグループと ALL</td></tr>
 </table>
+<div class="note">
+  <b>スキャン グループの選択（7 長押し・F＋7）</b>：グループを選ぶ小さな画面が出ます（上の行が一つ前、白黒反転の行が選択中、下の行が一つ後）。<b>＞</b> で上の行へ、<b>＜</b> で下の行へ移ります。<b>MENU</b> を押すか、5 秒そのままにすると、選んだグループですぐスキャンを始めます。<b>EXIT</b> で取りやめます。<br>
+  スキャンしていないときも使えます。VFO モードのときは CH モードに切り替わります。CH が入っていないグループは出ません。選んだグループは次も残ります。
+</div>
 <h3>7.3 準備と設定</h3>
 <table>
   <tr><th>項目</th><th>操作</th><th>設定範囲</th><th>コツ</th></tr>
@@ -282,7 +296,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><td>EXIT</td><td>入力の取り消し・スキャンの停止<br>何もないときは FM 放送を終わる</td><td>―</td></tr>
   <tr><td>F＋8／F＋9</td><td>バックライト</td><td>―</td></tr>
 </table>
-<div class="warn">F＋1 でバンドを 64〜76 MHz にしたとき、今の周波数がその範囲に自動では収まるかどうかは、確認していません（元の Dondji も同じ作りで、収める処理はソースに見当たりません）。バンドを切り替えたあと、周波数を入れ直してください。</div>
+<div class="warn">F＋1 でバンドを 64〜76 MHz にしたとき、今の周波数がその範囲に収まらないことがあります。バンドを切り替えたあと、周波数を入れ直してください。</div>
 <h3>9.3 放送局を登録する</h3>
 <ol>
   <li>周波数モードで聞きたい局に合わせる（数字入力、上下、または ＊）。</li>
@@ -305,7 +319,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <ul>
   <li>最大 127 局。周波数は 64.0〜108.0MHz、0.1MHz 単位、重複なし</li>
   <li>局名は UTF-8 で 28 バイト・画面幅 128 ドットまで（漢字・かなは 9 字、半角英数は 18 字まで）</li>
-  <li>使える字は半角英数記号と、字庫にある字（JIS 第 1・第 2 水準）。半角カナ・機種依存文字は不可。ツールが赤で知らせます</li>
+  <li>使える字は半角英数記号と、書体データにある字（JIS X 0208 の全字。ギリシャ文字・キリル文字・記号を含む）。半角カナ・機種依存文字は不可。ツールが赤で知らせます</li>
   <li>CSV は「周波数,局名」の 2 列。読込は UTF-8 / Shift_JIS、書出は UTF-8（BOM 付き）</li>
 </ul>
 <div class="note">
@@ -313,10 +327,10 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 </div>
 
 <h2>10. CH 名・CH表示・スキャン グループ（本体メニュー）</h2>
-<div class="note">PC の CPS「NeonPlugJA」（<code>https://github.com/ja2izu/NeonPlugJA</code>）の使いかたは、「NeonPlugJA 取扱説明書」を見てください。NeonPlugJA は、infamy 氏の NeonPlug（MIT License、<code>https://github.com/infamy/NeonPlug</code>）をもとにしたフォークです。</div>
+<div class="note">CH の編集は PC の CPS「NeonPlugJA」で行います（CHIRP には対応していません）。NeonPlugJA（<code>https://github.com/ja2izu/NeonPlugJA</code>）の使いかたは、「NeonPlugJA 取扱説明書」を見てください。NeonPlugJA は、infamy 氏の NeonPlug（MIT License、<code>https://github.com/infamy/NeonPlug</code>）をもとにしたフォークです。</div>
 <h3>本体メニューの構成と「CH表示」（ChDisp）</h3>
 <ul>
-  <li>メニューの最初の画面は、<b>5 つの分類</b>のアイコンです：<b>チャンネル／表示/音声／キー設定／システム／スキャン</b>。分類ごとの項目と並びは次のとおりです（日本語表示。ソース上の分類で、実機の表示は配布前確認で確かめます）。
+  <li>メニューの最初の画面は、<b>5 つの分類</b>のアイコンです：<b>チャンネル／表示/音声／キー設定／システム／スキャン</b>。分類ごとの項目と並びは次のとおりです（日本語表示）。メニューを開くと、前回使った分類から始まります（電源を入れ直すと「チャンネル」から）。
     <ul>
       <li><b>チャンネル</b>（16）：ステップ、送信出力、受信 DCS、受信 CTCSS、送信 DCS、送信 CTCSS、シフト 方向、シフト 周波数、ワイド/ナロー、ビジー ロック、Compand、受信 モード、所属 グループ、CH保存、CH削除、CH名 編集</li>
       <li><b>表示/音声</b>（17）：スケルチ、ラジャー 音、テール 消去、レピータ STE、キー音、マイク 感度、音質設定、表示言語、待受方式&lt;主画面&gt;、CH表示、LED点滅、照明時間、照明最小、照明最大、送受照明、表示濃度、スペアナ 表示</li>
@@ -327,11 +341,11 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   </li>
   <li>「CH表示」（ChDisp）は<b>「表示/音声」</b>の中にあります（元の Dondji ではカテゴリから外れていて、メニューで選べませんでした）。</li>
   <li>選べる値は<b>周波数</b>／<b>CH番号</b>／<b>名前</b>／<b>名前+周波数</b>の 4 つです（英語表示では FREQ／CHANNEL NUMBER／NAME／NAME + FREQ）。値は本体に保存されます。</li>
-  <li>2 つの VFO を並べる通常のメイン画面では、CH 名の見え方（下の項）は ChDisp では変わりません（実機で確認）。ほかの画面（メインのみ表示など）での効き方は、まだ確認していません。</li>
+  <li>2 つの VFO を並べる通常のメイン画面では、CH 名の見え方（下の項）は ChDisp では変わりません。</li>
 </ul>
 <h3>CH 名の長さ</h3>
 <ul>
-  <li>CH 名は <b>最大 31 バイト</b>（UTF-8）です。英数字は 1 バイト、漢字・かなは 3 バイトで数えるので、英数字だけなら 31 字、漢字・かなだけなら 10 字です。例：<code>29MHz</code> に全角 9 字を続けると 5 ＋ 27 ＝ 32 バイトで、1 バイト超えます。</li>
+  <li>CH 名は <b>最大 31 バイト</b>（UTF-8）です。英数字は 1 バイト、漢字・かなは 3 バイト、ギリシャ文字・キリル文字と一部の記号（° ± × ÷ など）は 2 バイトで数えるので、英数字だけなら 31 字、漢字・かなだけなら 10 字、ギリシャ文字だけなら 15 字です。例：<code>29MHz</code> に全角 9 字を続けると 5 ＋ 27 ＝ 32 バイトで、1 バイト超えます。</li>
 </ul>
 <h3>メイン画面での CH 名の見え方</h3>
 <ul>
@@ -346,15 +360,15 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <li>本体のスキャンリストは<b>固定の 24 枠（1〜24）</b>です。作成や削除の操作はありません。CH ごとに「どの枠に入れるか」を選びます。<b>0</b> はどのリストにも入らない（スキャンしない）、<b>ALL（25）</b>は全リストに入る、の意味です。</li>
   <li>リスト名は本体の漢字名欄（12 バイト）に入ります。PC の CPS から書き込み・読み込みできます。</li>
   <li><b>リスト名の表示（F/W 0.4 から）</b>：メニューの「所属 グループ」（「チャンネル」の中）と「スキャン グループ」（「スキャン」の中）の値が「<code>03 防災</code>」のように、番号＋名前で出ます。名前が空のリストは番号だけです。ALL は「ALL」です。</li>
-  <li><b>切り替え時のポップアップ（F/W 0.4 から）</b>：スキャン中に <b>F → ↑↓</b> でリストを切り替えると、リスト番号と名前の小さな表示が一時的に出て、自動で消えます。数字キーの 2 桁入力で切り替えたとき、PF2 短押し（スキャン）のときにも出ます（作者の実機で確認。画面の重なりの見え方は未整理）。PF1/PF2 の割り当ては変えていません。</li>
-  <li>本体の初期化（工場リセット）でリスト名の欄も消える作りです（ソース上の確認。実機は未確認）。</li>
+  <li><b>切り替え時のポップアップ（F/W 0.4 から）</b>：スキャン中に <b>F → ↑↓</b> でリストを切り替えると、リスト番号と名前の小さな表示が一時的に出て、自動で消えます。数字キーの 2 桁入力で切り替えたとき、PF2 短押し（スキャン）のときにも出ます。PF1/PF2 の割り当ては変えていません。</li>
+  <li>本体の初期化（工場リセット）で、リスト名の欄も消えます。</li>
   <li><b>除外中</b>：スキャン中に MENU 長押しで外した CH は、リスト番号を残したまま「除外」の印が付きます。スキャン待機中に MENU を押すと戻ります。</li>
 </ul>
 <h3>スキャン速度（F/W 0.4 から）</h3>
 <ul>
   <li>F4HWN の高速スキャン（SCAN_FASTER）と RSSI 表示を移植しています。メニューの「<b>スキャン 速度</b>」で <b>通常／高速</b> を選びます。</li>
   <li>それまでの 25Ja から更新したときの初期値は<b>高速</b>です。設定が消去されている・不正なときは<b>通常</b>です。</li>
-  <li>RSSI の表示はメインのみの画面での作りです（他の画面の見え方は未確認）。</li>
+  <li>RSSI の表示は、メインのみの画面に出ます。</li>
 </ul>
 
 <h3>送信出力（本体メニュー）</h3>
@@ -372,22 +386,24 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><td>ファイルの選択</td><td>各欄の「<b>ファイルを選ぶ</b>」で選びます。選んだファイル名と大きさ、検査の結果（✔ / ✖）が欄に出ます。同じファイルを選び直すこともできます</td></tr>
 </table>
 
-<h2>12. 送信の制限（F Lock JA/CE）</h2>
-<p>隠しメニューの<b>「バンド ロック」（F Lock）</b>で「<b>JA/CE</b>」を選ぶと、送信できるのは 144〜146MHz と 430〜440MHz だけになります。このとき CH ごとの送信許可（TxLock）の設定は無視されます。「全送信禁止」を選ぶと送信できなくなります。</p>
-<p>隠しメニューは、ソース上は <b>PTT と SIDE1 キーを押したまま電源 ON</b> で出る作りです（ソース確認済み。実機での確認は配布前確認で行ってください）。PTT と SIDE2 の組み合わせは、AIRCOPY が無効のためエラー画面になります。</p>
-<p>隠しメニューに入っている項目：バンド ロック、電池校正、電池種類、機種依存 キー、リセット（いずれも「システム」の中。ソース上の確認）。</p>
+<h2>12. 送信の制限（バンド ロック）</h2>
+<p>25Ja を初めて入れた直後は、<b>すべての周波数で送信できません</b>（隠しメニューの「バンド ロック」が「全送信 禁止」）。送信しようとすると「TX DISABLE」と出ます。次のときも同じ状態になります：ほかの F/W から 25Ja を入れたとき、F/W 0.4.x から 0.5 以降に更新したとき、リセット（全部）のあと、25Ja Tool で F/W 0.4.x のときの設定バックアップを書き戻したとき。</p>
+<p>送信するには、<b>PF1 と PTT を押したまま電源 ON</b> で隠しメニューを出し、「システム」の「<b>バンド ロック</b>」（F Lock）で使う範囲を選びます。日本のアマチュア無線では「<b>JA/CEアマ</b>」を選ぶと、送信できるのは 144〜146MHz と 430〜440MHz だけになります。このとき CH ごとの送信許可（TxLock）の設定は無視されます。「全送信 禁止」を選ぶと、再び送信できなくなります。</p>
+<p>PF2 と PTT の組み合わせは、AIRCOPY が無効のためエラー画面になります。</p>
+<p>隠しメニューに入っている項目：バンド ロック、電池校正、電池種類、機種依存 キー、リセット（いずれも「システム」の中）。</p>
 
 <h2>13. 困ったとき</h2>
 <table>
   <tr><th>症状</th><th>対処</th></tr>
-  <tr><td>書込後に起動しない</td><td>電源を切り、<b>PTT を押したまま電源 ON</b> で刷机モードに入り、F/Wを書き直します。ブートローダーはF/Wの書込で消えないので、この方法は常に使えます</td></tr>
-  <tr><td>CH 名・メニューの漢字が出ない、□ になる</td><td>字庫が入っていないか版が違います。「3 字庫」を書き直してください</td></tr>
-  <tr><td>「刷机モードになっています」と出る</td><td>その操作は普通に起動した状態で行います。電源を入れ直してください</td></tr>
-  <tr><td>「無線機が通常起動しています」と出る</td><td>F/Wの書込は刷机モードで行います（PTT を押したまま電源 ON）</td></tr>
+  <tr><td>書込後に起動しない</td><td>電源を切り、<b>PTT を押したまま電源 ON</b> で F/W 書込モードに入り、F/Wを書き直します。ブートローダーはF/Wの書込で消えないので、この方法は常に使えます</td></tr>
+  <tr><td>CH 名・メニューの漢字が出ない、□ になる</td><td>書体データが入っていないか版が違います。「3 書体データ」を書き直してください（F/W 0.5 以降は書体データ v5）</td></tr>
+  <tr><td>送信できない（「TX DISABLE」と出る）</td><td>隠しメニューの「バンド ロック」が「全送信 禁止」です。25Ja を初めて入れた直後はこの状態です。12 を参照して、使う範囲を選んでください</td></tr>
+  <tr><td>「F/W 書込モードになっています」と出る</td><td>その操作は普通に起動した状態で行います。電源を入れ直してください</td></tr>
+  <tr><td>「無線機が通常起動しています」と出る</td><td>F/Wの書込は F/W 書込モードで行います（PTT を押したまま電源 ON）</td></tr>
   <tr><td>側面キーに割り当てた 1750Hz が効かない</td><td>25Ja では 1750Hz トーンを外しました。そのキーは何もしなくなるので、メニュー「PF1短押」などで別の機能を割り当ててください</td></tr>
-  <tr><td>「ファイルが選ばれませんでした」</td><td>ファイル選択で <code>firmware/25Ja_v0.4.1.bin</code> または <code>font/25Ja_font_v4.bin</code> を選んでください</td></tr>
+  <tr><td>「ファイルが選ばれませんでした」</td><td>ファイル選択で <code>firmware/25Ja_v0.5.1.bin</code> または <code>font/25Ja_font_v5.bin</code> を選んでください</td></tr>
   <tr><td>書込がとても遅い</td><td>ツールのタブを前に出したままにしてください</td></tr>
-  <tr><td>字庫の書込で「照合で不一致」</td><td>もう一度書き込んでください。続くときは USB ケーブル・接続を確かめてください</td></tr>
+  <tr><td>書体データの書込で「照合で不一致」</td><td>もう一度書き込んでください。続くときは USB ケーブル・接続を確かめてください</td></tr>
   <tr><td>待受中に LED が 1〜2 秒おきに一瞬光る</td><td>「LED点滅」機能（英語表示では Airplt）が ON になっています。メニュー「LED点滅」を OFF にしてください。赤だけが 2 秒おきに光る場合は、画面が消えたあとの「休眠」表示です（メニュー「スリープ」を OFF にすると出ません）</td></tr>
   <tr><td>FM の局名が出ない</td><td>その局がプリセットにあるか、周波数が表とぴったり同じかを確かめます。バンドが 76〜108MHz かも確かめてください</td></tr>
   <tr><td>校正がおかしい（受信感度・送信出力）</td><td>1 で保存した <code>calibration.dat</code> を「4 校正データの復元」で書き戻します</td></tr>
@@ -409,29 +425,29 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <h2 id="hash">15. 配布物の照合値</h2>
 <table>
   <tr><th>ファイル</th><th>サイズ</th><th>SHA-256</th></tr>
-  <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">69,218 B</td><td class="hash">e39681ca3d3c4ffd4ffd5b548d35d1c08c09ac8efe8a6a75b81eee9b81102cc8</td></tr>
-  <tr><td class="nowrap"><code>firmware/25Ja_v0.4.1.bin</code></td><td class="nowrap">114,448 B</td><td class="hash">2997fe5a2a3f501204d247341c85962295cea52044791341287c36a2f3892409</td></tr>
-  <tr><td class="nowrap"><code>font/25Ja_font_v4.bin</code></td><td class="nowrap">186,117 B</td><td class="hash">ca5d44656e91a9eb8f04a37af2e158456fd05fce2228167ae522a652da23e825</td></tr>
+  <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">70,543 B</td><td class="hash">2c4faeead1558832d1b41b09343fb125655b1b960ad9140f0247a9864aa58a30</td></tr>
+  <tr><td class="nowrap"><code>firmware/25Ja_v0.5.1.bin</code></td><td class="nowrap">116,236 B</td><td class="hash">05d08a70b5988031073b613e4a6c8ed42f36c9a1851a4e34d499c71bda8d5657</td></tr>
+  <tr><td class="nowrap"><code>font/25Ja_font_v5.bin</code></td><td class="nowrap">192,613 B</td><td class="hash">49894793f441ff7b97f4942b6a1d9c829e8b483df2ef3984e144871566a43ed4</td></tr>
   <tr><td class="nowrap"><code>LICENSE</code></td><td class="nowrap">11,357 B</td><td class="hash">c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4</td></tr>
-  <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">1,601 B</td><td class="hash">5017f3f728a0262e6eff3dfe8ecb03276688ca1f4097e11fcb44eec21227deec</td></tr>
-  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">3,285 B</td><td class="hash">9d6b19a848717a4deb7c22c5237c04c05838b7144edab23bb3cb66bd7a7d1a0f</td></tr>
+  <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">1,601 B</td><td class="hash">d549af037701164eeebba345539e8f28c9fa88e87caf1d0ab2ae1bb06b9e2e06</td></tr>
+  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">3,528 B</td><td class="hash">fcff9572198edfd1700a45202953cdd667e0edafc47edf6cc9b01a7184fa2cc7</td></tr>
 </table>
-<p>F/Wの版：25Ja v0.4.1（Dondji v5.2.8 ベース、F4HWN 由来）。同梱 BIN をビルドしたコミットは <code>0bf0b1e</code> です（短縮ハッシュ）。本体情報の画面に出るのは「ビルド日時」だけで、コミット名は実機では表示されません（実機で確認）。BIN の照合は、下の SHA-256 で行います</p>
+<p>F/Wの版：25Ja v0.5.1（Dondji v5.2.8 ベース、F4HWN 由来）。書体データ：v5（6,879 字）。F/W 0.5 以降は書体データ v5 と組で使います。本体情報の画面に出るのは「ビルド日時」で、BIN の照合は上の SHA-256 で行います</p>
 
 <h2>16. 配布前の確認表（実機）</h2>
 <table class="check">
   <tr><th>□</th><th>確認すること</th></tr>
-  <tr><td>□</td><td>index.html をダブルクリックで開き、右上に「Ver 0.1.18  JA2IZU」、上部に「ファイルを直接開いています」の案内が出る</td></tr>
+  <tr><td>□</td><td>index.html をダブルクリックで開き、右上に「Ver 0.1.19  JA2IZU」、上部に「ファイルを直接開いています」の案内が出る</td></tr>
   <tr><td>□</td><td>ログの上の取っ手をドラッグして高さを変えられる（ダブルクリックで大小切替）</td></tr>
-  <tr><td>□</td><td>「ログをコピー」→ メモ帳に貼ると先頭に「25Ja Tool Ver 0.1.18 / 日時」。「ログを消す」で空になる</td></tr>
+  <tr><td>□</td><td>「ログをコピー」→ メモ帳に貼ると先頭に「25Ja Tool Ver 0.1.19 / 日時」。「ログを消す」で空になる</td></tr>
   <tr><td>□</td><td>「ファイルを選ぶ」でファイルを選ぶと、欄に ✔ とファイル名が出る（同じファイルを続けて選び直しても出る）</td></tr>
   <tr><td>□</td><td>新F/Wで普通に起動して接続すると、ログの「本体:」の行に「（25Ja, CH 名 31 B）」と出る</td></tr>
   <tr><td>□</td><td>手順の番号を押すと各欄へ移動し、欄の操作が終わると手順に ✔ が付く</td></tr>
   <tr><td>□</td><td>1 校正：calibration.dat が保存され（512 バイト）、4 の欄に「1 で読み出した校正データ」と出る</td></tr>
-  <tr><td>□</td><td>2 F/W：刷机モードで書ける／通常起動のままだと止まる</td></tr>
+  <tr><td>□</td><td>2 F/W：F/W 書込モードで 1 回目から書ける（ログに「読み取りエラー」が出ても続く）／通常起動のままだと止まる</td></tr>
   <tr><td>□</td><td>起動画面：招き猫とその下の「電圧・25JA・版」の行が重ならない</td></tr>
-  <tr><td>□</td><td>3 字庫：「高速」で書け、全体照合 OK。かかった秒数と「再送」の回数を控える（新F/Wの USB 修正で、再送は 0 か数回に減るはず）</td></tr>
-  <tr><td>□</td><td>本体情報の字形：6647 字・正常</td></tr>
+  <tr><td>□</td><td>3 書体データ：「高速」で書け、全体照合 OK。かかった秒数と「再送」の回数を控える（新F/Wの USB 修正で、再送は 0 か数回に減るはず）</td></tr>
+  <tr><td>□</td><td>本体情報の字形：6879 字・正常</td></tr>
   <tr><td>□</td><td>4 校正復元（必要なときだけ）：書き戻され、再起動後の受信・送信出力が以前と同じ。通常の手順では行わなくてよい</td></tr>
   <tr><td>□</td><td>メニューの日本語表示、漢字・かな CH 名（本体で入れる 5 字、NeonPlugJA で入れる 10 字）。長い名前のメイン画面での見え方</td></tr>
   <tr><td>□</td><td>周波数・CH 番号・スペクトラムの数値の表示が以前と同じ（数値の書式処理を入れ替えたため）</td></tr>
@@ -442,7 +458,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><td>□</td><td>FM：自動登録中・サーチ中の表示、保存・削除の確認表示</td></tr>
   <tr><td>□</td><td>FM：プリセット取込 → 局名入力 → 書込 → 局名が表示される</td></tr>
   <tr><td>□</td><td>FM：「表の周波数を書く」→ 再起動後、表の局を CH で選べ局名が出る</td></tr>
-  <tr><td>□</td><td>F/Wだけの更新で、字庫・CH・設定が残る</td></tr>
+  <tr><td>□</td><td>F/Wだけの更新で、書体データ・CH・設定が残る（0.5.1 以降どうし。0.4.x からは送信禁止になり、書体データ v5 が必要）</td></tr>
   <tr><td>□</td><td>設定領域の一括バックアップ・復元、起動画像の書込・無効化</td></tr>
   <tr><td>□</td><td>F→8：バックライトが点灯。F→9：バックライトの操作。長押しの 8 は周波数反転、長押しの 9 は従来のコール CH</td></tr>
   <tr><td>□</td><td>スキャン中に F→↑↓ でスキャン グループを切り替えると、ステータスバーのリスト名がすぐ変わる</td></tr>
@@ -460,7 +476,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><td>□</td><td>「チャンネル」の「送信出力」に USER が無い（Low1〜Low5・Medium・High）。値 0 の CH は Low1 と出る。「出力設定」がメニューに出ない</td></tr>
   <tr><td>□</td><td>「表示/音声」の中に「CH表示」が出て、周波数／CH番号／名前／名前+周波数の 4 つを選べる。値を変えて電源を入れ直しても保たれる</td></tr>
   <tr><td>□</td><td>CH表示の 4 つの値それぞれで、画面が崩れない（メインのみ表示なども確認）</td></tr>
-  <tr><td>□</td><td>隠しメニュー（PTT＋SIDE1 を押したまま電源 ON）に、バンド ロック・電池校正・電池種類・機種依存 キー・リセットが出る。通常起動では出ない</td></tr>
+  <tr><td>□</td><td>隠しメニュー（PF1＋PTT を押したまま電源 ON）に、バンド ロック・電池校正・電池種類・機種依存 キー・リセットが出る。通常起動では出ない</td></tr>
   <tr><td>□</td><td>NeonPlugJA：書込を押すとポート選択の画面が出て、選んだポートで書込できる（ポートが 2 個以上ある PC で確認）</td></tr>
   <tr><td>□</td><td>NeonPlugJA 0.91.4：CH 名の入力が 31 バイトで切れる（漢字・かな 10 字、英数字 31 字）。31 バイトの名前を書込して、本体で読み戻せる</td></tr>
   <tr><td>□</td><td>NeonPlugJA 0.91.4：チャンネル表のスキャンリストで「枠」「ALL」「なし」を選んで書込し、本体のスキャン（リスト切替を含む）が選んだとおりに動く。書込後に読み込み直すと、番号が同じ</td></tr>
@@ -471,8 +487,13 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><td>□</td><td>F/W 0.4：NeonPlugJA で付けたリスト名（漢字 4 字）が書込後に本体に出る。名前を空にして書いたときの本体側の名前の扱い。工場リセット後に名前が消える</td></tr>
   <tr><td>□</td><td>F/W 0.4：メニュー「スキャン 速度」で通常／高速を選べ、スキャンの速さが変わる。更新直後の初期値が高速</td></tr>
   <tr><td>□</td><td>F/W 0.4：NeonPlugJA 0.92 に接続して「F/W:25Ja v0.4.1(F4HWN v5.2.8)」と出る（表示の形は NeonPlugJA の版による）。本体情報の「25Ja v0.4.1」とビルド日時。起動画面の下の行にも「25Ja v0.4.1」</td></tr>
-  <tr><td colspan="2"><b>6〜9 章（簡易取説の統合。ソースとの突き合わせ済み・実機は未確認）</b></td></tr>
-  <tr><td>□</td><td>数字キーの長押し：0・1・2・3・4・6 は F＋数字と同じ。5（スキャン グループの切替）、7（何もしない）、8（周波数反転）、9（呼出 CH）は違う</td></tr>
+  <tr><td>□</td><td>F/W 0.5.1：初めて入れた直後（ほかの F/W から、0.4.x から、リセット（全部）のあと）は送信できず「TX DISABLE」。隠しメニュー「バンド ロック」で JA/CEアマ を選ぶと 145.000 で送信できる。0.5.1 どうしの更新では送信の設定が残る</td></tr>
+  <tr><td>□</td><td>F/W 0.5.1：ギリシャ文字・キリル文字・記号（α Ω ° ± → ♪ など）を CH 名・グループ名に入れて表示できる</td></tr>
+  <tr><td>□</td><td>F/W 0.5.1：7 長押し・F＋7 でグループ選択の画面が出る。＞ で上、＜ で下へ移り、MENU か 5 秒でスキャンが始まる。EXIT で取りやめ。画面がちらつかない（受信中も）</td></tr>
+  <tr><td>□</td><td>F/W 0.5.1：メニューを開くと前回の分類から始まる。電源を入れ直すと「チャンネル」から</td></tr>
+  <tr><td>□</td><td>F/W 0.5.1：本体情報・起動画面の版が「25Ja v0.5.1」。NeonPlugJA に接続して版が出る（表示の形は NeonPlugJA の版による）</td></tr>
+  <tr><td colspan="2"><b>6〜9 章の操作</b></td></tr>
+  <tr><td>□</td><td>数字キーの長押し：0・1・2・3・4・6・7 は F＋数字と同じ（7 はスキャン グループの選択）。5（スキャン グループの切替）、8（周波数反転）、9（呼出 CH）は違う</td></tr>
   <tr><td>□</td><td>CH モードで 5 長押し：なし→1→…→24→全→なし。外した CH は最初の 5 長押しで元に戻る</td></tr>
   <tr><td>□</td><td>スキャン中：数字 2 桁（00・01〜24）、F＋上下、PF2、MENU 長押し（除外）、MENU 短押し、EXIT。空のグループを選ぶと次の使えるグループへ進む</td></tr>
   <tr><td>□</td><td>範囲スキャン：2 画面表示で VFO の A・B に上限・下限 → 5 長押し → ＊ 長押し。メインのみ表示ではエラー音。もう一度 5 長押しで解除</td></tr>
