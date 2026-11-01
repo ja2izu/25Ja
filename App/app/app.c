@@ -1276,10 +1276,10 @@ void APP_TimeSlice10ms(void)
 
     if (gUpdateDisplayCurrent) {
         gUpdateDisplay = false;
-        GUI_DisplayScreen();   /* JA: スキャン グループ名・グループ選択のポップアップは UI_DisplayMain の中で送信前に描く */
+        GUI_DisplayScreen();   /* JA: スキャン グループ名・クイックスキャンのポップアップは UI_DisplayMain の中で送信前に描く */
     }
 
-    if (gJaScanGroupSelTimeout) {   /* JA: スキャン グループ選択の無操作 5 秒 → 確定（メイン画面以外なら取消） */
+    if (gJaScanGroupSelTimeout) {   /* JA: クイックスキャンの無操作 5 秒 → 確定（メイン画面以外なら取消） */
         gJaScanGroupSelTimeout = false;
         if (gJaScanGroupSelActive) {
             if (gScreenToDisplay == DISPLAY_MAIN)

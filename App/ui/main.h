@@ -78,8 +78,6 @@ void UI_DisplayYanIdRxPopup(void);
 void UI_MAIN_TimeSlice500ms(void);
 void UI_DisplayMain(void);
 void UI_MAIN_ShowScanListPopup(void);   /* JA */
-void UI_MAIN_DrawScanListPopup(void);   /* JA */
-void UI_MAIN_DrawScanGroupSelPopup(void);   /* JA: 「7」長押し・F→7 のスキャン グループ選択 */
 
 
 #endif

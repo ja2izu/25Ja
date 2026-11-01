@@ -242,7 +242,7 @@ bool              gCssBackgroundScan;
 volatile bool     gScheduleScanListen = true;
 volatile uint16_t gScanPauseDelayIn_10ms;
 volatile uint16_t gScanListNameCountdown_10ms;   /* JA: スキャングループ名ポップアップの残り時間 */
-bool              gJaScanGroupSelActive;          /* JA: スキャン グループ選択ポップアップ */
+bool              gJaScanGroupSelActive;          /* JA: クイックスキャンのポップアップ */
 uint8_t           gJaScanGroupSel;
 uint8_t           gJaScanGroupSelPrev;
 uint8_t           gJaScanGroupSelNext;

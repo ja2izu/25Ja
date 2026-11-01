@@ -22,7 +22,7 @@
 void MAIN_ProcessKeys(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld);
 void channelMoveSwitch(void);
 
-/* JA: 「7」長押し・F→7 のスキャン グループ選択 */
+/* JA: クイックスキャン（「7」長押し・F＋7） */
 void MAIN_JaScanGroupSelOpen(void);
 void MAIN_JaScanGroupSelConfirm(void);
 void MAIN_JaScanGroupSelCancel(void);

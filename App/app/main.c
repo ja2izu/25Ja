@@ -131,9 +131,9 @@ static void toggle_chan_scanlist(void)
     gFlagResetVfos    = true;
 }
 
-/* JA: スキャン グループ選択（「7」長押し・F→7）
+/* JA: クイックスキャン（「7」長押し・F＋7）：スキャン グループを選んで、すぐスキャンを始める
  *   ポップアップ（3 行：一つ前／選択中／一つ後）で「＜」「＞」で選び、MENU（短押し）か無操作 5 秒で確定してすぐスキャンを始める。EXIT で取消。
- *   「＞」（KEY_UP）で番号 -1（上の行へ）、「＜」（KEY_DOWN）で +1（下の行へ）（JA2IZU 指定。F+「＞」のグループ切替とは逆の向き）。
+ *   「＞」（KEY_UP）で番号 -1（上の行へ）、「＜」（KEY_DOWN）で +1（下の行へ）（F＋「＞」のグループ切替とは逆の向き）。
  *   選んでいる間、スキャン中ならスキャンは今のグループのまま続ける。
  *   初期値は今のスキャン グループ（SCAN_LIST_DEFAULT。起動時の既定は 1）。CH が無いグループは飛ばす。 */
 #define JA_SCAN_GROUP_SEL_TIMEOUT_10MS  500u    /* 無操作 5 秒で確定 */
@@ -436,7 +436,7 @@ static void processFKeyFunction(const KEY_Code_t Key, const bool beep)
 //#else
 //          toggle_chan_scanlist();
 #else
-            MAIN_JaScanGroupSelOpen();   /* JA: F→7 は「7」長押しと同じ（スキャン グループ選択） */
+            MAIN_JaScanGroupSelOpen();   /* JA: F＋7 は「7」長押しと同じ（クイックスキャン） */
 #endif
             break;
 
@@ -615,7 +615,7 @@ static void MAIN_Key_DIGITS(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
 #ifdef ENABLE_VOX
                 gBeepToPlay = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
 #else
-                /* JA: 「7」長押し = スキャン グループ選択 */
+                /* JA: 「7」長押し = クイックスキャン */
                 if (gScreenToDisplay == DISPLAY_MAIN) {
                     if (gInputBoxIndex > 0) {
                         gInputBoxIndex        = 0;
@@ -1239,7 +1239,7 @@ void MAIN_ProcessKeys(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
     }
 #endif
 
-    if (gJaScanGroupSelActive) {    /* JA: スキャン グループ選択中 */
+    if (gJaScanGroupSelActive) {    /* JA: クイックスキャンの選択中 */
         if (Key == KEY_PTT) {
             MAIN_JaScanGroupSelCancel();
             GENERIC_Key_PTT(bKeyPressed);

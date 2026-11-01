@@ -2096,21 +2096,8 @@ static bool UI_MAIN_RenderScanListPopup(void)
     return true;
 }
 
-void UI_MAIN_DrawScanListPopup(void)
-{
-    if (!UI_MAIN_RenderScanListPopup())
-        return;
-
-#ifdef ENABLE_FEAT_F4HWN
-    if (UI_IsDualVfoMainScreen())
-        ST7565_BlitFullScreenDualVfoTightTop();
-    else
-#endif
-        ST7565_BlitFullScreen();
-}
-
-/* JA: スキャン グループ選択のポップアップ（3 行）
- *     ＜ 01 本部      ← 一つ前（「＞」で移る。印は JA2IZU の指定でこのまま）
+/* JA: クイックスキャンのポップアップ（3 行）
+ *     ＜ 01 本部      ← 一つ前（「＞」で移る）
  *    [02 消防     ]   ← 選択中（白黒反転）
  *     ＞ 03 防災      ← 一つ後（「＜」で移る）
  *   行は 13 ドット送り（漢字 12 ドット）。名前 4 字（"03 " + 52 ドット）が入る幅にする */
@@ -2168,19 +2155,6 @@ static bool UI_MAIN_RenderScanGroupSelPopup(void)
         UI_PrintStringSmallAtPixel(label, tx, tx, ty, (uint8_t)(ty + 11u), 0u);   /* x_end = x_start で左寄せ */
     }
     return true;
-}
-
-void UI_MAIN_DrawScanGroupSelPopup(void)
-{
-    if (!UI_MAIN_RenderScanGroupSelPopup())
-        return;
-
-#ifdef ENABLE_FEAT_F4HWN
-    if (UI_IsDualVfoMainScreen())
-        ST7565_BlitFullScreenDualVfoTightTop();
-    else
-#endif
-        ST7565_BlitFullScreen();
 }
 
 #ifdef ENABLE_MDC_YAN_ID  // JA
@@ -2271,10 +2245,6 @@ void UI_DisplayYanIdRxPopup(void)
 }
 
 #endif /* ENABLE_MDC_YAN_ID */
-
-/* JA: ポップアップ（スキャン グループ名・グループ選択）を、メイン画面の送信前に画面バッファへ描く */
-static bool UI_MAIN_RenderScanListPopup(void);
-static bool UI_MAIN_RenderScanGroupSelPopup(void);
 
 static void UI_DisplayMainRxIdPopups(void)
 {

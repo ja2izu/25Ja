@@ -382,11 +382,11 @@ enum
 extern volatile bool     gScheduleScanListen;
 extern volatile uint16_t gScanPauseDelayIn_10ms;
 extern volatile uint16_t gScanListNameCountdown_10ms;   /* JA: スキャンリスト名ポップアップ残り時間 */
-/* JA: 「7」長押し・F→7 のスキャン グループ選択ポップアップ（app/main.c） */
+/* JA: クイックスキャン（「7」長押し・F＋7）のポップアップ（app/main.c） */
 extern bool              gJaScanGroupSelActive;          /* 選択中 */
 extern uint8_t           gJaScanGroupSel;                /* 選択中のグループ（1〜24、25 = ALL） */
-extern uint8_t           gJaScanGroupSelPrev;            /* 一つ前（「＜」で移る）。表示用 */
-extern uint8_t           gJaScanGroupSelNext;            /* 一つ後（「＞」で移る）。表示用 */
+extern uint8_t           gJaScanGroupSelPrev;            /* 一つ前（「＞」で移る）。表示用 */
+extern uint8_t           gJaScanGroupSelNext;            /* 一つ後（「＜」で移る）。表示用 */
 extern volatile uint16_t gJaScanGroupSelCountdown_10ms;  /* 無操作で確定するまでの残り時間 */
 extern volatile bool     gJaScanGroupSelTimeout;         /* 無操作の時間切れ */
 

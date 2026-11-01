@@ -141,7 +141,7 @@ void SysTick_Handler(void)
     if (gScanListNameCountdown_10ms > 0 && --gScanListNameCountdown_10ms == 0)
         gUpdateDisplay = true;   /* JA: ポップアップを消すため再描画 */
 
-    DECREMENT_AND_TRIGGER(gJaScanGroupSelCountdown_10ms, gJaScanGroupSelTimeout);   /* JA: スキャン グループ選択の無操作 */
+    DECREMENT_AND_TRIGGER(gJaScanGroupSelCountdown_10ms, gJaScanGroupSelTimeout);   /* JA: クイックスキャンの無操作 */
 
     DECREMENT(gFoundCDCSSCountdown_10ms);
 
