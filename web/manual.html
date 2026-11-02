@@ -37,6 +37,14 @@ th { background: var(--box); font-weight: bold; }
 code, .mono { font-family: "BIZ UDGothic", "BIZ UDゴシック", ui-monospace, monospace; font-size: .9em; }
 pre { background: var(--box); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; overflow-x: auto; font-family: "BIZ UDGothic", "BIZ UDゴシック", ui-monospace, monospace; font-size: .88rem; }
 .warn { border-left: 4px solid var(--warn); background: var(--box); padding: 8px 12px; border-radius: 4px; margin: 10px 0; }
+.warn.top { border-left-width: 8px; font-size: .88rem; line-height: 1.7; padding: 8px 14px 10px; }
+.warn.top .ttl { display: block; font-size: 1.3rem; font-weight: bold; margin-bottom: 4px; line-height: 1.4; }
+.points { margin: 10px 0; padding: 0; list-style: none; counter-reset: pt; }
+.points li { counter-increment: pt; margin: 8px 0; padding: 8px 12px 8px 44px; position: relative; background: var(--box); border: 1px solid var(--line); border-radius: 6px; }
+.points li::before { content: counter(pt); position: absolute; left: 12px; top: 8px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--bg); font-weight: bold; text-align: center; line-height: 24px; }
+.points li b { font-size: 1.05rem; }
+.points li small { display: block; color: var(--sub); font-size: .88rem; line-height: 1.6; margin-top: 2px; }
+.others { font-size: .92rem; }
 .note { border-left: 4px solid var(--accent); background: var(--box); padding: 8px 12px; border-radius: 4px; margin: 10px 0; }
 ol, ul { padding-left: 1.5em; margin: 6px 0; }
 li { margin: 3px 0; }
@@ -63,38 +71,41 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <h1>25Ja（にこじゃ）説明書</h1>
 <p class="lead">UV-K1 / UV-K5(K6) V3 用 日本語ファームウェア（以下F/W）25Ja と 書込ツール 25Ja Tool の使い方</p>
 
-<div class="warn">
-  <b>ご注意</b><br>
+<div class="warn top">
+  <span class="ttl">ご注意</span>
   ・元のデータが必要なときは、先にバックアップしておいてください。F/Wは、公式その他のツールで元に戻したり、上書きしたりできます。<br>
   ・F/Wの書き換えは自己責任で行ってください。書き換えにより故障・保証外となる場合があります。<br>
   ・技術基準適合証明（技適）のない無線機から電波を出すことは電波法違反です。送信は、適法に運用できる無線機・免許の範囲で行ってください。<br>
   ・25Ja は Dondji（BD1AHN）をもとにした派生版で、Dondji 公式のものではありません。
 </div>
 
-<div class="warn">
-  <b>送信について</b><br>
+<div class="warn top">
+  <span class="ttl">送信について</span>
   25Ja を初めて入れた直後は、<b>すべての周波数で送信できません</b>（隠しメニューの「バンド ロック」が「全送信 禁止」になっています）。<br>
   <b>PF1 と PTT を押したまま電源を入れ</b>、隠しメニューの「バンド ロック」で使う範囲（例：JA/CE HAM 144〜146／430〜440MHz）を選ぶと送信できます（12 を参照）。
 </div>
 
 <h2>1. 25Ja とは</h2>
-<p>Dondji v5.2.8（F4HWN 系, PY32F071 版）をもとに、日本語で使えるようにしたF/Wです。</p>
-<ul>
-  <li><b>CH 名に漢字・かな</b>（東雲 12 ドットフォント, JIS X 0208 の全 6,879 字。漢字・かなのほか、ギリシャ文字・キリル文字・記号も使えます）。CH 名は UTF-8 で最大 31 バイト＝漢字・かな 10 字（英数字 31 字）。
-      31 バイトの名前は PC の CPS（NeonPlugJA）で書きます。本体では CH 名を編集できません（メニューに「CH名 編集」はありません）。
-      メイン画面では、漢字・かなの長い名前は 7 字ほどまでしか見えません</li>
-  <li><b>メニューの日本語化</b>（本体メニュー「表示言語」で切替）</li>
-  <li><b>メニューを 5 つの分類に再編成</b>：チャンネル／表示/音声／キー設定／システム／スキャン（アイコンで選びます。項目は 10 を参照）</li>
-  <li><b>送信出力から USER をなくしました</b>：選べるのは Low1〜Low5・Medium・High。全体の「出力設定」はメニューから外しました</li>
-  <li><b>バンド ロック（F Lock）「JA/CE HAM」</b>：隠しメニューの「バンド ロック」で選ぶと、送信を 144〜146MHz / 430〜440MHz に限定（CH ごとの送信許可より優先）。初めて入れた直後は「全送信 禁止」です（12 を参照）</li>
-  <li><b>クイックスキャン</b>：7 長押し（または F＋7）で、スキャン グループを選んですぐスキャンを始められます（7.2 を参照）</li>
-  <li><b>メニューの分類を覚える</b>：メニューを開くと、前回使った分類から始まります</li>
-  <li><b>FM 放送の局名表示</b>：受信中の周波数に合う局名を周波数の下に表示（最大 127 局, 漢字・かな 9 字まで）</li>
-  <li><b>書体データの高速書込</b>：25Ja 同士なら書体データをセクタ単位でまとめて書くため、従来方式より速く、フラッシュの消去回数も少ない</li>
-  <li><b>画面転送</b>：PC の 25Dock / K5Viewer で本体の画面を見てキー操作できます（F4HWN の画面転送と同じ方式）</li>
-  <li>本体の側面キーの呼び方を <b>PF1 / PF2</b> に統一（メニュー「PF1短押」など）</li>
-  <li>起動ロゴ（招き猫）、名称表示を 25Ja に</li>
-  <li>日本では使わない機能を外して容量を空けました：<b>MDC1200 / Yan ID</b>（ID の送受信、ラジャー音の MDC・Yan ID）、<b>1750Hz トーン</b>（側面キーの機能）</li>
+<p>UV-K1 / UV-K5(K6) V3 用の、<b>日本語で使える F/W</b> です（Dondji v5.2.8 をもとにしています）。ポイントは次の 4 つです。</p>
+<ol class="points">
+  <li><b>CH 名とメニューが、漢字・かなで表示されます</b>
+    <small>CH 名は最大 31 バイト（漢字・かな 10 字）。ギリシャ文字・キリル文字・記号も使えます。CH 名は PC の CPS「NeonPlugJA」で書きます（本体では編集できません）。メニューは「表示言語」で日本語に切り替えます。メイン画面では、漢字・かなの長い名前は 7 字ほどまでしか見えません。</small></li>
+  <li><b>クイックスキャン</b>
+    <small>7 長押し（または F＋7）で、スキャン グループを選んですぐスキャンを始められます（7.2 を参照）。</small></li>
+  <li><b>FM 放送の局名が出ます</b>
+    <small>受信中の周波数に合う局名を、周波数の下に表示します（最大 127 局、漢字・かな 9 字まで）。局名は別ページの「25Ja FM局名ツール」で書きます（9 章）。</small></li>
+  <li><b>初めて入れた直後は、送信できません</b>
+    <small>隠しメニューの「バンド ロック」で使う範囲（例：JA/CE HAM ＝ 144〜146 / 430〜440MHz）を選ぶと送信できます（12 を参照）。</small></li>
+</ol>
+<h3>そのほかの変更</h3>
+<ul class="others">
+  <li>メニューを 5 つの分類（チャンネル／表示/音声／キー設定／システム／スキャン）に再編成しました。アイコンで選びます（項目は 10 を参照）。メニューを開くと、前回使った分類から始まります</li>
+  <li>送信出力から USER をなくしました（選べるのは Low1〜Low5・Medium・High）。全体の「出力設定」はメニューから外しました</li>
+  <li>側面キーの呼び方を PF1 / PF2 に統一しました（メニュー「PF1短押」など）</li>
+  <li>書体データの高速書込：25Ja 同士なら、書体データをセクタ単位でまとめて書くため、従来方式より速く、フラッシュの消去回数も少なくて済みます</li>
+  <li>画面転送：PC の 25Dock / K5Viewer で、本体の画面を見てキー操作できます（F4HWN の画面転送と同じ方式）</li>
+  <li>起動ロゴ（招き猫）と名称表示を 25Ja にしました</li>
+  <li>日本では使わない機能を外して、容量を空けました：MDC1200 / Yan ID（ID の送受信、ラジャー音の MDC・Yan ID）、1750Hz トーン（側面キーの機能）</li>
 </ul>
 
 <h2>2. 配布物</h2>
