@@ -199,18 +199,18 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <table>
   <tr><th>操作</th><th>動き</th><th>範囲</th></tr>
   <tr><td>上／下</td><td>次の CH へ飛ばす（向きも変わる）</td><td>―</td></tr>
-  <tr><td>数字 2 桁</td><td>グループを切り替える（空のグループを選ぶと、次の使えるグループへ進みます）</td><td>00（全）、01〜24</td></tr>
+  <tr><td>数字 2 桁</td><td>グループを切り替える（空のグループを選ぶと、次の使えるグループへ進みます）</td><td>01〜24</td></tr>
   <tr><td>F＋上下、SK2</td><td>次のグループへ</td><td>CH が入っているグループだけを順に</td></tr>
   <tr><td>MENU 長押し（受信中）</td><td>その CH をスキャンから外す（電源を入れ直すと戻る）。範囲スキャン中は、今の周波数を外す</td><td>―</td></tr>
   <tr><td>MENU 短押し</td><td>止めて、その CH に留まる</td><td>―</td></tr>
   <tr><td>EXIT</td><td>止めて、元の CH に戻る</td><td>―</td></tr>
-  <tr><td>7 長押し、F＋7</td><td>クイックスキャン（下の説明）</td><td>CH が入っているグループと ALL</td></tr>
+  <tr><td>7 長押し、F＋7</td><td>クイックスキャン（下の説明）</td><td>CH が入っているグループ</td></tr>
 </table>
 <div class="note">
   <b>クイックスキャン（7 長押し、または F＋7）</b>：グループを選んで、すぐスキャンを始めます。
   <ol>
     <li>CH モードで 7 を長押し（または F＋7）。グループを選ぶ小さな画面が出ます（上の行＝一つ前、白黒反転の行＝選択中、下の行＝一つ後）。</li>
-    <li><b>＞</b> で上へ、<b>＜</b> で下へ。ALL の次は 01 に戻ります。CH が入っていないグループは出ません。</li>
+    <li><b>＞</b> で上へ、<b>＜</b> で下へ。24 の次は 01 に戻ります。CH が入っていないグループは出ません。</li>
     <li><b>MENU</b>（または 5 秒そのまま）で、選んだグループのスキャンを始めます。<b>EXIT</b> で取りやめ、<b>PTT</b> で取りやめて送信します。</li>
   </ol>
   ・選んでいる間は、<b>SK1 が「＞」、SK2 が「＜」</b>の代わりになります（SK1・SK2 に割り当てた機能は働きません）。ほかのキーは働きません。<br>
@@ -221,7 +221,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <table>
   <tr><th>項目</th><th>操作</th><th>設定範囲</th><th>コツ</th></tr>
   <tr><td>CH をグループに入れる</td><td>メニュー「所属 グループ」（チャンネルの中）、または NeonPlugJA</td><td>0（入れない）、1〜24、全</td><td>地域別・用途別に分けておく</td></tr>
-  <tr><td>使うグループを選ぶ</td><td>メニュー「スキャン グループ」（スキャンの中）、またはクイックスキャン</td><td>1〜24、全</td><td>―</td></tr>
+  <tr><td>使うグループを選ぶ</td><td>メニュー「スキャン グループ」（スキャンの中）、またはクイックスキャン</td><td>1〜24</td><td>―</td></tr>
   <tr><td>再開のしかた</td><td>メニュー「スキャン 再開」</td><td>停止<br>CARRIER 0.25〜20.00 秒（0.25 秒刻み）<br>TIMEOUT 5 秒〜2 分（5 秒刻み）</td><td>レピータを聞くなら CARRIER を数秒に</td></tr>
   <tr><td>スキャン速度</td><td>メニュー「スキャン 速度」</td><td>通常／高速</td><td>10 章を参照</td></tr>
 </table>
@@ -455,13 +455,13 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><th>ファイル</th><th>サイズ</th><th>SHA-256</th></tr>
   <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">51,621 B</td><td class="hash">839cddbbb065c1f4c0e5e0ad7d8e80c7a2cdb4be87849761ac4b323d928beeeb</td></tr>
   <tr><td class="nowrap"><code>fm.html</code></td><td class="nowrap">76,747 B</td><td class="hash">2d133d9d69303b4f2e10a0cb49931719a4e3fcc315ea8775a9f83dfc71d179b2</td></tr>
-  <tr><td class="nowrap"><code>firmware/25Ja_v0.5.1.bin</code></td><td class="nowrap">116,032 B</td><td class="hash">37be17d40b9d7a324df5dec3678f53bbb7bb5604a49d7920f539de3a7933d21f</td></tr>
+  <tr><td class="nowrap"><code>firmware/25Ja_v0.5.1.bin</code></td><td class="nowrap">116,056 B</td><td class="hash">ae638440ebc271d5b92017862f502791943a450f8073c23dbae3f84c97fa6b95</td></tr>
   <tr><td class="nowrap"><code>font/25Ja_font_v5.bin</code></td><td class="nowrap">192,613 B</td><td class="hash">49894793f441ff7b97f4942b6a1d9c829e8b483df2ef3984e144871566a43ed4</td></tr>
   <tr><td class="nowrap"><code>LICENSE</code></td><td class="nowrap">11,357 B</td><td class="hash">c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4</td></tr>
   <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">6,225 B</td><td class="hash">71de577187f794de95e647c27d73cc8dced998ae24c658f013803870694c76cf</td></tr>
   <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">5,354 B</td><td class="hash">b0e5206b1023def8856d61611b7847707aa67ab418970e638b739f966126df31</td></tr>
 </table>
-<p>F/Wの版：25Ja v0.5.1（Dondji v5.2.8 ベース、F4HWN 由来）。書体データ：v5（6,879 字）。F/W 0.5 以降は書体データ v5 と組で使います。同梱 BIN をビルドしたコミットは <code>706ad3b</code> です（短縮ハッシュ）。本体情報の画面に出るのは「ビルド日時」で、BIN の照合は上の SHA-256 で行います</p>
+<p>F/Wの版：25Ja v0.5.1（Dondji v5.2.8 ベース、F4HWN 由来）。書体データ：v5（6,879 字）。F/W 0.5 以降は書体データ v5 と組で使います。同梱 BIN をビルドしたコミットは <code>0996ad7</code> です（短縮ハッシュ）。本体情報の画面に出るのは「ビルド日時」で、BIN の照合は上の SHA-256 で行います</p>
 
 <footer>
   25Ja 説明書 — © 2026 JA2IZU, Apache License 2.0。
