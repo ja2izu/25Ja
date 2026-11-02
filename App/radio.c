@@ -159,7 +159,7 @@ void RADIO_NextValidList(int8_t direction)
 {
     uint8_t startList = gEeprom.SCAN_LIST_DEFAULT;
     uint8_t attempts = 0;
-    const uint8_t MAX_VALUE = MR_CHANNELS_LIST + 1;  // 25 (1-24 lists + ALL)
+    const uint8_t MAX_VALUE = MR_CHANNELS_LIST;  // JA: 24（ALL は廃止）
     
     do {
         if (direction > 0) {
@@ -176,9 +176,9 @@ void RADIO_NextValidList(int8_t direction)
             
     } while (gEeprom.SCAN_LIST_DEFAULT != startList && attempts < MAX_VALUE);
     
-    // Safety fallback: switch to ALL mode
+    // Safety fallback (JA: ALL は廃止したので、グループ 1 に戻す)
     if (!RADIO_CheckValidList(gEeprom.SCAN_LIST_DEFAULT)) {
-        gEeprom.SCAN_LIST_DEFAULT = MAX_VALUE;  // ALL (25)
+        gEeprom.SCAN_LIST_DEFAULT = 1;
     }
 }
 

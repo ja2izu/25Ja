@@ -1127,7 +1127,7 @@ int MENU_GetLimits(uint8_t menu_id, int32_t *pMin, int32_t *pMax)
 
         case MENU_S_LIST:
             *pMin = 1;
-            *pMax = MR_CHANNELS_LIST + 1;
+            *pMax = MR_CHANNELS_LIST;   /* JA: ALL は廃止 */
             break;
 
 #ifdef ENABLE_DTMF_CALLING

@@ -141,7 +141,7 @@ static void toggle_chan_scanlist(void)
 
 static uint8_t JA_ScanGroupNextValid(uint8_t list, int8_t dir)
 {
-    const uint8_t max_value = MR_CHANNELS_LIST + 1;     /* 1〜24、25 = ALL */
+    const uint8_t max_value = MR_CHANNELS_LIST;     /* 1〜24（ALL は廃止） */
 
     for (uint8_t n = 0; n < max_value; n++)
     {
@@ -153,7 +153,7 @@ static uint8_t JA_ScanGroupNextValid(uint8_t list, int8_t dir)
         if (RADIO_CheckValidList(list))
             return list;
     }
-    return max_value;   /* ALL は常に有効 */
+    return list;   /* CH が入ったグループが無いときは、元のまま */
 }
 
 /* 表示用の前後のグループ（全 CH を見るので、選択が変わったときだけ計算する） */
@@ -189,8 +189,13 @@ void MAIN_JaScanGroupSelOpen(void)
     }
 
     list = gEeprom.SCAN_LIST_DEFAULT;
-    if (list < 1u || list > MR_CHANNELS_LIST + 1u || !RADIO_CheckValidList(list))
+    if (list < 1u || list > MR_CHANNELS_LIST || !RADIO_CheckValidList(list))
         list = JA_ScanGroupNextValid(list, 1);
+
+    if (list < 1u || list > MR_CHANNELS_LIST || !RADIO_CheckValidList(list)) {
+        gBeepToPlay = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;   /* CH が入ったグループが 1 つも無い */
+        return;
+    }
 
     gJaScanGroupSel               = list;
     JA_ScanGroupSelUpdateNeighbors();
@@ -692,16 +697,10 @@ static void MAIN_Key_DIGITS(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
 
             uint8_t value = (gInputBox[0] * 10) + gInputBox[1];
 
-            /* 00 = ALL scan lists */
+            /* JA: 00（ALL）は廃止。何もしない */
             if (value == 0)
             {
-                gEeprom.SCAN_LIST_DEFAULT = MR_CHANNELS_LIST + 1;
-                UI_MAIN_ShowScanListPopup();   /* JA */
-                gUpdateStatus  = true;   /* JA: 切替をすぐ画面に出す */
-                gUpdateDisplay = true;
-            #ifdef ENABLE_FEAT_F4HWN_RESUME_STATE
-                SETTINGS_WriteCurrentState();
-            #endif
+                gBeepToPlay = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
                 return;
             }
 

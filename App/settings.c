@@ -417,7 +417,7 @@ gEeprom.FreqChannel[1]   = IS_FREQ_CHANNEL(Data16[5]) ? Data16[5] : (FREQ_CHANNE
     PY25Q16_ReadBuffer(0x00A130, Data, 8);
 
     gEeprom.SCAN_LIST_DEFAULT =
-            (((Data[0] & 0x7F) >= 1) && ((Data[0] & 0x7F) <= (MR_CHANNELS_LIST + 1)))
+            (((Data[0] & 0x7F) >= 1) && ((Data[0] & 0x7F) <= MR_CHANNELS_LIST))   /* JA: ALL(25) は廃止。25 以上は 1 */
                 ? (Data[0] & 0x7F)
                 : 1;
     gEeprom.SCAN_LIST_ENABLED = 0;   /* JA: 優先スキャンは廃止。保存値（bit7）は無視して常に OFF */
