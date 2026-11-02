@@ -44,9 +44,6 @@ main { max-width: 1480px; margin: 0 auto; padding: 4px 16px 16px; }
 .note-inline { font-size: .88rem; font-weight: normal; color: var(--sub); }
 .warnline { margin: 6px 0 0; font-size: .92rem; color: var(--warn); font-weight: bold; }
 .logo-row { display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap; }
-.fm-tools { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 6px 0; }
-.fm-tools .grp { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.fm-tools .lbl { font-size: .92rem; color: var(--sub); font-weight: bold; }
 .card h2 { margin: 0 0 4px; font-size: 1.12rem; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
 .card h2 .no { color: var(--accent); font-variant-numeric: tabular-nums; }
 .mode { font-size: .82rem; font-weight: normal; padding: 1px 10px; border-radius: 999px; border: 1px solid var(--edge); color: var(--sub); }
@@ -98,16 +95,6 @@ ol.setup a.jump, ol.setup .step { font-weight: bold; font-size: 1.05rem; color: 
 ol.setup small { color: var(--sub); font-size: .88rem; }
 ol.setup .st { font-size: .92rem; color: var(--sub); display: inline-flex; gap: 6px; align-items: center; }
 ol.setup .st.ok { color: var(--ok); font-weight: bold; } ol.setup .st.ng { color: var(--err); font-weight: bold; }
-.fmhow { margin: 4px 0 10px; padding: 8px 12px; border: 1px solid var(--edge); border-radius: 8px; font-size: .95rem; line-height: 1.7; }
-.fmhow ol { margin: 4px 0 0 1.4em; padding: 0; }
-table.fm { border-collapse: collapse; width: 100%; font-size: .95rem; margin: 8px 0; }
-table.fm th, table.fm td { border-bottom: 1px solid var(--line); padding: 4px 6px; text-align: left; vertical-align: middle; }
-table.fm th { color: var(--sub); font-weight: bold; }
-table.fm td.no { color: var(--sub); width: 2.8em; font-variant-numeric: tabular-nums; }
-table.fm input { font: inherit; width: 100%; min-height: 40px; padding: 4px 8px; border: 2px solid var(--edge); border-radius: 6px; background: var(--card); color: var(--fg); }
-table.fm td.f { width: 8em; } table.fm td.w { width: 9em; color: var(--sub); font-size: .88rem; } table.fm td.x { width: 3.5em; }
-table.fm td.w.ng { color: var(--err); font-weight: bold; }
-table.fm button { min-height: 40px; padding: 2px 12px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; scroll-behavior: auto !important; }
@@ -118,7 +105,7 @@ table.fm button { min-height: 40px; padding: 2px 12px; }
 <div id="verBadge">Ver 0.1.19  JA2IZU</div>
 <header>
   <h1>25Ja Tool</h1>
-  <p>UV-K1 / UV-K5(K6) V3 用 25Ja（にこじゃ）F/Wと書体データの書込・校正バックアップ。Chrome / Edge（Web Serial）で使います。<a href="manual.html" target="_blank">説明書</a></p>
+  <p>UV-K1 / UV-K5(K6) V3 用 25Ja（にこじゃ）F/Wと書体データの書込・校正バックアップ。Chrome / Edge（Web Serial）で使います。<a href="manual.html" target="_blank">説明書</a>　<a href="fm.html" target="_blank">FM局名ツール</a>（FM ラジオの局名の編集は別ページです）</p>
 </header>
 
 <main>
@@ -211,45 +198,6 @@ table.fm button { min-height: 40px; padding: 2px 12px; }
   </section>
   </div>
 
-  <section class="card" id="sec7">
-    <h2><span class="no">7</span>FM 局名 <span class="mode">通常起動</span>
-      <span class="note-inline">最大 127 局。局名は 28 バイト・幅 128 ドットまで（漢字・かな 9 字、半角英数 18 字）。書いた後、FM ラジオに入り直すと反映</span></h2>
-    <p class="desc"><b>※ この機能はまだ不完全です。</b>内容を確認しながら使ってください。</p>
-    <div class="fmhow">
-      <b>最初のやりかた</b>
-      <ol>
-        <li>本体を FM ラジオにして、局をサーチします（<b>★ を長押し</b>、または F → ★ で自動登録。<b>今のプリセット 48CH は全部消えます</b>）。</li>
-        <li>本体を通常起動のまま接続し、「<b>周波数を表に取り込む</b>」を押します。</li>
-        <li>表に局名を記入します（局名が空の行は書き込めません。要らない行は消します）。</li>
-        <li>「本体の局名表」の「<b>書き込む</b>」を押します。本体で FM ラジオに入り直すと局名が出ます。</li>
-      </ol>
-    </div>
-    <div class="fm-tools">
-      <div class="grp"><span class="lbl">本体の局名表</span>
-        <button id="fmReadBtn">読み出す</button>
-        <button id="fmWriteBtn" disabled>書き込む</button>
-        <button class="sub" id="fmEraseBtn">消す</button></div>
-      <div class="grp"><span class="lbl">本体の FM プリセット 48CH</span>
-        <button class="sub" id="fmPresetBtn">周波数を表に取り込む</button>
-        <button class="sub" id="fmPresetWriteBtn">表の周波数を書く</button>
-        <label class="inline"><input type="checkbox" id="fmPresetSort" checked> 低い順</label></div>
-      <div class="grp"><span class="lbl">CSV（周波数,局名）</span>
-        <input type="file" id="fmCsvFile" aria-label="局名 CSV のファイル" accept=".csv,.txt">
-        <button class="sub" id="fmCsvBtn">書き出す</button>
-        <a id="fmCsvLink" download="25Ja_fm_stations.csv" hidden>25Ja_fm_stations.csv を保存</a></div>
-    </div>
-    <table class="fm">
-      <thead><tr><th scope="col">No</th><th scope="col">周波数 MHz</th><th scope="col">局名</th><th scope="col">検査</th><th scope="col"><span class="sr">行を消す</span></th></tr></thead>
-      <tbody id="fmBody"></tbody>
-    </table>
-    <div class="row">
-      <button class="sub" id="fmAddBtn">行を足す</button>
-      <button class="sub" id="fmClearBtn">表を空にする</button>
-      <span class="file" id="fmInfo" aria-live="polite">0 局</span>
-      <span class="desc" style="margin:0">CSV 読込は UTF-8 / Shift_JIS、書出は UTF-8（BOM 付き, Excel で開けます）。見出し行は有っても無くても可</span>
-    </div>
-  </section>
-
 
   <div class="sticky">
     <div id="progress" role="progressbar" aria-label="進み具合" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div></div></div>
@@ -292,9 +240,6 @@ const CFG_BASE = 0x00A000, CFG_SIZE = 0x220, CFG_SIZE_OLD = 0x200, CFG_CHUNK = 3
 const LOGO_ADDR = 0x1FF000, LOGO_HDR = 8, LOGO_SIZE = 1024;
 const SPI_CHUNK = 48;
 const STAGE_CHUNK = 120, READ_CHUNK = 120;   // F/Wの SPI_FLASH_WRITE_SIZE / READ_SIZE
-const FM_ADDR = 0x012000, FM_HDR = 16, FM_ENTRY = 32, FM_NAME = 28, FM_MAX = 127, FM_VER = 1;   // App/app/fm.h FM_STATION_*
-const FM_PRESET_ADDR = 0x00A028, FM_PRESET_COUNT = 48;   // gFM_Channels（u16 LE, 100kHz 単位, 0xFFFF=空）
-const FM_FREQ_MIN = 640, FM_FREQ_MAX = 1080;   // 100kHz 単位（BK1080 の全バンド 64.0〜108.0MHz）
 
 // ===== 画面 =====
 const $ = id => document.getElementById(id);
@@ -314,7 +259,7 @@ async function sha256(u8) {
 let busy = false;
 function setBusy(b) {
   busy = b;
-  ['calibDumpBtn','fwFlashBtn','fontFlashBtn','calibRestoreBtn','cfgBackupBtn','cfgRestoreBtn','logoWriteBtn','logoClearBtn','fwBundledBtn','fontBundledBtn','fmReadBtn','fmWriteBtn','fmEraseBtn','fmPresetBtn','fmPresetWriteBtn']
+  ['calibDumpBtn','fwFlashBtn','fontFlashBtn','calibRestoreBtn','cfgBackupBtn','cfgRestoreBtn','logoWriteBtn','logoClearBtn','fwBundledBtn','fontBundledBtn']
     .forEach(id => { const el = $(id); if (b) el.disabled = true; });
   if (!b) refreshButtons();
 }
@@ -323,7 +268,6 @@ function refreshButtons() {
   $('fwBundledBtn').disabled = false; $('fontBundledBtn').disabled = false;
   $('fwFlashBtn').disabled = !fwData; $('fontFlashBtn').disabled = !fontData;
   $('calibRestoreBtn').disabled = !calibData; $('cfgRestoreBtn').disabled = !cfgData; $('logoWriteBtn').disabled = !logoBitmap;
-  $('fmReadBtn').disabled = false; $('fmEraseBtn').disabled = false; $('fmPresetBtn').disabled = false; $('fmPresetWriteBtn').disabled = fmRows.length === 0; $('fmWriteBtn').disabled = fmRows.length === 0;
 }
 
 // ===== 通信（枠・難読化・CRC）=====
@@ -670,13 +614,11 @@ $('fontBundledBtn').onclick = async () => {
   try { const u8 = await fetchBin(FONT_URL); fontData = (await showFile('fontInfo', FONT_URL, u8, checkFont(u8))) ? u8 : null; }
   catch (e) { log(e.message, 'error'); fontData = null; }
   refreshButtons();
-  if (fontData && !fmGlyphs) fmLoadGlyphs().then(fmUpdateChecks);
 };
 $('fontFile').onchange = async e => {
   try { const f = await readFile(e.target); fontData = (await showFile('fontInfo', f.name, f.u8, checkFont(f.u8))) ? f.u8 : null; }
   catch (err) { fontData = null; }
   e.target.value = ''; refreshButtons();
-  if (fontData && !fmGlyphs) fmLoadGlyphs().then(fmUpdateChecks);
 };
 $('fontFlashBtn').onclick = () => {
   if (!fontData) return;
@@ -840,245 +782,6 @@ $('logoClearBtn').onclick = () => run('起動画像の無効化', async () => {
   log('起動画像を無効にしました（組み込みのロゴに戻ります）', 'success');
 });
 
-// ===== 7 FM 局名 =====
-// 表の形式（F/W App/app/fm.h と同じ）
-//   見出し 16B: "FMST", 版数 1, 件数(0-127), 残り 0xFF
-//   項目 32B: 周波数 u16 LE（100kHz 単位）, 予備 0xFFFF, 局名 28B（UTF-8, 余りは 0x00）
-let fmRows = [];            // { f: '82.5', n: 'NHK FM' }
-let fmGlyphs = null;        // 書体データにある文字（U+0080〜U+FFFF）の集合。読めなければ null（字の検査を省く）
-async function fmLoadGlyphs() {
-  if (fmGlyphs) return;
-  if (!fontData && isFileProto) return;   // 直開き: 3 で書体データを選ぶと検査できるようになる
-  try {
-    const u8 = fontData || await fetchBin(FONT_URL);
-    if (checkFont(u8)) throw new Error('書体データのファイルが不正');
-    const n = (FONT_SIZE - 1) / 28, idx = n * 24, dv = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
-    fmGlyphs = new Set();
-    for (let i = 0; i < n; i++) fmGlyphs.add(dv.getUint32(idx + i * 4, true) >>> 16);
-  } catch (e) { log('書体データを読めないため、局名の字の検査を省きます（' + e.message + '）', 'warn'); }
-}
-function fmParseFreq(t) {
-  const v = parseFloat(String(t).trim());
-  if (!isFinite(v)) return { err: '周波数が数値でない' };
-  const f = Math.round(v * 10);
-  if (Math.abs(v * 10 - f) > 1e-6) return { err: '0.1MHz 単位でない' };
-  if (f < FM_FREQ_MIN || f > FM_FREQ_MAX) return { err: '64.0〜108.0MHz の範囲外' };
-  return { f };
-}
-// 画面のドット幅: 書体データの字 12+1, 半角 6+1（F/W UI_SmallStringPixelWidth と同じ。F/W 0.5 以降は U+0080〜U+FFFF を書体データの字として扱う）
-function fmCheckName(name) {
-  let w = 0;
-  for (const ch of name) {
-    const cp = ch.codePointAt(0);
-    if (cp >= 0x20 && cp <= 0x7E) { w += 7; continue; }
-    if (cp >= 0x80 && cp <= 0xFFFF) {
-      if (fmGlyphs && !fmGlyphs.has(cp)) return { err: '書体データにない字「' + ch + '」' };
-      w += 13; continue;
-    }
-    return { err: '使えない字「' + ch + '」' };
-  }
-  if (w > 0) w--;
-  const bytes = new TextEncoder().encode(name);
-  if (bytes.length > FM_NAME) return { err: bytes.length + '/' + FM_NAME + ' バイト超過', w, bytes };
-  if (w > 128) return { err: '幅 ' + w + '/128 ドット超過', w, bytes };
-  return { w, bytes };
-}
-function fmCheckAll() {
-  const seen = new Map(), errs = [];
-  fmRows.forEach((r, i) => {
-    const pf = fmParseFreq(r.f), pn = fmCheckName(r.n);
-    r.fe = pf.err || null; r.ne = pn.err || null; r.w = pn.w; r.b = pn.bytes ? pn.bytes.length : 0; r.f10 = pf.f;
-    if (!r.n.trim()) r.ne = '局名が空';
-    if (pf.f !== undefined) {
-      if (seen.has(pf.f)) r.fe = 'No ' + (seen.get(pf.f) + 1) + ' と同じ周波数';
-      else seen.set(pf.f, i);
-    }
-    if (r.fe || r.ne) errs.push('No ' + (i + 1) + ': ' + (r.fe || r.ne));
-  });
-  if (fmRows.length > FM_MAX) errs.push('局数が ' + FM_MAX + ' を超えています（' + fmRows.length + '）');
-  return errs;
-}
-function fmUpdateChecks() {
-  const errs = fmCheckAll();
-  fmRows.forEach((r, i) => {
-    const td = $('fmBody').children[i] && $('fmBody').children[i].querySelector('td.w'); if (!td) return;
-    const e = r.fe || r.ne;
-    td.textContent = e ? e : (r.b + 'B / ' + r.w + 'px');
-    td.className = 'w' + (e ? ' ng' : '');
-  });
-  $('fmInfo').textContent = fmRows.length + ' 局' + (errs.length ? '（要修正 ' + errs.length + ' 件）' : '');
-  $('fmInfo').className = 'file' + (errs.length ? ' ng' : (fmRows.length ? ' ok' : ''));
-  if (!busy) refreshButtons();
-  return errs;
-}
-function fmRender() {
-  const tb = $('fmBody'); tb.textContent = '';
-  fmRows.forEach((r, i) => {
-    const tr = document.createElement('tr');
-    const cell = cls => { const td = document.createElement('td'); if (cls) td.className = cls; tr.appendChild(td); return td; };
-    cell('no').textContent = i + 1;
-    const fi = document.createElement('input'); fi.value = r.f; fi.inputMode = 'decimal'; fi.setAttribute('aria-label', 'No ' + (i + 1) + ' 周波数 MHz'); fi.oninput = () => { r.f = fi.value; fmUpdateChecks(); }; cell('f').appendChild(fi);
-    const ni = document.createElement('input'); ni.value = r.n; ni.setAttribute('aria-label', 'No ' + (i + 1) + ' 局名'); ni.oninput = () => { r.n = ni.value; fmUpdateChecks(); }; cell('n').appendChild(ni);
-    cell('w');
-    const del = document.createElement('button'); del.className = 'sub'; del.textContent = '×'; del.title = 'この行を消す'; del.setAttribute('aria-label', 'No ' + (i + 1) + ' の行を消す');
-    del.onclick = () => { fmRows.splice(i, 1); fmRender(); }; cell('x').appendChild(del);
-    tb.appendChild(tr);
-  });
-  fmUpdateChecks();
-}
-function fmBuildTable() {
-  const n = fmRows.length, buf = new Uint8Array(FM_HDR + n * FM_ENTRY).fill(0xFF);
-  buf.set([0x46, 0x4D, 0x53, 0x54, FM_VER, n], 0);                        // "FMST", 版数, 件数
-  fmRows.forEach((r, i) => {
-    const o = FM_HDR + i * FM_ENTRY;
-    buf[o] = r.f10 & 0xFF; buf[o + 1] = r.f10 >> 8;                        // 周波数 u16 LE, 予備 0xFFFF はそのまま
-    buf.fill(0x00, o + 4, o + 4 + FM_NAME);
-    buf.set(new TextEncoder().encode(r.n), o + 4);
-  });
-  return buf;
-}
-async function fmReadRange(ts, addr, len) {
-  const out = new Uint8Array(len);
-  for (let i = 0; i < len; i += 96) {
-    const n = Math.min(96, len - i);
-    const c = await spiRead(ts, addr + i, n);
-    if (!c) throw new Error('読み出し失敗 @ 0x' + (addr + i).toString(16));
-    out.set(c, i);
-  }
-  return out;
-}
-function fmDecodeName(u8) {
-  let end = u8.indexOf(0x00); if (end < 0) end = u8.length;
-  const ff = u8.indexOf(0xFF); if (ff >= 0 && ff < end) end = ff;
-  return new TextDecoder('utf-8').decode(u8.subarray(0, end));
-}
-$('fmAddBtn').onclick = () => {
-  if (fmRows.length >= FM_MAX) { log('局数は ' + FM_MAX + ' までです', 'warn'); return; }
-  fmRows.push({ f: '', n: '' }); fmRender();
-  const ins = $('fmBody').lastElementChild.querySelectorAll('input'); ins[0].focus();
-};
-$('fmClearBtn').onclick = () => { if (fmRows.length && !confirm('表を空にします（本体の中身は変わりません）')) return; fmRows = []; fmRender(); };
-$('fmReadBtn').onclick = () => run('FM 局名の読み出し', async () => {
-  await fmLoadGlyphs();
-  const s = await openSession('FM 局名の読み出し');
-  const h = await fmReadRange(s.ts, FM_ADDR, FM_HDR);
-  if (!(h[0] === 0x46 && h[1] === 0x4D && h[2] === 0x53 && h[3] === 0x54) || h[4] !== FM_VER || h[5] > FM_MAX) {
-    log('本体に局名表はありません（未書込または消去済み）', 'warn'); fmRows = []; fmRender(); return;
-  }
-  const n = h[5], body = await fmReadRange(s.ts, FM_ADDR + FM_HDR, n * FM_ENTRY);
-  fmRows = [];
-  for (let i = 0; i < n; i++) {
-    const o = i * FM_ENTRY, f = body[o] | (body[o + 1] << 8);
-    fmRows.push({ f: (f / 10).toFixed(1), n: fmDecodeName(body.subarray(o + 4, o + 4 + FM_NAME)) });
-    progress(i / n * 100);
-  }
-  fmRender();
-  log('局名表を読み出しました（' + n + ' 局）', 'success');
-});
-$('fmWriteBtn').onclick = async () => {
-  await fmLoadGlyphs();
-  const errs = fmUpdateChecks();
-  if (errs.length) { errs.slice(0, 10).forEach(e => log(e, 'error')); log('直してから書き込んでください', 'error'); return; }
-  if (!confirm(fmRows.length + ' 局を本体に書き込みます（本体の局名表は置き換わります）')) return;
-  const tbl = fmBuildTable();
-  run('FM 局名の書込', async () => {
-    const s = await openSession('FM 局名の書込');
-    // 見出しを先に無効化 → 項目 → 見出しの順（途中で切れても半端な表を読ませない）
-    if (!await spiWrite(s.ts, FM_ADDR, new Uint8Array(FM_HDR).fill(0xFF))) throw new Error('見出しの無効化に失敗');
-    for (let off = FM_HDR; off < tbl.length; off += SPI_CHUNK) {
-      progress(off / tbl.length * 100);
-      if (!await spiWrite(s.ts, FM_ADDR + off, tbl.subarray(off, Math.min(off + SPI_CHUNK, tbl.length)))) throw new Error('書込失敗 @ 0x' + (FM_ADDR + off).toString(16));
-    }
-    if (!await spiWrite(s.ts, FM_ADDR, tbl.subarray(0, FM_HDR))) throw new Error('見出しの書込失敗');
-    const back = await fmReadRange(s.ts, FM_ADDR, tbl.length);
-    if (back.every((b, i) => b === tbl[i])) log('FM 局名を書き込みました（' + fmRows.length + ' 局, 照合 OK）。FM ラジオに入り直すと反映されます', 'success');
-    else throw new Error('書込後の照合が一致しません');
-  });
-};
-// 自動登録（スキャン）で入った FM プリセットの周波数を、局名が空の行として足す（表にある周波数は足さない）
-$('fmPresetBtn').onclick = () => run('FM プリセットの取り込み', async () => {
-  const s = await openSession('FM プリセットの取り込み');
-  const b = await fmReadRange(s.ts, FM_PRESET_ADDR, FM_PRESET_COUNT * 2);
-  const have = new Set(fmRows.map(r => fmParseFreq(r.f).f));
-  let found = 0, added = 0;
-  for (let i = 0; i < FM_PRESET_COUNT; i++) {
-    const f = b[i * 2] | (b[i * 2 + 1] << 8);
-    if (f < FM_FREQ_MIN || f > FM_FREQ_MAX) continue;      // 0xFFFF = 空き
-    found++;
-    if (have.has(f) || fmRows.length >= FM_MAX) continue;
-    fmRows.push({ f: (f / 10).toFixed(1), n: '' }); have.add(f); added++;
-  }
-  fmRender();
-  log('FM プリセット ' + found + ' 件のうち ' + added + ' 件を表に足しました（局名は空。入力して書き込むか、CSV に書き出して編集してください）', 'success');
-});
-// 表の周波数で FM プリセット 48CH を置き換える（受信できるかに関係なく登録。局名の有無は問わない）
-// 本体は起動時にプリセットを RAM に読むので、書いた後に再起動させる
-$('fmPresetWriteBtn').onclick = () => {
-  const seen = new Set(), list = [];
-  for (const r of fmRows) { const f = fmParseFreq(r.f).f; if (f !== undefined && !seen.has(f)) { seen.add(f); list.push(f); } }
-  if (!list.length) { log('書ける周波数が表にありません', 'error'); return; }
-  if ($('fmPresetSort').checked) list.sort((a, b) => a - b);
-  const bad = fmRows.length - list.length;
-  if (list.length > FM_PRESET_COUNT) log('表に ' + list.length + ' 局あります。FM プリセットは ' + FM_PRESET_COUNT + ' CH までなので、' + ($('fmPresetSort').checked ? '低い方から' : '表の上から') + ' ' + FM_PRESET_COUNT + ' 局を書きます', 'warn');
-  const use = list.slice(0, FM_PRESET_COUNT);
-  if (!confirm('本体の FM プリセット 48CH を、表の ' + use.length + ' 局（CH01〜CH' + String(use.length).padStart(2, '0') + '）で置き換えます。' + (bad ? '\n周波数が不正か重複の ' + bad + ' 行は除きます。' : '') + '\n書いた後、無線機を再起動します。')) return;
-  const buf = new Uint8Array(FM_PRESET_COUNT * 2).fill(0xFF);
-  use.forEach((f, i) => { buf[i * 2] = f & 0xFF; buf[i * 2 + 1] = f >> 8; });
-  run('FM プリセットの書込', async () => {
-    const s = await openSession('FM プリセットの書込');
-    for (let off = 0; off < buf.length; off += SPI_CHUNK)
-      if (!await spiWrite(s.ts, FM_PRESET_ADDR + off, buf.subarray(off, off + SPI_CHUNK))) throw new Error('書込失敗 @ 0x' + (FM_PRESET_ADDR + off).toString(16));
-    const back = await fmReadRange(s.ts, FM_PRESET_ADDR, buf.length);
-    if (!back.every((b, i) => b === buf[i])) throw new Error('書込後の照合が一致しません');
-    log('FM プリセットに ' + use.length + ' 局を書きました（照合 OK）。無線機を再起動します。FM のバンドが 76〜108MHz でないと範囲外の CH は選べません', 'success');
-    await reboot();
-  });
-};
-$('fmEraseBtn').onclick = () => {
-  if (!confirm('本体の局名表を消します（FM の局名が出なくなります）')) return;
-  run('FM 局名の消去', async () => {
-    const s = await openSession('FM 局名の消去');
-    if (!await spiWrite(s.ts, FM_ADDR, new Uint8Array(FM_HDR).fill(0xFF))) throw new Error('消去失敗');
-    log('本体の局名表を消しました', 'success');
-  });
-};
-function fmParseCsv(text) {
-  const rows = []; let row = [], cur = '', q = false;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (q) { if (c === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += c; continue; }
-    if (c === '"') q = true;
-    else if (c === ',') { row.push(cur); cur = ''; }
-    else if (c === '\n' || c === '\r') { if (c === '\r' && text[i + 1] === '\n') i++; row.push(cur); rows.push(row); row = []; cur = ''; }
-    else cur += c;
-  }
-  if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
-  return rows.filter(r => r.some(x => x.trim() !== ''));
-}
-$('fmCsvFile').onchange = async e => {
-  try {
-    const f = await readFile(e.target);
-    let text, enc = 'UTF-8';
-    try { text = new TextDecoder('utf-8', { fatal: true }).decode(f.u8); }
-    catch { text = new TextDecoder('shift_jis').decode(f.u8); enc = 'Shift_JIS'; }
-    text = text.replace(/^﻿/, '');
-    let rows = fmParseCsv(text);
-    if (rows.length && !isFinite(parseFloat(rows[0][0]))) rows = rows.slice(1);   // 見出し行
-    if (rows.length > FM_MAX) log('CSV が ' + rows.length + ' 行あります。' + FM_MAX + ' 局までです', 'warn');
-    await fmLoadGlyphs();
-    fmRows = rows.map(r => ({ f: (r[0] || '').trim(), n: (r[1] || '').trim() }));
-    fmRender();
-    log(f.name + ' を読み込みました（' + enc + ', ' + fmRows.length + ' 局）', 'success');
-  } catch (err) { log('CSV を読めません: ' + err.message, 'error'); }
-  e.target.value = '';
-};
-$('fmCsvBtn').onclick = () => {
-  const esc = v => /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
-  const csv = '﻿周波数,局名\r\n' + fmRows.map(r => esc(r.f) + ',' + esc(r.n)).join('\r\n') + '\r\n';
-  const a = $('fmCsvLink'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.hidden = false;
-  log('CSV を作りました（' + fmRows.length + ' 局）。「25Ja_fm_stations.csv を保存」で保存してください', 'success');
-};
-
 // ログの高さ: 上の取っ手をドラッグ（ダブルクリックで 3 行 ⇔ 大）。高さはこのブラウザに覚える
 (() => {
   const grip = $('logGrip'), box = $('log');
@@ -1155,7 +858,6 @@ if (isFileProto) { document.querySelectorAll('.bundled').forEach(b => b.hidden =
 if (!('serial' in navigator)) { $('noSerial').hidden = false; log('Web Serial 非対応のブラウザです（PC の Chrome / Edge を使ってください）', 'error'); }
 refreshButtons();
 log('25Ja Tool を開きました');
-fmLoadGlyphs().then(fmUpdateChecks);   // 局名の字の検査用（同梱の書体データを読む）
 </script>
 </body>
 </html>

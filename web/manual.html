@@ -102,6 +102,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><th>ファイル</th><th>内容</th></tr>
   <tr><td class="nowrap"><code>index.html</code></td><td>25Ja Tool（書込ツール本体）。PC の Chrome / Edge で使います</td></tr>
   <tr><td class="nowrap"><code>manual.html</code></td><td>この説明書</td></tr>
+  <tr><td class="nowrap"><code>fm.html</code></td><td>25Ja FM局名ツール（FM ラジオの局名の編集。25Ja Tool とは別のページ。PC の Chrome / Edge で使います）</td></tr>
   <tr><td class="nowrap"><code>firmware/25Ja_v0.5.1.bin</code></td><td>25Ja F/W（同梱）</td></tr>
   <tr><td class="nowrap"><code>font/25Ja_font_v5.bin</code></td><td>書体データ（東雲 12 ドット, 6,879 字, 版数 5）</td></tr>
   <tr><td class="nowrap"><code>LICENSE</code> / <code>NOTICE</code></td><td>ライセンスと出典</td></tr>
@@ -313,21 +314,21 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <li>MENU で登録。やめるときは EXIT。</li>
 </ol>
 <p>まとめて登録するなら F＋＊（自動登録）。ただし、それまでの登録は消えます。</p>
-<p>FM 放送の局名は、<b>25Ja Tool の「7 FM 局名」</b>で本体の局名表に書きます（メモリ CH やメニューでは設定しません。メニューに「FM 局名」の項目はありません）。</p>
-<h3>9.4 局名の入れ方（ツール「7 FM 局名」）</h3>
-<p><b>※ ツールの「7 FM 局名」はまだ不完全な機能です。</b>内容を確認しながら使ってください。</p>
+<p>FM 放送の局名は、<b>別ページの「25Ja FM局名ツール」（fm.html）</b>で本体の局名表に書きます（メモリ CH やメニューでは設定しません。メニューに「FM 局名」の項目はありません）。</p>
+<h3>9.4 局名の入れ方（25Ja FM局名ツール）</h3>
+<p>25Ja FM局名ツール（<code>fm.html</code>）は、25Ja Tool（<code>index.html</code>）とは別のページです。同じ要領で、PC の Chrome / Edge で開き、無線機を普通に起動して USB でつなぎます。</p>
 <ol>
-  <li>本体で FM ラジオに入り、局をプリセットに入れます（<span class="kbd">*</span> 長押し、または <span class="kbd">F</span> → <span class="kbd">*</span> の自動登録。今のプリセットは全部消えます。サーチして保存でもかまいません）。</li>
-  <li>ツールの「本体の FM プリセット 48CH」の「<b>周波数を表に取り込む</b>」→ 表に周波数が入ります。</li>
-  <li>表で局名を入力します（局名が空の行は書き込めません。要らない行は消します）。または CSV の「書き出す」→ Excel などで局名を入れる → CSV の「ファイルを選ぶ」で読み込む。</li>
-  <li>「本体の局名表」の「<b>書き込む</b>」。FM ラジオに入り直すと局名が出ます。</li>
+  <li>本体を FM ラジオにして、右上のバンド表示が 76-108MHz になっていることを確かめます（バンド表示は <span class="kbd">1</span> 長押し、または <span class="kbd">F</span> → <span class="kbd">1</span> で変わります）。<span class="kbd">*</span> 長押しで局をサーチして、プリセットに入れます（今のプリセット 48CH は全部消えます）。</li>
+  <li>ツールで「エリア」を選び、「<b>プリセットを取り込み、局名を入れる</b>」を押します。本体のプリセットの周波数に、同じ周波数の局名が入ります（内蔵の局名データベースは、総務省「全国民放FM局・ワイドFM局一覧」令和7年4月1日現在。民放のみで、NHK とコミュニティ放送は入っていません）。</li>
+  <li>表で局名を確かめ、必要なら直して、「<b>書き込む</b>」を押します。FM ラジオに入り直すと局名が出ます。</li>
+  <li>不要なプリセットを消すときは、本体で <span class="kbd">F</span> → <span class="kbd">3</span>（CH モード）→ 消したい CH を選ぶ → <span class="kbd">MENU</span> →「CH○○を削除?」と出たら、もう一度 <span class="kbd">MENU</span>（9.2 のとおり）。</li>
 </ol>
-<p>逆に、「本体の FM プリセット 48CH」の「<b>表の周波数を書く</b>」を使うと、受信できるかどうかに関係なく、表の局をプリセット 48CH に登録できます（今のプリセットは置き換わり、書いた後に無線機が再起動します）。</p>
+<p>表の周波数を「<b>表の周波数を書く</b>」でプリセット 48CH に書くこともできます（今のプリセットは置き換わり、書いた後に無線機が再起動します）。表の読み出し・消去、CSV の書出し・読込もツールにあります。</p>
 <h3>9.5 局名の決まり</h3>
 <ul>
   <li>最大 127 局。周波数は 64.0〜108.0MHz、0.1MHz 単位、重複なし</li>
   <li>局名は UTF-8 で 28 バイト・画面幅 128 ドットまで（漢字・かな・ギリシャ文字などの全角の字は 9 字、半角英数は 18 字まで）</li>
-  <li>使える字は半角英数記号と、書体データにある字（JIS X 0208 の全字。ギリシャ文字・キリル文字・記号を含む）。半角カナ・機種依存文字は不可。ツールが赤で知らせます</li>
+  <li>使える字は半角英数記号と、全角の字（書体データの JIS X 0208 の全字。ギリシャ文字・キリル文字・記号を含む）。絵文字など 4 バイトの字は不可です。書体データにない字（半角カナなど）は、本体では全角幅の空白で出ます。ツールは、字数とバイト数・幅の超過を知らせます</li>
   <li>CSV は「周波数,局名」の 2 列。読込は UTF-8 / Shift_JIS、書出は UTF-8（BOM 付き）</li>
 </ul>
 <div class="note">
@@ -433,12 +434,13 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <h2 id="hash">15. 配布物の照合値</h2>
 <table>
   <tr><th>ファイル</th><th>サイズ</th><th>SHA-256</th></tr>
-  <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">70,543 B</td><td class="hash">2c4faeead1558832d1b41b09343fb125655b1b960ad9140f0247a9864aa58a30</td></tr>
+  <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">51,597 B</td><td class="hash">e25ed2722834492ee9077ef20e7f357126dbcadeb9ec35408409f062648b9c2f</td></tr>
+  <tr><td class="nowrap"><code>fm.html</code></td><td class="nowrap">76,747 B</td><td class="hash">2d133d9d69303b4f2e10a0cb49931719a4e3fcc315ea8775a9f83dfc71d179b2</td></tr>
   <tr><td class="nowrap"><code>firmware/25Ja_v0.5.1.bin</code></td><td class="nowrap">116,132 B</td><td class="hash">d464aa6f0a8ee5dfc7c3e745d934cf8127e4839640f6fa6932cae81089227c08</td></tr>
   <tr><td class="nowrap"><code>font/25Ja_font_v5.bin</code></td><td class="nowrap">192,613 B</td><td class="hash">49894793f441ff7b97f4942b6a1d9c829e8b483df2ef3984e144871566a43ed4</td></tr>
   <tr><td class="nowrap"><code>LICENSE</code></td><td class="nowrap">11,357 B</td><td class="hash">c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4</td></tr>
   <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">5,819 B</td><td class="hash">9f7d51c35522b7978248ee470ef8a4009abf95a507a47e5679dabb8971e7e575</td></tr>
-  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">5,045 B</td><td class="hash">9d3b5f3ff687e764185893498e8a73c5bd289379047d9bac3b0510a5f2b2777a</td></tr>
+  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">5,103 B</td><td class="hash">b434f6a1dbbe23404e857a4f5948348f471fa807474908278c1bbc7e70aeeec9</td></tr>
 </table>
 <p>F/Wの版：25Ja v0.5.1（Dondji v5.2.8 ベース、F4HWN 由来）。書体データ：v5（6,879 字）。F/W 0.5 以降は書体データ v5 と組で使います。同梱 BIN をビルドしたコミットは <code>75d30a7</code> です（短縮ハッシュ）。本体情報の画面に出るのは「ビルド日時」で、BIN の照合は上の SHA-256 で行います</p>
 

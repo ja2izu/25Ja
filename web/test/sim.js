@@ -137,7 +137,7 @@ class Radio {
   }
 }
 
-const ONLY = process.env.CASES ? new RegExp(process.env.CASES) : null;   // 例: CASES='^7' node sim.js
+const ONLY = process.env.CASES ? new RegExp(process.env.CASES) : null;   // 例: CASES='^3' node sim.js
 async function runCase(name, mode, act, check, setup, opts = {}) {
   if (ONLY && !ONLY.test(name)) return true;
   const radio = new Radio(mode);
@@ -234,51 +234,6 @@ const eq = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
   res.push(await runCase('6 起動画像を無効化', 'normal', async w => click(w, 'logoClearBtn'),
     async (w, r) => eq(r.spi.slice(0x1FF000, 0x1FF008), new Uint8Array(8).fill(0xff))));
 
-  // ---- 7 FM 局名 ----
-  // 期待値はツールと独立に組む（App/app/fm.h の形式）
-  const fmTable = list => {
-    const b = new Uint8Array(16 + list.length * 32).fill(0xff);
-    b.set([0x46, 0x4d, 0x53, 0x54, 1, list.length]);
-    list.forEach(([f10, name], i) => { const o = 16 + i * 32; b[o] = f10 & 0xff; b[o + 1] = f10 >> 8; b.fill(0, o + 4, o + 32); b.set(Buffer.from(name, 'utf8'), o + 4); });
-    return b;
-  };
-  const fmList = [[825, 'NHK FM 名古屋'], [778, 'ZIP-FM'], [807, 'エフエム愛知名古屋'], [899, '東海ラジオ放送']];
-  const csvUtf8 = Buffer.from('\uFEFF周波数,局名\r\n82.5,NHK FM 名古屋\r\n77.8,ZIP-FM\r\n80.7,エフエム愛知名古屋\r\n89.9,"東海ラジオ放送"\r\n', 'utf8');
-  res.push(await runCase('7a CSV(UTF-8) → 書込', 'normal', async w => { await setFile(w, 'fmCsvFile', 'fm.csv', csvUtf8); await new Promise(r => setTimeout(r, 500)); click(w, 'fmWriteBtn'); },
-    async (w, r, L) => { const t = fmTable(fmList); return eq(r.spi.slice(0x12000, 0x12000 + t.length), t) && L.some(s => s.includes('照合 OK')); }));
-
-  // Shift_JIS: 「82.5,名古屋」 名=96BC 古=8CC3 屋=89AE、見出しなし
-  const csvSjis = new Uint8Array([...Buffer.from('82.5,'), 0x96, 0xBC, 0x8C, 0xC3, 0x89, 0xAE, 0x0d, 0x0a, ...Buffer.from('90.0,ABC\r\n')]);
-  res.push(await runCase('7b CSV(Shift_JIS) → 書込', 'normal', async w => { await setFile(w, 'fmCsvFile', 'fm_sjis.csv', csvSjis); await new Promise(r => setTimeout(r, 500)); click(w, 'fmWriteBtn'); },
-    async (w, r, L) => { const t = fmTable([[825, '名古屋'], [900, 'ABC']]); return eq(r.spi.slice(0x12000, 0x12000 + t.length), t) && L.some(s => s.includes('Shift_JIS')); }));
-
-  res.push(await runCase('7c 本体から読み出し → CSV 書出', 'normal', async w => { click(w, 'fmReadBtn'); for (let i = 0; i < 100 && w.document.getElementById('fmReadBtn').disabled !== false; i++) await new Promise(r => setTimeout(r, 50)); await new Promise(r => setTimeout(r, 3000)); click(w, 'fmCsvBtn'); },
-    async (w, r, L) => {
-      const b = await blobBytes(w); const t = new TextDecoder('utf-8', { ignoreBOM: true }).decode(b);
-      return t === '\uFEFF周波数,局名\r\n82.5,NHK FM 名古屋\r\n77.8,ZIP-FM\r\n80.7,エフエム愛知名古屋\r\n89.9,東海ラジオ放送\r\n' && L.some(s => s.includes('4 局'));
-    }, r => r.spi.set(fmTable(fmList), 0x12000)));
-
-  // 検査: 10 字（幅超過）/ 書体データにない字（半角カナ）/ 範囲外 / 同じ周波数 → 書かない
-  const csvBad = Buffer.from('82.5,あいうえおかきくけこ\n77.8,ｱｲｳ\n120.0,X\n82.5,Y\n80.05,Z\n', 'utf8');
-  res.push(await runCase('7d 不正な行 → 書込拒否', 'normal', async w => { await setFile(w, 'fmCsvFile', 'bad.csv', csvBad); await new Promise(r => setTimeout(r, 500)); click(w, 'fmWriteBtn'); },
-    async (w, r, L) => r.stats.spiWrite === 0 && ['超過', '書体データにない字', '範囲外', '同じ周波数', '0.1MHz'].every(k => L.some(s => s.includes(k)))));
-
-  res.push(await runCase('7e 局名表の消去', 'normal', async w => click(w, 'fmEraseBtn'),
-    async (w, r) => eq(r.spi.slice(0x12000, 0x12010), new Uint8Array(16).fill(0xff)) && r.spi[0x12010] === 0x39, r => r.spi.set(fmTable(fmList), 0x12000)));
-
-  res.push(await runCase('7f FM プリセットの周波数を取り込み → CSV 書出', 'normal', async w => { click(w, 'fmPresetBtn'); await new Promise(r => setTimeout(r, 3000)); click(w, 'fmCsvBtn'); },
-    async (w, r, L) => {
-      const t = new TextDecoder('utf-8', { ignoreBOM: true }).decode(await blobBytes(w));
-      return t === '\uFEFF周波数,局名\r\n82.5,\r\n77.8,\r\n90.0,\r\n' && L.some(s => s.includes('3 件のうち 3 件'));
-    }, r => { r.spi.fill(0xff, 0xA028, 0xA028 + 96); [825, 778, 0xffff, 900].forEach((f, i) => { r.spi[0xA028 + i * 2] = f & 0xff; r.spi[0xA029 + i * 2] = f >> 8; }); }));
-
-  const csvPre = Buffer.from('89.9,東海ラジオ放送\n76.5,\n82.5,NHK\n120.0,範囲外\n82.5,重複\n', 'utf8');
-  res.push(await runCase('7g 表の周波数を FM プリセットに書く（低い順）', 'normal', async w => { await setFile(w, 'fmCsvFile', 'pre.csv', csvPre); await new Promise(r => setTimeout(r, 500)); click(w, 'fmPresetWriteBtn'); },
-    async (w, r, L) => {
-      const exp = new Uint8Array(96).fill(0xff); [765, 825, 899].forEach((f, i) => { exp[i * 2] = f & 0xff; exp[i * 2 + 1] = f >> 8; });
-      return eq(r.spi.slice(0xA028, 0xA028 + 96), exp) && r.rebooted && L.some(s => s.includes('3 局を書きました'));
-    }));
-
   // ---- 0 初めての手順（各欄の結果が手順の欄に ✔ / ✖ で出る）----
   const st = (w, n) => w.document.getElementById('suSt' + n).textContent;
   const call = (w, id) => w.document.getElementById(id).onclick();
@@ -298,11 +253,6 @@ const eq = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
   res.push(await runCase('F1 直開き: 同梱ボタンを隠す・ファイル選択でF/Wを書く', 'boot', async w => { await setFile(w, 'fwFile', '25Ja_v0.5.1.bin', fw); await call(w, 'fwFlashBtn'); },
     async (w, r, L) => !w.document.getElementById('fileProto').hidden && w.document.getElementById('fwBundledBtn').hidden && w.document.getElementById('fontBundledBtn').hidden && eq(r.mcu.slice(0, fw.length), fw),
     null, { url: F }));
-  res.push(await runCase('F2 直開き: 書体データを選ぶと局名の字の検査が効く', 'normal', async w => {
-      await setFile(w, 'fontFile', '25Ja_font_v5.bin', font); await new Promise(r => setTimeout(r, 300));
-      await setFile(w, 'fmCsvFile', 'k.csv', Buffer.from('82.5,ｱｲｳ\n', 'utf8')); await new Promise(r => setTimeout(r, 300)); },
-    async (w, r, L) => w.document.querySelector('#fmBody td.w').textContent.includes('書体データにない字'),
-    null, { url: F }));
 
   res.push(await runCase('3d 応答が時々消える（37 回に 1 回）→ 再送で完了・照合 OK', 'normal', async w => { await call(w, 'fontBundledBtn'); await call(w, 'fontFlashBtn'); },
     async (w, r, L) => { console.log('   dropped=' + r.stats.dropped + ' / ' + L.find(s => s.includes('再送'))); return eq(r.spi.slice(0x024000, 0x024000 + font.length), font) && L.some(s => s.includes('照合 OK')); },
@@ -310,13 +260,12 @@ const eq = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
 
   // ---- 9 ファイル選択の表示・ログのコピー／消去・25Ja の目印（0.1.10）----
   res.push(await runCase('9a ファイルを選ぶ → 名前が出る（標準部品は隠す）', 'normal', async w => {
-      await setFile(w, 'fwFile', '25Ja_v0.5.1.bin', fw); await setFile(w, 'fmCsvFile', 'k.csv', Buffer.from('82.5,NHK\n', 'utf8')); },
+      await setFile(w, 'fwFile', '25Ja_v0.5.1.bin', fw); },
     async (w, r, L) => {
       const d = w.document, picks = d.querySelectorAll('button.pick'), nat = d.querySelectorAll('input[type=file]');
-      const csvName = d.getElementById('fmCsvFile').nextElementSibling;
-      console.log('   pick=' + picks.length + ' / fwInfo=' + d.getElementById('fwInfo').textContent + ' / csv=' + csvName.textContent);
+      console.log('   pick=' + picks.length + ' / fwInfo=' + d.getElementById('fwInfo').textContent);
       return picks.length === nat.length && Array.from(nat).every(i => i.classList.contains('native') && i.previousElementSibling.classList.contains('pick'))
-        && d.getElementById('fwInfo').textContent.startsWith('✔ 25Ja_v0.5.1.bin') && csvName.textContent.startsWith('✔ k.csv');
+        && d.getElementById('fwInfo').textContent.startsWith('✔ 25Ja_v0.5.1.bin');
     }));
   res.push(await runCase('9b ログをコピー → 版・日時付き、ログを消す → 1 行', 'normal', async w => {
       Object.defineProperty(w.navigator, 'clipboard', { value: { writeText: async t => { w.__clip = t; } } });
