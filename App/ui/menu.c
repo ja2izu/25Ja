@@ -366,7 +366,8 @@ const t_menu_item MenuList[] =
     {"ChList",      MENU_LIST_CH       },
     {"ChSave",      MENU_MEM_CH        }, // was "MEM-CH"
     {"ChDele",      MENU_DEL_CH        }, // was "DEL-CH"
-    {"ChName",      MENU_MEM_NAME      },
+    /* JA: 本体での CH 名の編集は外した（CH 名は CPS で書く。本体の編集は 15 バイトまでで、長い名前が切れるため）。
+       編集のコードは残してある。MenuList に載せないので、メニューには出ない */
     {"ChDisp",      MENU_MDF           }, // was "MDF"
 
     {"ScList",       MENU_S_LIST       },
