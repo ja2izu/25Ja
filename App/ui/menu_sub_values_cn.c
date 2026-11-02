@@ -263,7 +263,7 @@ const char *const gSubMenu_SIDEFUNCTIONS_CN[] = {
     "照明一時OFF",
 #endif
 #ifdef ENABLE_FEAT_F4HWN
-    "受信 モード",
+    "待受方式",
     "メインのみ",
     "PTT",
     "ワイド\nナロー",
@@ -303,7 +303,7 @@ _Static_assert(ARRAY_SIZE(gSubMenu_MODULATION_CN) == MODULATION_UKNOWN, "gSubMen
 
 #ifdef ENABLE_SPECTRUM
 const char gSubMenu_SPECTRUM_MODE_CN[][13] = {
-    "シンプル",     /* 简单 */
+    "簡易",     /* 简单 */
     "詳細",     /* 专业 */
 };
 #endif

@@ -1970,7 +1970,7 @@ static void MENU_ClampSelection(int8_t Direction)
         }
 #endif
 #ifndef ENABLE_MDC_YAN_ID
-        /* JA: MDC / Yan ID を外したビルドでは、ロジャー音の選択肢の MDC と Yan ID を飛ばす。
+        /* JA: MDC / Yan ID を外したビルドでは、ラジャー音の選択肢の MDC と Yan ID を飛ばす。
            番号（EEPROM の保存値）は詰めない */
         if (UI_MENU_GetCurrentMenuId() == MENU_ROGER && Direction != 0)
         {
