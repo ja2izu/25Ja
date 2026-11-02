@@ -420,7 +420,7 @@ gEeprom.FreqChannel[1]   = IS_FREQ_CHANNEL(Data16[5]) ? Data16[5] : (FREQ_CHANNE
             (((Data[0] & 0x7F) >= 1) && ((Data[0] & 0x7F) <= (MR_CHANNELS_LIST + 1)))
                 ? (Data[0] & 0x7F)
                 : 1;
-    gEeprom.SCAN_LIST_ENABLED = (Data[0] >> 7) & 0x01;
+    gEeprom.SCAN_LIST_ENABLED = 0;   /* JA: 優先スキャンは廃止。保存値（bit7）は無視して常に OFF */
 
     gEeprom.SCANLIST_PRIORITY_CH[0] =
             (uint16_t)Data[1] |

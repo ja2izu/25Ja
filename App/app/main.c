@@ -87,6 +87,10 @@ static void toggle_chan_scanlist(void)
     if (SCANNER_IsScanning())
         return;
 
+    /* JA: 「5」長押しは範囲スキャンだけ。CH モードでは何もしない（グループへの出し入れ・除外の解除はなくした） */
+    if (IS_MR_CHANNEL(gTxVfo->CHANNEL_SAVE))
+        return;
+
     if(!IS_MR_CHANNEL(gTxVfo->CHANNEL_SAVE)) {
 #ifdef ENABLE_SCAN_RANGES
 #ifdef ENABLE_SPECTRUM

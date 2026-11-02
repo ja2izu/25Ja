@@ -371,9 +371,7 @@ const t_menu_item MenuList[] =
     {"ChDisp",      MENU_MDF           }, // was "MDF"
 
     {"ScList",       MENU_S_LIST       },
-    {"ScPri",        MENU_S_PRI        },
-    {"PriCh1",       MENU_S_PRI_CH_1   },
-    {"PriCh2",       MENU_S_PRI_CH_2   },
+    /* JA: 優先スキャン・優先 CH は廃止（メニューから外した。コードは残してある） */
     {"ScnRev",      MENU_SC_REV        },
 #ifdef ENABLE_FEAT_F4HWN_SCAN_FASTER
     {"SetScn",      MENU_SET_SCN       }, /* JA: 高速スキャン（F4HWN SCAN_FASTER） */
