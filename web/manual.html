@@ -81,7 +81,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <p>Dondji v5.2.8（F4HWN 系, PY32F071 版）をもとに、日本語で使えるようにしたF/Wです。</p>
 <ul>
   <li><b>CH 名に漢字・かな</b>（東雲 12 ドットフォント, JIS X 0208 の全 6,879 字。漢字・かなのほか、ギリシャ文字・キリル文字・記号も使えます）。CH 名は UTF-8 で最大 31 バイト＝漢字・かな 10 字（英数字 31 字）。
-      31 バイトの名前は PC の CPS（NeonPlugJA）で書きます。本体で名前を編集できるのは従来どおり 15 バイト（漢字・かな 5 字）までで、長い名前を本体で編集すると 15 バイトに切れます。
+      31 バイトの名前は PC の CPS（NeonPlugJA）で書きます。本体では CH 名を編集できません（メニューに「CH名 編集」はありません）。
       メイン画面では、漢字・かなの長い名前は 7 字ほどまでしか見えません</li>
   <li><b>メニューの日本語化</b>（本体メニュー「表示言語」で切替）</li>
   <li><b>メニューを 5 つの分類に再編成</b>：チャンネル／表示/音声／キー設定／システム／スキャン（アイコンで選びます。項目は 10 を参照）</li>
@@ -341,7 +341,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <ul>
   <li>メニューの最初の画面は、<b>5 つの分類</b>のアイコンです：<b>チャンネル／表示/音声／キー設定／システム／スキャン</b>。分類ごとの項目と並びは次のとおりです（日本語表示）。メニューを開くと、前回使った分類から始まります（電源を入れ直すと「チャンネル」から）。
     <ul>
-      <li><b>チャンネル</b>（16）：ステップ、送信出力、受信 DCS、受信 CTCSS、送信 DCS、送信 CTCSS、シフト 方向、シフト 周波数、ワイド/ナロー、ビジー ロック、Compand、受信 モード、所属 グループ、CH保存、CH削除、CH名 編集</li>
+      <li><b>チャンネル</b>（15）：ステップ、送信出力、受信 DCS、受信 CTCSS、送信 DCS、送信 CTCSS、シフト 方向、シフト 周波数、ワイド/ナロー、ビジー ロック、Compand、受信 モード、所属 グループ、CH保存、CH削除</li>
       <li><b>表示/音声</b>（17）：スケルチ、ラジャー 音、テール 消去、レピータ STE、キー音、マイク 感度、音質設定、表示言語、待受方式&lt;主画面&gt;、CH表示、LED点滅、照明時間、照明最小、照明最大、送受照明、表示濃度、スペアナ 表示</li>
       <li><b>キー設定</b>（6）：PF1短押、PF1長押、PF2短押、PF2長押、MENU 長押、ワンキー 呼出</li>
       <li><b>システム</b>（通常 11）：起動音、起動画面、起動表示、電池表示、送信表示、自動 ロック、ロック 範囲、送信時間、省電力、スリープ、本体情報。<b>隠しメニュー</b>（12 を参照）を出すと、バンド ロック、電池校正、電池種類、機種依存 キー、リセットが「本体情報」の前に加わります（計 16）。「起動表示」は、「起動画面」が標準以外のときは出ません</li>
@@ -436,13 +436,13 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><th>ファイル</th><th>サイズ</th><th>SHA-256</th></tr>
   <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">51,597 B</td><td class="hash">e25ed2722834492ee9077ef20e7f357126dbcadeb9ec35408409f062648b9c2f</td></tr>
   <tr><td class="nowrap"><code>fm.html</code></td><td class="nowrap">76,747 B</td><td class="hash">2d133d9d69303b4f2e10a0cb49931719a4e3fcc315ea8775a9f83dfc71d179b2</td></tr>
-  <tr><td class="nowrap"><code>firmware/25Ja_v0.5.1.bin</code></td><td class="nowrap">116,132 B</td><td class="hash">d464aa6f0a8ee5dfc7c3e745d934cf8127e4839640f6fa6932cae81089227c08</td></tr>
+  <tr><td class="nowrap"><code>firmware/25Ja_v0.5.1.bin</code></td><td class="nowrap">116,124 B</td><td class="hash">a7b6c9dbd2eab58800a37630856940adb2b3b76a49aad0329bdadea317565f7d</td></tr>
   <tr><td class="nowrap"><code>font/25Ja_font_v5.bin</code></td><td class="nowrap">192,613 B</td><td class="hash">49894793f441ff7b97f4942b6a1d9c829e8b483df2ef3984e144871566a43ed4</td></tr>
   <tr><td class="nowrap"><code>LICENSE</code></td><td class="nowrap">11,357 B</td><td class="hash">c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4</td></tr>
   <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">5,819 B</td><td class="hash">9f7d51c35522b7978248ee470ef8a4009abf95a507a47e5679dabb8971e7e575</td></tr>
   <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">5,103 B</td><td class="hash">b434f6a1dbbe23404e857a4f5948348f471fa807474908278c1bbc7e70aeeec9</td></tr>
 </table>
-<p>F/Wの版：25Ja v0.5.1（Dondji v5.2.8 ベース、F4HWN 由来）。書体データ：v5（6,879 字）。F/W 0.5 以降は書体データ v5 と組で使います。同梱 BIN をビルドしたコミットは <code>75d30a7</code> です（短縮ハッシュ）。本体情報の画面に出るのは「ビルド日時」で、BIN の照合は上の SHA-256 で行います</p>
+<p>F/Wの版：25Ja v0.5.1（Dondji v5.2.8 ベース、F4HWN 由来）。書体データ：v5（6,879 字）。F/W 0.5 以降は書体データ v5 と組で使います。同梱 BIN をビルドしたコミットは <code>49ea2b4</code> です（短縮ハッシュ）。本体情報の画面に出るのは「ビルド日時」で、BIN の照合は上の SHA-256 で行います</p>
 
 <footer>
   25Ja 説明書 — © 2026 JA2IZU, Apache License 2.0。本書および 25Ja は Dondji 公式のものではありません。
