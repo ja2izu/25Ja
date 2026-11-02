@@ -226,9 +226,9 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <li>2 画面表示にして、VFO モードで、A と B に範囲の端の周波数を入れます（どちらが上でもかまいません）。</li>
   <li>A（選んでいる側）で <b>5 を長押し</b>します。A と B の間が、スキャンの範囲になります。</li>
   <li><b>＊ を長押し</b>すると、その範囲だけをスキャンします。</li>
-  <li>止めるときは EXIT。範囲をやめるときは、もう一度 5 を長押しします。</li>
+  <li>止めるときは EXIT（スキャンが止まります）。範囲をやめるときは、もう一度 EXIT、または 5 を長押しします。</li>
 </ol>
-<div class="note">2 画面表示（または 2 つの VFO を使う設定）のときだけ使えます。メインのみの表示では、エラー音が鳴ります。メニュー「スペアナ 表示」が「詳細」のときは働きません。CH モードでは、5 長押しは何もしません。</div>
+<div class="note">2 画面表示（または 2 つの VFO を使う設定）のときだけ使えます。メインのみの表示では、エラー音が鳴ります。CH モードでは、5 長押しは何もしません。</div>
 <h3>7.5 操作例</h3>
 <p><b>例 1　よく聞くレピータだけを巡回する</b></p>
 <ol>
@@ -241,7 +241,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <ol>
   <li>2 画面表示にして、VFO の A に 430.000、B に 431.000 を入れる。</li>
   <li>A で 5 を長押し（範囲を設定）→ ＊ を長押しして、スキャン開始。</li>
-  <li>終わったら、5 をもう一度長押しして範囲をやめる。</li>
+  <li>終わったら、EXIT で止め、もう一度 EXIT（または 5 長押し）で範囲をやめる。</li>
 </ol>
 <p><b>例 3　相手の周波数とトーンを調べる</b></p>
 <ol>
@@ -449,13 +449,13 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><th>ファイル</th><th>サイズ</th><th>SHA-256</th></tr>
   <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">51,621 B</td><td class="hash">00d9ce06012eb6282cf662c694f11b049f3d3026a2ee28274a23c2ab1e9403ce</td></tr>
   <tr><td class="nowrap"><code>fm.html</code></td><td class="nowrap">76,747 B</td><td class="hash">2d133d9d69303b4f2e10a0cb49931719a4e3fcc315ea8775a9f83dfc71d179b2</td></tr>
-  <tr><td class="nowrap"><code>firmware/25Ja_v0.5.1.bin</code></td><td class="nowrap">116,008 B</td><td class="hash">4091f9ff5ffdae5ca5a8e8da50d7307d322fa506d68adede59ac059403805b2d</td></tr>
+  <tr><td class="nowrap"><code>firmware/25Ja_v0.5.1.bin</code></td><td class="nowrap">116,020 B</td><td class="hash">50c5e89902aaa0e048202eee126ebdb06fb109afe73c0192d085efc63305e092</td></tr>
   <tr><td class="nowrap"><code>font/25Ja_font_v5.bin</code></td><td class="nowrap">192,613 B</td><td class="hash">49894793f441ff7b97f4942b6a1d9c829e8b483df2ef3984e144871566a43ed4</td></tr>
   <tr><td class="nowrap"><code>LICENSE</code></td><td class="nowrap">11,357 B</td><td class="hash">c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4</td></tr>
-  <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">6,135 B</td><td class="hash">de21dcebae16b5333d3880caf960f9e2e0991ecbb94ecc67702d2dd4f70c2017</td></tr>
+  <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">6,225 B</td><td class="hash">1d2afe0d3ad19440f973b80a6dee7ea9fdaa72b94e519afe29eae6985a375c1b</td></tr>
   <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">5,354 B</td><td class="hash">b1d6304c37472f29e3b09021bd1f39dcebf479fae06c6ec541034eec831763e8</td></tr>
 </table>
-<p>F/Wの版：25Ja v0.5.1（Dondji v5.2.8 ベース、F4HWN 由来）。書体データ：v5（6,879 字）。F/W 0.5 以降は書体データ v5 と組で使います。同梱 BIN をビルドしたコミットは <code>060b0ee</code> です（短縮ハッシュ）。本体情報の画面に出るのは「ビルド日時」で、BIN の照合は上の SHA-256 で行います</p>
+<p>F/Wの版：25Ja v0.5.1（Dondji v5.2.8 ベース、F4HWN 由来）。書体データ：v5（6,879 字）。F/W 0.5 以降は書体データ v5 と組で使います。同梱 BIN をビルドしたコミットは <code>10323c7</code> です（短縮ハッシュ）。本体情報の画面に出るのは「ビルド日時」で、BIN の照合は上の SHA-256 で行います</p>
 
 <footer>
   25Ja 説明書 — © 2026 JA2IZU, Apache License 2.0。

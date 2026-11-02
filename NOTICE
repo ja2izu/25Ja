@@ -117,7 +117,8 @@ to the Dondji source code. It is not an official Dondji product.
     group and starts scanning at once
   * Menu: opens on the last used category
   * Key 5 long press: range scan only (assigning a channel to a scan group
-    and clearing an exclusion with this key were removed)
+    and clearing an exclusion with this key were removed); it no longer
+    depends on the spectrum display setting, and EXIT also clears the range
   * Removed from the menu: priority scan / priority channels (the stored
     enable bit is ignored and always treated as off) and on-radio channel
     name editing (the code is kept)
