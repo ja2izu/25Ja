@@ -75,8 +75,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <span class="ttl">ご注意</span>
   ・元のデータが必要なときは、先にバックアップしておいてください。F/Wは、公式その他のツールで元に戻したり、上書きしたりできます。<br>
   ・F/Wの書き換えは自己責任で行ってください。書き換えにより故障・保証外となる場合があります。<br>
-  ・技術基準適合証明（技適）のない無線機から電波を出すことは電波法違反です。送信は、適法に運用できる無線機・免許の範囲で行ってください。<br>
-  ・25Ja は Dondji（BD1AHN）をもとにした派生版で、Dondji 公式のものではありません。
+  ・無線局の設備として認証を受けていない無線機から電波を出すことは電波法違反です。送信は、適法に運用できる無線機・免許の範囲で行ってください。
 </div>
 
 <div class="warn top">
@@ -89,7 +88,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <p>UV-K1 / UV-K5(K6) V3 用の、<b>日本語で使える F/W</b> です（Dondji v5.2.8 をもとにしています）。ポイントは次の 4 つです。</p>
 <ol class="points">
   <li><b>CH 名とメニューが、漢字・かなで表示されます</b>
-    <small>CH 名は最大 31 バイト（漢字・かな 10 字）。ギリシャ文字・キリル文字・記号も使えます。CH 名は PC の CPS「NeonPlugJA」で書きます（本体では編集できません）。メニューは「表示言語」で日本語に切り替えます。メイン画面では、漢字・かなの長い名前は 7 字ほどまでしか見えません。</small></li>
+    <small>CH 名は最大 31 バイト（漢字・かな 10 字）。ギリシャ文字・記号なども使えます。CH 名は PC の CPS「NeonPlugJA」で書きます。メニューは「表示言語」で日本語・英語の切替が可能です。メイン画面での長い名前は表示が切れることがあります。</small></li>
   <li><b>クイックスキャン</b>
     <small>7 長押し（または F＋7）で、スキャン グループを選んですぐスキャンを始められます（7.2 を参照）。</small></li>
   <li><b>FM 放送の局名が出ます</b>
@@ -126,8 +125,8 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <li>PC（Windows / Mac / Linux）に <b>Chrome または Edge</b> を用意します（Web Serial を使うため。Safari・Firefox・スマートフォンは不可）。</li>
   <li>無線機と PC を USB ケーブルでつなぎます。</li>
   <li>配布の ZIP を展開し、<code>25Ja_Tool</code> フォルダの <b><code>index.html</code> をダブルクリック</b>して開きます。<br>
-     Chrome / Edge 以外で開いたときは、<code>index.html</code> を右クリック →「プログラムから開く」→ Chrome（または Edge）を選びます。</li>
-  <li>この開き方では、同梱のF/W・書体データをツールが自動では読めません。2・3 の欄の「ファイルを選ぶ」で、
+     Chrome / Edge 以外のブラウザで開いたときは、<code>index.html</code> を右クリック →「プログラムから開く」→ Chrome（または Edge）を選びます。</li>
+  <li>同梱のF/W・書体データをツールが自動で認識しない場合は、2・3 の欄の「ファイルを選ぶ」で、
      同じフォルダの <code>firmware/25Ja_v0.5.1.bin</code>（F/W）、<code>font/25Ja_font_v5.bin</code>（書体データ）を選んでください。</li>
 </ol>
 <div class="note">
@@ -136,7 +135,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 </div>
 
 <h2>4. 初めて 25Ja を入れる</h2>
-<p>ツール上部の「<b>0 初めて 25Ja を入れる手順</b>」に順番が並んでいます。番号を押すとその欄へ移動するので、各欄のボタンで進めます。終わった欄には ✔（失敗は ✖）が付きます。</p>
+<p>ツール上部の「<b>0 初めて 25Ja を入れる手順</b>」の番号を押すとその欄へ移動するので、各欄のボタンで進めます。終わった欄には ✔（失敗は ✖）が付きます。</p>
 <table>
   <tr><th>順</th><th>欄</th><th>無線機の状態</th><th>操作</th></tr>
   <tr><td>1</td><td>1 校正データのバックアップ</td><td>普通に起動</td><td>「校正データを読み出す」→「calibration.dat を保存」。<b>この無線機専用の大切なデータ</b>です。必ず保管してください</td></tr>
