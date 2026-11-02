@@ -110,7 +110,7 @@ to the Dondji source code. It is not an official Dondji product.
     menu (the stored value is kept)
   * Boot hint: labels replaced with Japanese text in the Japanese menu;
     value 1 can show a 24-byte user text written by the CPS (SPI 0x0089A0)
-  * Japanese labels for the side keys (PF1 / PF2); F Lock option "JA/CE HAM"
+  * Japanese labels for the side keys (SK1 / SK2); F Lock option "JA/CE HAM"
     (144-146 MHz / 430-440 MHz) in the Dondji F Lock list
   * Boot logo: replaced with an image made for 25Ja
   * Quick Scan: long press of key 7 (or F+7) opens a pop-up to pick a scan
