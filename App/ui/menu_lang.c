@@ -51,10 +51,10 @@ const char *UI_MENU_GetMenuTitle(const t_menu_item *item)
     case MENU_NOAA_S:       return "NOAA-S";
     #endif
 #endif
-    case MENU_F1SHRT:       return "PF1短押";
-    case MENU_F1LONG:       return "PF1長押";
-    case MENU_F2SHRT:       return "PF2短押";
-    case MENU_F2LONG:       return "PF2長押";
+    case MENU_F1SHRT:       return "SK1短押";
+    case MENU_F1LONG:       return "SK1長押";
+    case MENU_F2SHRT:       return "SK2短押";
+    case MENU_F2LONG:       return "SK2長押";
     case MENU_MLONG:        return "MENU 長押";
     case MENU_AUTOLK:       return "自動 ロック";
     case MENU_LANGUAGE:     return "表示言語";

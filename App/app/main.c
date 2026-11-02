@@ -244,6 +244,12 @@ static void JA_ScanGroupSelKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
     if (bKeyPressed)
         gJaScanGroupSelCountdown_10ms = JA_SCAN_GROUP_SEL_TIMEOUT_10MS;
 
+    /* SK1（上の側面キー）は「＞」、SK2（下の側面キー）は「＜」と同じ */
+    if (Key == KEY_SIDE1)
+        Key = KEY_UP;
+    else if (Key == KEY_SIDE2)
+        Key = KEY_DOWN;
+
     switch (Key) {
         case KEY_UP:
         case KEY_DOWN:

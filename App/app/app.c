@@ -2111,6 +2111,7 @@ static void ProcessKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
 #ifdef ENABLE_FEAT_F4HWN // For F + SIDE1 or F + SIDE2
             || (gWasFKeyPressed && (Key == KEY_SIDE1 || Key == KEY_SIDE2))
 #endif
+            || (gJaScanGroupSelActive && (Key == KEY_SIDE1 || Key == KEY_SIDE2))   /* JA: クイックスキャンの選択中は SK1・SK2 を矢印キーの代わりにする */
             || (gScreenToDisplay == DISPLAY_MENU &&
                 UI_MENU_GetCurrentMenuId() == MENU_MEM_NAME &&
                 gIsInSubMenu &&

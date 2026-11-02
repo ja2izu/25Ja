@@ -1296,22 +1296,22 @@ static void UI_MENU_DrawLevel2SplitLayout(uint8_t menu_count, char *String)
 #endif
         else if (UI_MENU_GetCurrentMenuId() == MENU_F1SHRT)
         {
-            UI_PrintStringSmallAtPixel("PF1", 0, left_end, l2_y1_lo, l2_y1_hi, 0u);
+            UI_PrintStringSmallAtPixel("SK1", 0, left_end, l2_y1_lo, l2_y1_hi, 0u);
             UI_PrintStringSmallAtPixel("短押", 0, left_end, l2_y2_lo, l2_y2_hi, 3u);
         }
         else if (UI_MENU_GetCurrentMenuId() == MENU_F1LONG)
         {
-            UI_PrintStringSmallAtPixel("PF1", 0, left_end, l2_y1_lo, l2_y1_hi, 0u);
+            UI_PrintStringSmallAtPixel("SK1", 0, left_end, l2_y1_lo, l2_y1_hi, 0u);
             UI_PrintStringSmallAtPixel("長押", 0, left_end, l2_y2_lo, l2_y2_hi, 3u);
         }
         else if (UI_MENU_GetCurrentMenuId() == MENU_F2SHRT)
         {
-            UI_PrintStringSmallAtPixel("PF2", 0, left_end, l2_y1_lo, l2_y1_hi, 0u);
+            UI_PrintStringSmallAtPixel("SK2", 0, left_end, l2_y1_lo, l2_y1_hi, 0u);
             UI_PrintStringSmallAtPixel("短押", 0, left_end, l2_y2_lo, l2_y2_hi, 3u);
         }
         else if (UI_MENU_GetCurrentMenuId() == MENU_F2LONG)
         {
-            UI_PrintStringSmallAtPixel("PF2", 0, left_end, l2_y1_lo, l2_y1_hi, 0u);
+            UI_PrintStringSmallAtPixel("SK2", 0, left_end, l2_y1_lo, l2_y1_hi, 0u);
             UI_PrintStringSmallAtPixel("長押", 0, left_end, l2_y2_lo, l2_y2_hi, 3u);
         }
         else if (UI_MENU_GetCurrentMenuId() == MENU_MLONG)
@@ -3590,7 +3590,7 @@ void UI_DisplayMenu(void)
                      (VOL_line_band_height(String) == CH_CN_H ||
                       VOL_line_band_height(String + strlen(String) + 1u) == CH_CN_H))
             {   /* JA: 専用処理のない 2 行値（受信方式・マイクバーなど）。漢字・かなは 1 行 12px なので、
-                 * 共通処理の行送り 8px だと 4px 重なる。PF1/PF2 など専用処理・左ペインの 2 行タイトルと
+                 * 共通処理の行送り 8px だと 4px 重なる。SK1/SK2 など専用処理・左ペインの 2 行タイトルと
                  * 同じく行間 2px（漢字・かな行は 14px 送り）で積む。ASCII だけの 2 行値は従来どおり */
                 const uint8_t ld_mix = 0u;
                 uint8_t yp = JA_value_y0((uint8_t)(y * 8u), JA_value_block_h(String, len, lines));   /* JA: 単一ペインは中央 */
