@@ -99,12 +99,12 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 </ol>
 <h3>そのほかの変更</h3>
 <ul class="others">
-  <li>メニューを 5 つの分類（チャンネル／表示/音声／キー設定／システム／スキャン）に再編成しました。</li>
+  <li>メニューを 5 つの分類（チャンネル／表示・音声／キー設定／システム／スキャン）に再編成しました。</li>
   <li>送信出力は、Low1〜Low5、Medium、High の 7 段階です。</li>
   <li>書体データの高速書込に対応しました。</li>
   <li>画面転送：PC やスマホから、25Dock で本体の画面をリモートで見て、キー操作もできます。</li>
   <li>新しい起動ロゴ（招き猫）を入れました。ロゴは、25Ja Tool の「6 起動画像」で、好きな 128×64 の白黒画像に変更できます（11 を参照）。</li>
-  <li>日本では使わない機能（MDC1200 / Yan ID、1750Hz トーン）を外して、容量を空けました。</li>
+  <li>日本では使わない機能を外して、容量を空けました。</li>
 </ul>
 
 <h2>2. 配布物</h2>
@@ -349,16 +349,16 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
 <div class="note">CH の編集は PC の CPS「NeonPlugJA」で行います（CHIRP には対応していません）。NeonPlugJA（<code>https://github.com/ja2izu/NeonPlugJA</code>）の使いかたは、「NeonPlugJA 取扱説明書」を見てください。NeonPlugJA は、infamy 氏の NeonPlug（MIT License、<code>https://github.com/infamy/NeonPlug</code>）をもとにしたフォークです。</div>
 <h3>本体メニューの構成と「CH表示」（ChDisp）</h3>
 <ul>
-  <li>メニューの最初の画面は、<b>5 つの分類</b>のアイコンです：<b>チャンネル／表示/音声／キー設定／システム／スキャン</b>。分類ごとの項目と並びは次のとおりです（日本語表示）。メニューを開くと、前回使った分類から始まります（電源を入れ直すと「チャンネル」から）。
+  <li>メニューの最初の画面は、<b>5 つの分類</b>のアイコンです：<b>チャンネル／表示・音声／キー設定／システム／スキャン</b>。分類ごとの項目と並びは次のとおりです（日本語表示）。メニューを開くと、前回使った分類から始まります（電源を入れ直すと「チャンネル」から）。
     <ul>
       <li><b>チャンネル</b>（15）：ステップ、送信出力、受信 DCS、受信 CTCSS、送信 DCS、送信 CTCSS、シフト 方向、シフト 周波数、ワイド/ナロー、ビジー ロック、Compand、受信 モード、所属 グループ、CH保存、CH削除</li>
-      <li><b>表示/音声</b>（17）：スケルチ、ラジャー 音、テール 消去、レピータ STE、キー音、マイク 感度、音質設定、表示言語、待受方式&lt;主画面&gt;、CH表示、LED点滅、照明時間、照明最小、照明最大、送受照明、表示濃度、スペアナ 表示</li>
+      <li><b>表示・音声</b>（17）：スケルチ、ラジャー 音、テール 消去、レピータ STE、キー音、マイク 感度、音質設定、表示言語、待受方式&lt;主画面&gt;、CH表示、LED点滅、照明時間、照明最小、照明最大、送受照明、表示濃度、スペアナ 表示</li>
       <li><b>キー設定</b>（6）：PF1短押、PF1長押、PF2短押、PF2長押、MENU 長押、ワンキー 呼出</li>
       <li><b>システム</b>（通常 11）：起動音、起動画面、起動表示、電池表示、送信表示、自動 ロック、ロック 範囲、送信時間、省電力、スリープ、本体情報。<b>隠しメニュー</b>（12 を参照）を出すと、バンド ロック、電池校正、電池種類、機種依存 キー、リセットが「本体情報」の前に加わります（計 16）。「起動表示」は、「起動画面」が標準以外のときは出ません</li>
       <li><b>スキャン</b>（6）：スキャン グループ、優先 スキャン、優先CH1、優先CH2、スキャン 再開、スキャン 速度</li>
     </ul>
   </li>
-  <li>「CH表示」（ChDisp）は<b>「表示/音声」</b>の中にあります。</li>
+  <li>「CH表示」（ChDisp）は<b>「表示・音声」</b>の中にあります。</li>
   <li>選べる値は<b>周波数</b>／<b>CH番号</b>／<b>名前</b>／<b>名前+周波数</b>の 4 つです（英語表示では FREQ／CHANNEL NUMBER／NAME／NAME + FREQ）。値は本体に保存されます。</li>
   <li>2 つの VFO を並べる通常のメイン画面では、CH 名の見え方（下の項）は ChDisp では変わりません。</li>
 </ul>
@@ -450,7 +450,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><td class="nowrap"><code>font/25Ja_font_v5.bin</code></td><td class="nowrap">192,613 B</td><td class="hash">49894793f441ff7b97f4942b6a1d9c829e8b483df2ef3984e144871566a43ed4</td></tr>
   <tr><td class="nowrap"><code>LICENSE</code></td><td class="nowrap">11,357 B</td><td class="hash">c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4</td></tr>
   <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">5,819 B</td><td class="hash">9f7d51c35522b7978248ee470ef8a4009abf95a507a47e5679dabb8971e7e575</td></tr>
-  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">5,103 B</td><td class="hash">b434f6a1dbbe23404e857a4f5948348f471fa807474908278c1bbc7e70aeeec9</td></tr>
+  <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">5,105 B</td><td class="hash">95ee4ccbb205dc24ee5db27516e9ff815a10514f96f886b02606a9d993b425ce</td></tr>
 </table>
 <p>F/Wの版：25Ja v0.5.1（Dondji v5.2.8 ベース、F4HWN 由来）。書体データ：v5（6,879 字）。F/W 0.5 以降は書体データ v5 と組で使います。同梱 BIN をビルドしたコミットは <code>49ea2b4</code> です（短縮ハッシュ）。本体情報の画面に出るのは「ビルド日時」で、BIN の照合は上の SHA-256 で行います</p>
 
