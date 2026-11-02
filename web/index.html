@@ -162,7 +162,7 @@ ol.setup .st.ok { color: var(--ok); font-weight: bold; } ol.setup .st.ng { color
 
   <section class="card" id="sec4">
     <h2><span class="no">4</span>校正データの復元 <span class="mode">通常起動</span> <span class="note-inline">必要なときだけ</span></h2>
-    <p class="desc">通常は不要です。校正データは、リセット・F/W書込・書体データの書込・NeonPlugJA の操作では書き換わりません。変わるのは、隠しメニューの「電池校正」（12 バイト）とこの復元だけです。受信感度や送信出力がおかしいときだけ、保存した calibration.dat を書き戻します。<b>書き戻すと、バックアップを取った後に行った電池校正は上書きされ、バックアップ時点の値に戻ります</b>（電池校正を変えていなければ影響はありません）。1 で読み出した直後なら選び直し不要です。終わると再起動します。</p>
+    <p class="desc">通常は不要です。<br>校正データは、リセット・F/W書込・書体データの書込・NeonPlugJA の操作では書き換わりません。<br>校正データが変わるのは、隠しメニューの「電池校正」（12 バイト）と、この復元操作だけです。受信感度や送信出力がおかしいときだけ復元（書き戻す）を行ってください。<b>書き戻すと、バックアップを取った後に行った電池校正は上書きされ、バックアップ時点の値に戻ります。</b>電池校正を変えたときは、1 の校正データのバックアップを取り直しておくと戻りません。終わると再起動します。</p>
     <div class="row"><input type="file" id="calibFile" data-info="calibInfo" aria-label="校正データのファイル" accept=".dat,.bin"><button id="calibRestoreBtn" disabled>書き戻す</button></div>
     <div class="file" id="calibInfo">未選択</div>
   </section>
