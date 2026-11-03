@@ -438,7 +438,7 @@ async function spiStage(ts, addr, payload, commit, tries = 5) {
     v.setUint32(4, addr >>> 0, true); v.setUint16(8, payload.length, true); v.setUint16(10, commit ? 1 : 0, true); v.setUint32(12, ts, true);
     m.set(payload, 16);
     await send(m);
-    if (await waitFor(MSG_SPI_STAGE_RESP, 60, m => replyAddr(m) === (addr >>> 0))) return true;   // 通常 1〜3ms、セクタの消去・書込を含んでも 600ms 以内（推測）
+    if (await waitFor(MSG_SPI_STAGE_RESP, 60, m => replyAddr(m) === (addr >>> 0))) return true;   // 通常 1〜3ms、セクタの消去・書込を含んでも 600ms 以内
   }
   return false;
 }
@@ -651,7 +651,7 @@ $('fontFlashBtn').onclick = () => {
     const t1 = Date.now();
     for (let off = 0; off < n; off += READ_CHUNK) {
       const len = Math.min(READ_CHUNK, n - off);
-      // 奇数長の読出しは実機で応答を取れないことがあった（推測）ため、偶数長で読んで先頭 len バイトを比べる
+      // 奇数長の読出しは実機で応答を取れないことがあったため、偶数長で読んで先頭 len バイトを比べる
       const c = await spiRead(s.ts, FONT_BASE + off, len + (len & 1));
       if (!c) throw new Error('照合の読み出し失敗 @ 0x' + (FONT_BASE + off).toString(16));
       for (let i = 0; i < len; i++) if (c[i] !== fontData[off + i]) throw new Error('照合で不一致 @ 0x' + (FONT_BASE + off + i).toString(16) + '。もう一度書き込んでください');

@@ -18,7 +18,7 @@ UV-K1 / UV-K5(K6) V3 用 25Ja（にこじゃ）F/Wの書込ツール。PC の Ch
 ## 使い方
 - 利用者: ZIP を展開し `index.html` をダブルクリック（Chrome / Edge）。同梱のF/W・書体データはボタンを押すとファイル選択が出るので、`firmware/` `font/` のファイルを選ぶ。
 - 開発者: `cd web && python3 -m http.server 8000` → `http://localhost:8000` で開くと同梱ファイルを自動で読む（https で公開した場合も同じ）。
-- 実機の Chrome（Windows）で、直開き（file://）でも Web Serial の接続・読み書きができることを確認済み（2026-09-28）。
+- 直開き（file://）でも、Web Serial の接続・読み書きができます（Chrome / Edge、Windows）。
 
 ## ファイル
 - index.html — ツール本体（外部ライブラリなし, Ver 0.1.22）
