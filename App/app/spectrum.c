@@ -1893,13 +1893,7 @@ static void OnKeyDown(uint8_t key)
 #ifdef ENABLE_SCAN_RANGES
         if (gScanRangeStart)
             break;
-        if (gSetting_SpectrumDisplayMode == 0u && kbd.counter == 16)
-        {
-            SaveSettings();
-            CHFRSCANNER_ScanRange();
-            DeInitSpectrum();
-            break;
-        }
+        /* JA: 「5」長押しの範囲スキャン設定は削除（押した瞬間に周波数入力へ移るため、長押しの分岐には届かなかった）。範囲スキャンはメイン画面の「5」長押しだけ */
 #endif
         FreqInput();
         break;
@@ -2010,15 +2004,7 @@ void OnKeyDownStill(KEY_Code_t key)
         UpdateRssiTriggerLevel(isTrue);
         break;
     case KEY_5:
-#ifdef ENABLE_SCAN_RANGES
-        if (gSetting_SpectrumDisplayMode == 0u && kbd.counter == 16)
-        {
-            SaveSettings();
-            CHFRSCANNER_ScanRange();
-            DeInitSpectrum();
-            break;
-        }
-#endif
+        /* JA: 「5」長押しの範囲スキャン設定は削除（OnKeyDown 側と同じ理由） */
         FreqInput();
         break;
     case KEY_0:
