@@ -200,7 +200,7 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><th>操作</th><th>動き</th><th>範囲</th></tr>
   <tr><td>上／下</td><td>次の CH へ切り替え（向きも変わる）</td><td>―</td></tr>
   <tr><td>数字 2 桁</td><td>グループを切り替える（空のグループを選ぶと、次の使えるグループへ進みます）</td><td>01〜24</td></tr>
-  <tr><td>F＋上下、SK2</td><td>次のグループへ</td><td>CH が入っているグループだけを順に</td></tr>
+  <tr><td>F＋上下、SK1／SK2</td><td>F＋上・SK1 で次のグループ、F＋下・SK2 で前のグループ（CH モードのスキャン中は、SK1・SK2 に割り当てた機能は働きません）</td><td>CH が入っているグループだけを順に</td></tr>
   <tr><td>MENU 長押し（受信中）</td><td>その CH をスキャンから外す（電源を入れ直すと戻る）。範囲スキャン中は、今の周波数を外す</td><td>―</td></tr>
   <tr><td>MENU 短押し</td><td>止めて、その CH に留まる</td><td>―</td></tr>
   <tr><td>EXIT</td><td>止めて、元の CH に戻る</td><td>―</td></tr>
@@ -436,13 +436,13 @@ footer { color: var(--sub); font-size: .9rem; margin-top: 36px; border-top: 1px 
   <tr><th>ファイル</th><th>サイズ</th><th>SHA-256</th></tr>
   <tr><td class="nowrap"><code>index.html</code></td><td class="nowrap">51,621 B</td><td class="hash">467acbab559504881700c29639a58689ec9fc80f20094e128e2af9836887041b</td></tr>
   <tr><td class="nowrap"><code>fm.html</code></td><td class="nowrap">76,747 B</td><td class="hash">2d133d9d69303b4f2e10a0cb49931719a4e3fcc315ea8775a9f83dfc71d179b2</td></tr>
-  <tr><td class="nowrap"><code>firmware/25Ja_v0.5.1.bin</code></td><td class="nowrap">116,056 B</td><td class="hash">ae638440ebc271d5b92017862f502791943a450f8073c23dbae3f84c97fa6b95</td></tr>
+  <tr><td class="nowrap"><code>firmware/25Ja_v0.5.1.bin</code></td><td class="nowrap">116,116 B</td><td class="hash">35303e5fca802a4089898862d2f4c3d7f8ad3335d990448e164e399a2f1eba71</td></tr>
   <tr><td class="nowrap"><code>font/25Ja_font_v5.bin</code></td><td class="nowrap">192,613 B</td><td class="hash">49894793f441ff7b97f4942b6a1d9c829e8b483df2ef3984e144871566a43ed4</td></tr>
   <tr><td class="nowrap"><code>LICENSE</code></td><td class="nowrap">11,357 B</td><td class="hash">c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4</td></tr>
   <tr><td class="nowrap"><code>NOTICE</code></td><td class="nowrap">6,225 B</td><td class="hash">71de577187f794de95e647c27d73cc8dced998ae24c658f013803870694c76cf</td></tr>
   <tr><td class="nowrap"><code>README.md</code></td><td class="nowrap">5,354 B</td><td class="hash">b0e5206b1023def8856d61611b7847707aa67ab418970e638b739f966126df31</td></tr>
 </table>
-<p>F/Wの版：25Ja v0.5.1（Dondji v5.2.8 ベース、F4HWN 由来）。書体データ：v5（6,879 字）。F/W 0.5 以降は書体データ v5 と組で使います。同梱 BIN をビルドしたコミットは <code>0996ad7</code> です（短縮ハッシュ）。本体情報の画面に出るのは「ビルド日時」で、BIN の照合は上の SHA-256 で行います</p>
+<p>F/Wの版：25Ja v0.5.1（Dondji v5.2.8 ベース、F4HWN 由来）。書体データ：v5（6,879 字）。F/W 0.5 以降は書体データ v5 と組で使います。同梱 BIN をビルドしたコミットは <code>50b2c7c</code> です（短縮ハッシュ）。本体情報の画面に出るのは「ビルド日時」で、BIN の照合は上の SHA-256 で行います</p>
 
 <footer>
   25Ja 説明書 — © 2026 JA2IZU, Apache License 2.0。
