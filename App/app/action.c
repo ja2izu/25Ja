@@ -333,6 +333,20 @@ void ACTION_Handle(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
         return;
     }
 
+    /* JA: CH モードのスキャン中は、SK1＝次のグループ、SK2＝前のグループ（SK1・SK2 に割り当てた機能は働かない）。
+     *     F＋上下と同じ処理。短押しを離したときだけ動かし、長押しは何もしない。 */
+    if ((Key == KEY_SIDE1 || Key == KEY_SIDE2) &&
+        gScanStateDir != SCAN_OFF && IS_MR_CHANNEL(gNextMrChannel))
+    {
+        if (!bKeyPressed && !bKeyHeld) {
+            RADIO_NextValidList(Key == KEY_SIDE1 ? 1 : -1);
+            UI_MAIN_ShowScanListPopup();
+            gUpdateStatus  = true;
+            gUpdateDisplay = true;
+        }
+        return;
+    }
+
     enum ACTION_OPT_t func = ACTION_OPT_NONE;
     switch(Key) {
         case KEY_SIDE1:
